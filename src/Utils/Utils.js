@@ -10,6 +10,10 @@ Utils.range = (init, end) => {
   return ans;
 };
 
+Utils.randomInt = (a, b) => {
+  return Math.floor(a + (b - a) * Math.random());
+};
+
 /**
  *
  * @param {*} array
