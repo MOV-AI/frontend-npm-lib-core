@@ -14,6 +14,14 @@ Utils.randomInt = (a, b) => {
   return Math.floor(a + (b - a) * Math.random());
 };
 
+Utils.normalizeStr = str => {
+  // from https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
+
 /**
  *
  * @param {*} array
