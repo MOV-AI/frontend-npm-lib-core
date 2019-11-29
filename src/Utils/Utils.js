@@ -10,9 +10,9 @@ Utils.range = (init, end) => {
   return ans;
 };
 
-Utils.randomInt = (a, b) => {
-  return Math.floor(a + (b - a) * Math.random());
-};
+Utils.randomInt = (a, b) => Math.floor(Utils.randomInt(a, b));
+
+Utils.random = (a, b) => a + (b - a) * Math.random();
 
 Utils.normalizeStr = str => {
   // from https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
