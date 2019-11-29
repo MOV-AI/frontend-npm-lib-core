@@ -10,7 +10,7 @@ Utils.range = (init, end) => {
   return ans;
 };
 
-Utils.randomInt = (a, b) => Math.floor(Utils.randomInt(a, b));
+Utils.randomInt = (a, b) => Math.floor(Utils.random(a, b));
 
 Utils.random = (a, b) => a + (b - a) * Math.random();
 
