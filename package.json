@@ -2,7 +2,7 @@
   "name": "mov.ai-core",
   "version": "1.0.0",
   "description": "The Mov.AI's core frontend library.",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "webpack"
