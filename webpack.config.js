@@ -6,8 +6,7 @@ module.exports = {
   output: {
     path: path.resolve("./"),
     filename: "dist/index.js",
-    library: "Movai",
-    libraryExport: "default"
+    library: "Movai"
   },
   module: {
     rules: [
