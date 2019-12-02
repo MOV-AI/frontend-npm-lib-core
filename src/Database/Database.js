@@ -1,8 +1,6 @@
-import {
-  checkLogin,
-  getToken,
-  AuthException
-} from "../Authentication/Authentication";
+import Authentication from "../Authentication/Authentication";
+
+const { getToken, AuthException, checkLogin } = Authentication;
 
 class Database {
   constructor() {
