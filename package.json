@@ -2,7 +2,7 @@
   "name": "mov.ai-core",
   "version": "1.0.0",
   "description": "The Mov.AI's core frontend library.",
-  "main": "./index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "webpack"
@@ -24,6 +24,10 @@
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-json-strings": "^7.7.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.7.4",
+    "@babel/plugin-syntax-import-meta": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
     "@babel/preset-react": "^7.7.4",
     "babel-loader": "^8.0.6",
     "jest": "^24.9.0",

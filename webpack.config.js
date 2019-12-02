@@ -2,11 +2,11 @@ const path = require("path");
 
 module.exports = {
   mode: "production",
-  entry: "./index.js",
+  entry: ["./index.js"],
   output: {
     path: path.resolve("./"),
-    filename: "dist/index.js",
-    library: "Movai"
+    filename: "dist/index.js"
+    // library: "Movai"
   },
   module: {
     rules: [
@@ -16,8 +16,13 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-react"],
-            plugins: ["@babel/plugin-proposal-class-properties"]
+            presets: ["@babel/preset-react", "@babel/preset-env"],
+            plugins: [
+              "@babel/plugin-syntax-dynamic-import",
+              "@babel/plugin-syntax-import-meta",
+              "@babel/plugin-proposal-class-properties",
+              "@babel/plugin-proposal-json-strings"
+            ]
           }
         }
       }
