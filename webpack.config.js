@@ -22,7 +22,10 @@ module.exports = {
               "@babel/plugin-syntax-import-meta",
               "@babel/plugin-proposal-class-properties",
               "@babel/plugin-proposal-json-strings",
-              ["@babel/plugin-transform-runtime", { corejs: 2 }]
+              [
+                "@babel/plugin-transform-runtime",
+                { corejs: 3, useESModules: true, helpers: true }
+              ]
             ]
           }
         }
