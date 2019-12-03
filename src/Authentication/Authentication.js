@@ -1,6 +1,6 @@
 import jwtDecode from "jwt-decode";
 
-const REST_API = "http://localhost:5004";
+const REST_API = `${window.location.hostname}:${window.location.port}`;
 
 const Authentication = {};
 

@@ -5,7 +5,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "jest",
-    "build": "webpack"
+    "build": "webpack --mode=production",
+    "buildDev": "webpack --mode=development"
   },
   "repository": {
     "type": "git",
