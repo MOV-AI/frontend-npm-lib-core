@@ -5,8 +5,11 @@ const Utils = {};
 Utils.ofNull = x => Maybe.fromNull(x);
 
 Utils.range = (init, end) => {
+  let i = init,
+    e = end;
+  if (!end) (i = 0), (e = init);
   const ans = [];
-  for (let i = 0; i < end; i++) ans.push(i);
+  for (let j = i; j < e; j++) ans.push(j);
   return ans;
 };
 
