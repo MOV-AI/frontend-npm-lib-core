@@ -1,6 +1,6 @@
 import jwtDecode from "jwt-decode";
 
-const REST_API = `${window.location.hostname}:${window.location.port}`;
+const REST_API = `http://${window.location.hostname}:${window.location.port}`;
 
 const Authentication = {};
 
