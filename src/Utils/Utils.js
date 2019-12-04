@@ -5,9 +5,9 @@ const Utils = {};
 Utils.ofNull = x => Maybe.fromNull(x);
 
 Utils.range = (init, end) => {
-  let i = init,
-    e = end;
-  if (!end) (i = 0), (e = init);
+  const { i, e } = Maybe.fromNull(end)
+    .map(x => ({ i: init, e: end }))
+    .orSome({ i: 0, e: init });
   const ans = [];
   for (let j = i; j < e; j++) ans.push(j);
   return ans;
@@ -15,7 +15,12 @@ Utils.range = (init, end) => {
 
 Utils.randomInt = (a, b) => Math.floor(Utils.random(a, b));
 
-Utils.random = (a, b) => a + (b - a) * Math.random();
+Utils.random = (a, b) => {
+  const { init, end } = Maybe.fromNull(b)
+    .map(x => ({ init: a, end: b }))
+    .orSome({ init: 0, end: a });
+  return init + (end - init) * Math.random();
+};
 
 Utils.normalizeStr = str => {
   // from https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
