@@ -36,9 +36,9 @@ class Database {
 
   onClose = evt => {
     this.dispatch("onclose", undefined);
-    // if (evt.code !== 1000) {
-    //   window.setTimeout(this.connect(), this.timeout);
-    // }
+    if (evt.code !== 1000) {
+      window.setTimeout(this.connect(), this.timeout);
+    }
   };
 
   onMessage = evt => {
