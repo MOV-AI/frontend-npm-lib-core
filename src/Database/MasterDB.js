@@ -4,7 +4,9 @@ import Database from "./Database";
  */
 class MasterDB {
   constructor() {
+    console.log("Before DB");
     if (instance) return instance;
+    console.log("Create DB instance");
     instance = this;
     this.db = new Database();
   }
