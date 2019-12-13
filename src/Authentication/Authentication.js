@@ -1,7 +1,5 @@
 import jwtDecode from "jwt-decode";
 
-const REST_API = `http://${window.location.hostname}:${window.location.port}`;
-
 const Authentication = {};
 
 Authentication.AuthException = function(message) {
@@ -44,7 +42,7 @@ Authentication.login = async (username, password, remember) => {
   let headers = {};
   headers["Content-Type"] = "application/json";
 
-  const url = `${REST_API}/token-auth/`;
+  const url = `token-auth/`;
 
   try {
     const response = await fetch(url, {
@@ -122,7 +120,7 @@ Authentication.checkLogin = async () => {
         throw "refresh token has expired";
       }
 
-      const url = `${REST_API}/token-refresh/`;
+      const url = `token-refresh/`;
       const headers = { "Content-Type": "application/json" };
       const response = await fetch(url, {
         method: "POST",
