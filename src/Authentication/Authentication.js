@@ -121,6 +121,7 @@ Authentication.checkLogin = async () => {
       }
 
       const url = `token-refresh/`;
+
       const headers = { "Content-Type": "application/json" };
       const response = await fetch(url, {
         method: "POST",

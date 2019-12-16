@@ -1,5 +1,5 @@
 import Authentication from "../Authentication/Authentication";
-
+import AuthWebSocket from "../AuthWebSocket/AuthWebSocket";
 const { getToken, AuthException, checkLogin } = Authentication;
 
 class Database {
@@ -15,19 +15,15 @@ class Database {
   }
 
   connect = () => {
-    checkLogin().then(res => {
-      if (!res) {
-        throw new AuthException("login error");
-      }
-
-      const wsUrl = `${this.WS_API}?token=${getToken()}`;
-      this.websocket = new WebSocket(wsUrl);
-
-      this.websocket.onopen = evt => this.onOpen(evt);
-      this.websocket.onclose = evt => this.onClose(evt);
-      this.websocket.onmessage = evt => this.onMessage(evt);
-      this.websocket.onerror = evt => this.onError(evt);
+    this.websocket = new AuthWebSocket({
+      url: this.WS_API,
+      onOpen: this.onOpen,
+      onClose: this.onClose,
+      onError: this.onError,
+      onMessage: this.onMessage,
+      connectionHandler: null
     });
+    this.websocket.createSocket();
   };
 
   onOpen = evt => {
@@ -42,43 +38,37 @@ class Database {
   };
 
   onMessage = evt => {
-    checkLogin().then(res => {
-      if (!res) {
-        throw new AuthException("login error");
-      }
-
-      let data;
-      try {
-        data = JSON.parse(evt.data);
-      } catch (err) {
-        console.error(err);
-        return;
-      }
-      if (data.error) {
-        console.error(data.error);
-        return;
-      }
-      let patterns = data.patterns;
-      let is_pattern = true;
-      let one_shot = false;
-      if (["list", "unsubscribe", "subscribe"].includes(data.event)) {
-        patterns = patterns.map(p => {
-          if (data.event === "unsubscribe") {
-            delete this.callbacks[JSON.stringify(p)];
-          }
-          return data.event + "/" + JSON.stringify(p);
-        });
-        if (data.event === "list") {
-          patterns = ["list"];
+    let data;
+    try {
+      data = JSON.parse(evt.data);
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+    if (data.error) {
+      console.error(data.error);
+      return;
+    }
+    let patterns = data.patterns;
+    let is_pattern = true;
+    let one_shot = false;
+    if (["list", "unsubscribe", "subscribe"].includes(data.event)) {
+      patterns = patterns.map(p => {
+        if (data.event === "unsubscribe") {
+          delete this.callbacks[JSON.stringify(p)];
         }
-
-        is_pattern = false;
-        one_shot = true;
+        return data.event + "/" + JSON.stringify(p);
+      });
+      if (data.event === "list") {
+        patterns = ["list"];
       }
 
-      patterns.map(pattern => {
-        this.dispatch(pattern, data, is_pattern, one_shot);
-      });
+      is_pattern = false;
+      one_shot = true;
+    }
+
+    patterns.map(pattern => {
+      this.dispatch(pattern, data, is_pattern, one_shot);
     });
   };
 
@@ -139,22 +129,7 @@ class Database {
   };
 
   _send = message => {
-    var self = this;
-    try {
-      this.websocket.send(JSON.stringify(message));
-    } catch (err) {
-      let sub_interval = undefined;
-      sub_interval = setInterval(
-        () => {
-          if (self.websocket.readyState === 1) {
-            clearInterval(sub_interval);
-            self.websocket.send(JSON.stringify(message));
-          }
-        },
-        200,
-        sub_interval
-      );
-    }
+    this.websocket.send(JSON.stringify(message));
   };
 
   /* Trigger callbacks attached to patterns and events*/
@@ -183,6 +158,10 @@ class Database {
       }
     }
   };
+
+  /**
+   * STOPPED HERE
+   */
 
   /* Get value from key in Var, scope fleet or global */
   getVar = (key, callback = undefined, scope = "global") => {
