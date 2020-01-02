@@ -39,14 +39,14 @@
     "react-dom": "^16.12.0"
   },
   "peerDependencies": {
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react": "^15.0.0 || ^16.12.0",
+    "react-dom": "^15.0.0 || ^16.12.0",
+    "@material-ui/core": "^4.8.2",
+    "prop-types": "^15.7.2"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.7.4",
-    "@material-ui/core": "^4.8.2",
     "jwt-decode": "^2.2.0",
-    "monet": "^0.9.0",
-    "prop-types": "^15.7.2"
+    "monet": "^0.9.0"
   }
 }
