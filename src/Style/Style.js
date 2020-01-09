@@ -1,6 +1,7 @@
 import icons from "../../resources/fonts/movai.woff";
+import { createGlobalStyle } from "styled-components";
 
-const Style = `
+const Style = createGlobalStyle`
   @font-face {
     font-family: "mov.ai";
     src: url(${icons}) format("woff");
@@ -25,40 +26,40 @@ const Style = `
   }
 
   .icon-Empty-Results:before {
-    content: "\e900";
+    content: "\\e900";
   }
   .icon-Sad:before {
-    content: "\e90a";
+    content: "\\e90a";
   }
   .icon-Happy:before {
-    content: "\e90b";
+    content: "\\e90b";
   }
   .icon-Normal:before {
-    content: "\e903";
+    content: "\\e903";
   }
   .icon-Callbacks:before {
-    content: "\e901";
+    content: "\\e901";
   }
   .icon-Filters:before {
-    content: "\e902";
+    content: "\\e902";
   }
   .icon-Flows:before {
-    content: "\e904";
+    content: "\\e904";
   }
   .icon-Layouts:before {
-    content: "\e905";
+    content: "\\e905";
   }
   .icon-Nodes:before {
-    content: "\e906";
+    content: "\\e906";
   }
   .icon-Scenes:before {
-    content: "\e907";
+    content: "\\e907";
   }
   .icon-Statistics:before {
-    content: "\e908";
+    content: "\\e908";
   }
   .icon-Annotations:before {
-    content: "\e909";
+    content: "\\e909";
   }
 `;
 
