@@ -1,6 +1,6 @@
 import icons from "../../resources/fonts/movai.woff";
 
-export default Style = `
+const Style = `
   @font-face {
     font-family: "mov.ai";
     src: url(${icons}) format("woff");
@@ -61,3 +61,5 @@ export default Style = `
     content: "\e909";
   }
 `;
+
+export default Style;
