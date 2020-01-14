@@ -49,4 +49,15 @@ Utils.groupBy = (array, groupFunction) => {
   return ans;
 };
 
+// From https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
+Utils.capitalize = s => {
+  if (typeof s !== "string") return "";
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+/**
+ * Positive mod function
+ */
+Utils.mod = (x, n) => ((x % n) + n) % n;
+
 export default Utils;
