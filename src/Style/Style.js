@@ -77,6 +77,9 @@ const Style = createGlobalStyle`
 .icon-Layouts:before {
   content: "\e910";
 }
+.icon-Happy:before {
+  content: "\e911";
+}
 .icon-Flows:before {
   content: "\e912";
 }
