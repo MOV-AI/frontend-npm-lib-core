@@ -1,7 +1,6 @@
 import icons from "../../resources/fonts/movai.woff";
 import { createGlobalStyle } from "styled-components";
 
-// New added font
 const Style = createGlobalStyle`
 @font-face {
   font-family: 'mov.ai';
@@ -26,120 +25,140 @@ const Style = createGlobalStyle`
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-time .path1:before {
+.icon-AddGlobal:before {
   content: "\\e900";
+}
+.icon-out:before {
+  content: "\\e901";
+}
+.icon-in:before {
+  content: "\\e902";
+}
+.icon-account_circle:before {
+  content: "\\e903";
+}
+.icon-data_setting:before {
+  content: "\\e904";
+}
+.icon-supervisor_account:before {
+  content: "\\e905";
+}
+.icon-add_box:before {
+  content: "\\e906";
+}
+.icon-time .path1:before {
+  content: "\\e907";
   color: rgb(0, 178, 188);
 }
 .icon-time .path2:before {
-  content: "\\e901";
+  content: "\\e908";
   margin-left: -1em;
   color: rgb(250, 250, 250);
 }
 .icon-carts .path1:before {
-  content: "\\e902";
+  content: "\\e909";
   color: rgb(0, 178, 188);
 }
 .icon-carts .path2:before {
-  content: "\\e903";
+  content: "\\e90a";
   margin-left: -1em;
   color: rgb(250, 250, 250);
 }
 .icon-tree_24px:before {
-  content: "\\e906";
-}
-.icon-expand_more_24px:before {
-  content: "\\e907";
-}
-.icon-expand_less_24px:before {
-  content: "\\e908";
-}
-.icon-chevron_right_24px:before {
-  content: "\\e909";
-}
-.icon-chevron_left_24px:before {
-  content: "\\e90a";
-}
-.icon-Statistics:before {
   content: "\\e90b";
 }
-.icon-Scenes:before {
+.icon-expand_more_24px:before {
   content: "\\e90c";
 }
-.icon-Sad:before {
+.icon-expand_less_24px:before {
   content: "\\e90d";
 }
-.icon-Normal:before {
+.icon-chevron_right_24px:before {
   content: "\\e90e";
 }
-.icon-Nodes:before {
+.icon-chevron_left_24px:before {
   content: "\\e90f";
 }
-.icon-Layouts:before {
+.icon-Statistics:before {
   content: "\\e910";
 }
-.icon-Happy:before {
+.icon-Scenes:before {
   content: "\\e911";
 }
-.icon-Flows:before {
+.icon-Sad:before {
   content: "\\e912";
 }
-.icon-Filters:before {
+.icon-Normal:before {
   content: "\\e913";
 }
-.icon-Empty:before {
+.icon-Nodes:before {
   content: "\\e914";
 }
-.icon-Callbacks:before {
+.icon-Layouts:before {
   content: "\\e915";
 }
-.icon-Annotations:before {
+.icon-Happy:before {
   content: "\\e916";
 }
-.icon-create_new_folder_24px:before {
+.icon-Flows:before {
+  content: "\\e917";
+}
+.icon-Filters:before {
   content: "\\e918";
 }
-.icon-widgets_24px:before {
+.icon-Empty:before {
   content: "\\e919";
 }
-.icon-log_24px:before {
+.icon-Callbacks:before {
   content: "\\e91a";
 }
-.icon-outlinedhidden:before {
+.icon-Annotations:before {
   content: "\\e91b";
 }
-.icon-outlined:before {
+.icon-create_new_folder_24px:before {
   content: "\\e91c";
 }
-.icon-repeat:before {
+.icon-widgets_24px:before {
   content: "\\e91d";
+}
+.icon-log_24px:before {
+  content: "\\e91e";
+}
+.icon-outlined_hidden:before {
+  content: "\\e91f";
+}
+.icon-outlined:before {
+  content: "\\e920";
+}
+.icon-repeat:before {
+  content: "\\e921";
   color: #2090b7;
 }
 .icon-edit:before {
-  content: "\\e91e";
+  content: "\\e922";
   color: #2091b7;
 }
 .icon-download:before {
-  content: "\\e91f";
-  color: #2091b7;
-}
-.icon-details_24px:before {
-  content: "\\e920";
-}
-.icon-delete:before {
-  content: "\\e921";
-  color: #2091b7;
-}
-.icon-check_circle_24px-copy:before {
-  content: "\\e922";
-}
-.icon-add:before {
   content: "\\e923";
   color: #2091b7;
 }
-.icon-drag_indicator-24px-3:before {
+.icon-details_24px:before {
   content: "\\e924";
 }
-
+.icon-delete:before {
+  content: "\\e925";
+  color: #2091b7;
+}
+.icon-check_circle_24px-copy:before {
+  content: "\\e926";
+}
+.icon-add:before {
+  content: "\\e927";
+  color: #2091b7;
+}
+.icon-drag_indicator-24px-3:before {
+  content: "\\e928";
+}
 `;
 
 export default Style;
