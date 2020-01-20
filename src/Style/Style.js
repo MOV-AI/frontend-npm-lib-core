@@ -13,7 +13,7 @@ const Style = createGlobalStyle`
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
+  font-family: 'mov.ai' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
