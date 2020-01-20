@@ -6,6 +6,9 @@ const Style = createGlobalStyle`
 @font-face {
   font-family: 'mov.ai';
   src: url(${icons}) format("woff");
+  src: url(${icons}) format("truetype");
+  src: url(${icons}) format("svg");
+  src: url(${icons}) format("embedded-opentype");
   font-weight: normal;
   font-style: normal;
   font-display: block;
