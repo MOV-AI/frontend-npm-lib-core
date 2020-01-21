@@ -160,5 +160,4 @@ const Style = createGlobalStyle`
   content: "\\e928";
 }
 `;
-
 export default Style;
