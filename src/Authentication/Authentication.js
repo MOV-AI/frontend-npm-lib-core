@@ -23,13 +23,13 @@ Authentication.getRefreshToken = () => {
 };
 
 Authentication.getTokenData = () => {
-  const token = getToken();
+  const token = Authentication.getToken();
   const message = jwtDecode(token).message;
 
   const tokenData = {
     message: message,
     auth_token: false,
-    refresh_token: getRefreshToken(),
+    refresh_token: Authentication.getRefreshToken(),
     error: false,
     access_token: token
   };
@@ -111,7 +111,7 @@ Authentication.checkLogin = async () => {
 
   // Check SessionStorage flag
   if (tokenRemember == "false" && sessionFlag === null) {
-    logout();
+    Authentication.logout();
     return false;
   }
 
