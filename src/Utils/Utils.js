@@ -66,4 +66,4 @@ Utils.capitalize = s => {
  */
 Utils.mod = (x, n) => ((x % n) + n) % n;
 
-module.exports = Utils;
+export default Utils;
