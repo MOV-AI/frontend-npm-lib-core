@@ -1,8 +1,14 @@
-import { Maybe } from "monet";
+const { Maybe } = require("monet");
 
 const Utils = {};
 
 Utils.ofNull = x => Maybe.fromNull(x);
+
+Utils.getter = prop => obj => obj[prop];
+
+Utils.dot = f => g => x => f(g(x));
+
+Utils.maybeGet = prop => Utils.dot(Utils.ofNull)(Utils.getter(prop));
 
 Utils.range = (init, end) => {
   const { i, e } = Maybe.fromNull(end)
@@ -60,4 +66,4 @@ Utils.capitalize = s => {
  */
 Utils.mod = (x, n) => ((x % n) + n) % n;
 
-export default Utils;
+module.exports = Utils;
