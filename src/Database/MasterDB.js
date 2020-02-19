@@ -25,6 +25,10 @@ class MasterDB {
     new MasterDB().db.list(evtCallback);
   };
 
+  static get = (url, callback = undefined) => {
+    new MasterDB().db.get(url, callback);
+  };
+
   /**
    * Set value from key in Scope
    * @param scope String

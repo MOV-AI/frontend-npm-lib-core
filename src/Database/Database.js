@@ -226,6 +226,42 @@ class Database {
   };
 
   /**
+   * GET value from key in Scope
+   * @param scope String
+   * @param name String - Instance Name
+   * @param key String - Key to override
+   * @param value Obj
+   * @param callback function
+   * @memberof Database
+   */
+  get = (url, callback = undefined) => {
+    // let url = this.REST_API + scope + "/" + name + "/";
+    // if (name === undefined) {
+    //   url = this.REST_API + scope + "/";
+    // }
+
+    checkLogin().then(res => {
+      if (!res) {
+        throw new AuthException("login error");
+      }
+
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`
+        }
+      }).then(res => {
+        if (callback) {
+          res.json().then(data => {
+            callback(data, res);
+          });
+        }
+      });
+    });
+  };
+
+  /**
    * Set value from key in Scope
    * @param scope String
    * @param name String - Instance Name
