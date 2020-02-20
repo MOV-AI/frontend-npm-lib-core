@@ -226,6 +226,34 @@ class Database {
   };
 
   /**
+   * GET value from url
+   * @param url String
+   * @param callback function
+   * @memberof Database
+   */
+  get = (url, callback = undefined) => {
+    checkLogin().then(res => {
+      if (!res) {
+        throw new AuthException("login error");
+      }
+
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`
+        }
+      }).then(res => {
+        if (callback) {
+          res.json().then(data => {
+            callback(data, res);
+          });
+        }
+      });
+    });
+  };
+
+  /**
    * Set value from key in Scope
    * @param scope String
    * @param name String - Instance Name
