@@ -226,20 +226,12 @@ class Database {
   };
 
   /**
-   * GET value from key in Scope
-   * @param scope String
-   * @param name String - Instance Name
-   * @param key String - Key to override
-   * @param value Obj
+   * GET value from url
+   * @param url String
    * @param callback function
    * @memberof Database
    */
   get = (url, callback = undefined) => {
-    // let url = this.REST_API + scope + "/" + name + "/";
-    // if (name === undefined) {
-    //   url = this.REST_API + scope + "/";
-    // }
-
     checkLogin().then(res => {
       if (!res) {
         throw new AuthException("login error");
