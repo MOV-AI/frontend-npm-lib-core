@@ -245,9 +245,15 @@ class Database {
         }
       }).then(res => {
         if (callback) {
-          res.json().then(data => {
-            callback(data, res);
-          });
+          res
+            .json()
+            .then(data => {
+              callback(data, res);
+            })
+            .catch(e => {
+              console.log("Vicente error", e);
+              callback(e, res);
+            });
         }
       });
     });
