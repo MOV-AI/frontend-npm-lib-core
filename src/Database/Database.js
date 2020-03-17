@@ -243,20 +243,22 @@ class Database {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
-        if (callback) {
-          res
-            .json()
-            .then(data => {
-              callback(data, res);
-            })
-            .catch(e => {
-              console.log("Vicente error", e);
-              console.log("Vicente res", res);
-              callback(e, res);
-            });
-        }
-      });
+      })
+        .then(res => {
+          if (callback) {
+            res
+              .json()
+              .then(data => {
+                callback(data, res);
+              })
+              .catch(e => {
+                console.log("Vicente error", e);
+                console.log("Vicente res", res);
+                callback(e, res);
+              });
+          }
+        })
+        .catch(e => console.log("Vicente error outside", e));
     });
   };
 
