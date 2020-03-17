@@ -252,6 +252,7 @@ class Database {
             })
             .catch(e => {
               console.log("Vicente error", e);
+              console.log("Vicente res", res);
               callback(e, res);
             });
         }
