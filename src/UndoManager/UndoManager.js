@@ -10,16 +10,25 @@ export default class UndoManager {
     this.redoStack = [];
   }
 
+  addIt(undoAbleAction) {
+    this.undoStack.push(undoAbleAction);
+    this.redoStack = [];
+  }
+
   undo() {
     const undoAbleAction = this.undoStack.pop();
-    undoAbleAction.undoAction();
-    this.redoStack.push(undoAbleAction);
+    if (undoAbleAction) {
+      undoAbleAction.undoAction();
+      this.redoStack.push(undoAbleAction);
+    }
   }
 
   redo() {
     const undoAbleAction = this.redoStack.pop();
-    undoAbleAction.doAction();
-    this.undoStack.push(undoAbleAction);
+    if (undoAbleAction) {
+      undoAbleAction.doAction();
+      this.undoStack.push(undoAbleAction);
+    }
   }
 
   static actionBuilder() {
