@@ -1,18 +1,19 @@
 export default class UndoManager {
-  constructor() {
-    this.undoStack = [];
-    this.redoStack = [];
+  constructor(size = 50) {
+    this.size = size;
+    this.undoStack = new Queue(size);
+    this.redoStack = new Queue(size);
   }
 
   doIt(undoAbleAction) {
     undoAbleAction.doAction();
     this.undoStack.push(undoAbleAction);
-    this.redoStack = [];
+    this.redoStack = new Queue(this.size);
   }
 
   addIt(undoAbleAction) {
     this.undoStack.push(undoAbleAction);
-    this.redoStack = [];
+    this.redoStack = new Queue(this.size);
   }
 
   undo() {
@@ -56,5 +57,23 @@ class UndoAbleActionBuilder {
     if ([this._undoAction, this._undoAction].some(x => x == null))
       throw "Forgot to set doAction or undoAction";
     return { doAction: this._doAction, undoAction: this._undoAction };
+  }
+}
+
+class Queue {
+  constructor(size = 50) {
+    this.size = size;
+    this.queue = [];
+  }
+
+  push(el) {
+    if (this.queue.length === this.size) {
+      this.queue.shift();
+    }
+    this.queue.push(el);
+  }
+
+  pop() {
+    return this.queue.pop();
   }
 }

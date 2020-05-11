@@ -73,3 +73,18 @@ test("should addIt", () => {
     expect(state).toBe(a.state);
   });
 });
+
+test("test undo limit", () => {
+  const undoManager = new UndoManager(2);
+  const actions = []; // used for logging purposes
+  actions.push({ action: () => undoManager.doIt(addOne), state: 1 });
+  actions.push({ action: () => undoManager.doIt(addTree), state: 4 });
+  actions.push({ action: () => undoManager.doIt(addTree), state: 7 });
+  actions.push({ action: () => undoManager.undo(), state: 4 });
+  actions.push({ action: () => undoManager.undo(), state: 1 });
+  actions.push({ action: () => undoManager.undo(), state: 1 });
+  actions.forEach(a => {
+    a.action();
+    expect(state).toBe(a.state);
+  });
+});
