@@ -30,8 +30,9 @@ export default class Clipboard {
    * @param {string} key base key to read
    */
   static read(key) {
+    // consider return a maybe
     const inst = new Clipboard();
-    return key ? inst.data[key] || {} : inst.data;
+    return key ? inst.data[key] : inst.data;
   }
 
   /**
