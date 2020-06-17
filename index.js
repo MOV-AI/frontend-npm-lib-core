@@ -5,6 +5,7 @@ import MasterDB from "./src/Database/MasterDB";
 import AuthWebSocket from "./src/AuthWebSocket/AuthWebSocket";
 import Style from "./src/Style/Style";
 import UndoManager from "./src/UndoManager/UndoManager";
+import Clipboard from "./src/Clipboard/Clipboard";
 
 export {
   Authentication,
@@ -13,5 +14,6 @@ export {
   MasterDB,
   AuthWebSocket,
   Style,
-  UndoManager
+  UndoManager,
+  Clipboard
 };

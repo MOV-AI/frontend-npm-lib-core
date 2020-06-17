@@ -1,5 +1,5 @@
 {
-  "name": "mov.ai-core",
+  "name": "mov-fe-lib-core",
   "version": "1.0.0",
   "description": "The Mov.AI's core frontend library.",
   "main": "./dist/index.js",
@@ -11,13 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://pedromovai@bitbucket.org/robosavvy/mov.ai-core.git"
+    "url": "git clone git@bitbucket.org:robosavvy/mov-fe-lib-core.git"
   },
   "keywords": [
     "frontend",
     "core",
     "common",
-    "react",
     "utils"
   ],
   "author": "MOV.AI",

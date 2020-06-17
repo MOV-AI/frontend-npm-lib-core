@@ -1,21 +1,39 @@
+/**
+ * Undo Manager class
+ */
 export default class UndoManager {
+  /**
+   *
+   * @param {*} size: number of possible undo operations without overwrite
+   */
   constructor(size = 50) {
     this.size = size;
     this.undoStack = new Queue(size);
     this.redoStack = new Queue(size);
   }
 
+  /**
+   * Do and stores undoAbleAction
+   * @param {*} undoAbleAction
+   */
   doIt(undoAbleAction) {
     undoAbleAction.doAction();
     this.undoStack.push(undoAbleAction);
     this.redoStack = new Queue(this.size);
   }
 
+  /**
+   * Just stores undoAbleAction
+   * @param {*} undoAbleAction
+   */
   addIt(undoAbleAction) {
     this.undoStack.push(undoAbleAction);
     this.redoStack = new Queue(this.size);
   }
 
+  /**
+   * Undo last undoAbleAction
+   */
   undo() {
     const undoAbleAction = this.undoStack.pop();
     if (undoAbleAction) {
@@ -24,6 +42,9 @@ export default class UndoManager {
     }
   }
 
+  /**
+   * Redo last undoAbleAction
+   */
   redo() {
     const undoAbleAction = this.redoStack.pop();
     if (undoAbleAction) {
@@ -32,11 +53,17 @@ export default class UndoManager {
     }
   }
 
+  /**
+   * Creates UndoAbleAction instance
+   */
   static actionBuilder() {
     return new UndoAbleActionBuilder();
   }
 }
 
+/**
+ * Private Builder pattern for UndoAbleActions
+ */
 class UndoAbleActionBuilder {
   constructor() {
     this._doAction = null;
@@ -60,6 +87,9 @@ class UndoAbleActionBuilder {
   }
 }
 
+/**
+ * Private Queue data structure
+ */
 class Queue {
   constructor(size = 50) {
     this.size = size;
