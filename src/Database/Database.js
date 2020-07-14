@@ -5,8 +5,9 @@ const { getToken, AuthException, checkLogin } = Authentication;
 class Database {
   constructor() {
     this.host = `${window.location.hostname}:${window.location.port}`;
-    this.WS_API = "ws://" + this.host + "/ws/subscriber";
-    this.REST_API = "http://" + this.host + "/api/v1/";
+    const isHttps = window.location.protocol === "https:";
+    this.WS_API = `${isHttps ? "wss" : "ws"}://${this.host}/ws/subscriber`;
+    this.REST_API = `${window.location.protocol}//${this.host}/api/v1/`;
     this.callbacks = {};
     this.evt_callbacks = {};
     this.timeout = 3000;
