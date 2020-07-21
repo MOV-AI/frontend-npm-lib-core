@@ -1,4 +1,4 @@
-const { Maybe } = require("monet");
+import { Maybe } from "monet";
 
 const Utils = {};
 
