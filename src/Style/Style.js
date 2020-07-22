@@ -1,7 +1,6 @@
 import icons from "../../resources/fonts/movai.woff";
-import { createGlobalStyle } from "styled-components";
 
-const Style = createGlobalStyle`
+const Style = `
 @font-face {
   font-family: 'mov.ai';
   src: url(${icons}) format("woff");
