@@ -175,7 +175,7 @@ class Database {
         throw "Wrong key format (robot_name@key_name)";
       }
     }
-    const url = this.REST_API + "Var/" + scope + "/" + key + "/";
+    const url = this.REST_API + "database/" + scope + "/" + key + "/";
 
     checkLogin().then(res => {
       fetch(url)
@@ -204,7 +204,7 @@ class Database {
       }
     }
     const data = { key: key, scope: scope, value: value };
-    const url = this.REST_API + "Var/";
+    const url = this.REST_API + "database/";
 
     checkLogin().then(res => {
       if (!res) {
