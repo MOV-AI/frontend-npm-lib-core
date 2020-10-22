@@ -1,4 +1,5 @@
 const path = require("path");
+var nodeExternals = require("webpack-node-externals");
 
 module.exports = {
   watch: true,
@@ -11,6 +12,7 @@ module.exports = {
   },
   target: "web",
   devtool: "source-map",
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   module: {
     rules: [
       {
