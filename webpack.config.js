@@ -1,5 +1,4 @@
 const path = require("path");
-var nodeExternals = require("webpack-node-externals");
 
 module.exports = {
   watch: true,
@@ -10,7 +9,7 @@ module.exports = {
     library: "Movai",
     libraryTarget: "umd"
   },
-  target: "web", // in order to ignore built-in modules like path, fs, etc.
+  target: "web",
   devtool: "source-map",
   module: {
     rules: [
