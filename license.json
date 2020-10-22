@@ -1,0 +1,42 @@
+{
+  "@babel/runtime@7.10.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/babel/babel",
+    "publisher": "Sebastian McKenzie",
+    "email": "sebmck@gmail.com",
+    "path": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/@babel/runtime",
+    "licenseFile": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/@babel/runtime/LICENSE"
+  },
+  "jwt-decode@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/auth0/jwt-decode",
+    "publisher": "Jose F. Romaniello",
+    "email": "jfromaniello@gmail.com",
+    "url": "http://joseoncode.com",
+    "path": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/jwt-decode",
+    "licenseFile": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/jwt-decode/LICENSE"
+  },
+  "monet@0.9.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/monet/monet.js",
+    "publisher": "Chris Myers",
+    "path": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/monet",
+    "licenseFile": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/monet/LICENSE"
+  },
+  "mov-fe-lib-core@1.0.1": {
+    "licenses": "ISC",
+    "repository": "git://bitbucket.org/robosavvy/mov-fe-lib-core",
+    "publisher": "MOV.AI",
+    "path": "/home/cristovao/movai/src/feapps/mov-fe-lib-core",
+    "licenseFile": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/license.csv"
+  },
+  "regenerator-runtime@0.13.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/regenerator/tree/master/packages/regenerator-runtime",
+    "publisher": "Ben Newman",
+    "email": "bn@cs.stanford.edu",
+    "path": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/regenerator-runtime",
+    "licenseFile": "/home/cristovao/movai/src/feapps/mov-fe-lib-core/node_modules/regenerator-runtime/LICENSE"
+  }
+}
+
