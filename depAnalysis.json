@@ -1,0 +1,49 @@
+{
+  "dependencies": ["@babel/runtime"],
+  "devDependencies": [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-json-strings",
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-syntax-import-meta",
+    "@babel/plugin-transform-runtime",
+    "@material-ui/core",
+    "babel-jest",
+    "webpack-cli"
+  ],
+  "missing": {},
+  "using": {
+    "@babel/preset-env": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/babel.config.js",
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/webpack.config.js"
+    ],
+    "@babel/core": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/babel.config.js",
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/webpack.config.js"
+    ],
+    "jest": ["/home/cristovao/movai/src/feapps/mov-fe-lib-core/package.json"],
+    "webpack": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/package.json",
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/webpack.config.js"
+    ],
+    "webpack-node-externals": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/webpack.config.js"
+    ],
+    "babel-loader": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/webpack.config.js"
+    ],
+    "url-loader": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/webpack.config.js"
+    ],
+    "@babel/preset-react": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/webpack.config.js"
+    ],
+    "monet": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/src/Utils/Utils.js"
+    ],
+    "jwt-decode": [
+      "/home/cristovao/movai/src/feapps/mov-fe-lib-core/src/Authentication/Authentication.js"
+    ]
+  },
+  "invalidFiles": {},
+  "invalidDirs": {}
+}
