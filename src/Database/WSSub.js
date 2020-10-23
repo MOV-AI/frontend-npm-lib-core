@@ -109,7 +109,7 @@ class WSSub {
 
     const _sufix = pattern ? `/${pattern}` : "";
     const _pattern = `${command}${_sufix}`;
-    console.log("???addEventCallback", command, this.evt_callbacks[_pattern]);
+
     return this.pushCallback(this.evt_callbacks, _pattern, callback);
   };
 
