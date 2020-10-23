@@ -1,12 +1,12 @@
 <html>
   <head>
-    <script src="./index.js"></script>
+    <script src="../dist/index.js"></script>
   </head>
   <script>
     const { Utils, Database, Authentication, MasterDB } = Movai;
     Utils.range(0, 10).forEach(x => console.log(x));
 
-    Authentication.login("pedro", "abcd", true)
+    Authentication.login("pedro", "movai", true)
       .then(data => {
         MasterDB.subscribe(
           { Scope: "Robot", Name: "*", Status: "*" },
@@ -16,7 +16,7 @@
         // setInterval(
         //   () =>
         //     MasterDB.cloudFunction("backend.Statistics", "getStats", [], res =>
-        //       console.log("Statistics")
+        //       console.log("Statistics", res)
         //     ),
         //   1000
         // );
