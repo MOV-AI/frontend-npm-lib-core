@@ -1,6 +1,6 @@
-import Database from "./Database";
+import WSSub from "./WSSub";
 /**
  * A Database singleton
  */
-const MasterDB = new Database();
+const MasterDB = new WSSub();
 export default MasterDB;
