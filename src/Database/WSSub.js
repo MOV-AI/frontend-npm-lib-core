@@ -10,7 +10,10 @@ class WSSub {
     this.host = `${window.location.hostname}:${window.location.port}`;
     const isHttps = window.location.protocol === "https:";
     this.url = `${isHttps ? "wss" : "ws"}://${this.host}/ws/subscriber`;
-    this.TIMEOUT = 3000;
+    this.REST_API = `${window.location.protocol}//${this.host}/api/v1/`;
+    this.RECONN_TIMEOUT = 3000;
+    this.RESEND_TIMEOUT = 1000;
+    this.RETRIES = 3;
     this.NORMAL_CLOSE_EVT = 1000;
 
     // supported commands
@@ -37,21 +40,32 @@ class WSSub {
   };
 
   /**
-   * connection initialization
+   * initialize the socket instance
    */
-  connect = () => {
-    if (this.getState() === WebSocket.OPEN) return this;
 
-    const { url, onOpen, onClose, onError, onMessage } = this;
+  initSocket = () => {
+    if (this.websocket) return this;
 
+    const { url, onOpen, onClose, onError, onMessage, onAuthError } = this;
+
+    // TODO extend WSSub from AuthWebSocket instead
     this.websocket = new AuthWebSocket({
       url,
       onOpen,
       onClose,
       onError,
-      onMessage
+      onMessage,
+      connectionHandler: onAuthError
     });
 
+    this.connect();
+    return this;
+  };
+
+  /**
+   * connection initialization
+   */
+  connect = () => {
     this.websocket.createSocket();
 
     return this;
@@ -61,7 +75,7 @@ class WSSub {
    * try to reconnect
    */
   reConnect = () => {
-    this.connect();
+    setTimeout(this.connect, this.RECONN_TIMEOUT);
   };
 
   /**
@@ -117,10 +131,20 @@ class WSSub {
    * sends a message to the server
    * @param {any} message to send to the server
    */
-  send = message => {
+  send = (message, retry = 0) => {
     try {
+      // do not keep trying to send the message after 3 times
+      if (retry >= this.RETRIES) throw new Error("Timeout sending message");
       // stringify the message before sending it
-      this.websocket.send(JSON.stringify(message));
+      // try to resend if the connection is not yet open
+      this.getState() !== WebSocket.OPEN
+        ? setTimeout(
+            this.websocket.send,
+            this.RESEND_TIMEOUT,
+            message,
+            retry + 1
+          )
+        : this.websocket.send(JSON.stringify(message));
     } catch (error) {
       console.error(error);
     }
@@ -148,12 +172,13 @@ class WSSub {
    * @param {string} event event to send to the server
    * @param {string} pattern pattern to send to the server
    */
-  getMessage = (event, pattern) => ({ event, pattern });
+  fmtMessage = (event, pattern) => ({ event, pattern });
 
   /**
    * triggered when the socket opens
    */
   onOpen = evt => {
+    // send current subscriptions to the server
     this.reSubscribe();
     this.dispatch("onopen");
   };
@@ -164,16 +189,25 @@ class WSSub {
   onClose = evt => {
     this.dispatch("onclose");
 
+    // reconnect if the connection was not closed on purpose
     if (evt.code !== this.NORMAL_CLOSE_EVT) {
-      setTimeout(this.reConnect(), this.TIMEOUT);
+      this.reConnect();
     }
   };
 
   /**
-   * triggered whe socket raises an error
+   * triggered when the socket raises an error
    */
   onError = evt => {
     this.dispatch("onerror");
+  };
+
+  /**
+   * triggered whit authentication error
+   */
+  onAuthError = () => {
+    // reconnect on authentication error
+    this.reConnect();
   };
 
   /**
@@ -212,10 +246,10 @@ class WSSub {
    */
   subscribe = (pattern, callback, evt_callback) => {
     const { SUBSCRIBE } = this.commands;
-    const message = this.getMessage(SUBSCRIBE, pattern);
+    const message = this.fmtMessage(SUBSCRIBE, pattern);
     const _pattern = JSON.stringify(pattern);
 
-    this.connect()
+    this.initSocket()
       .addSubscriberCallback(callback, _pattern)
       .addEventCallback(SUBSCRIBE, evt_callback, _pattern)
       .send(message);
@@ -228,7 +262,7 @@ class WSSub {
     const { SUBSCRIBE } = this.commands;
 
     Array.from(this.sub_callbacks.keys()).forEach(key => {
-      const message = this.getMessage(SUBSCRIBE, JSON.parse(key));
+      const message = this.fmtMessage(SUBSCRIBE, JSON.parse(key));
       this.send(message);
     });
   };
@@ -241,10 +275,10 @@ class WSSub {
    */
   unsubscribe = (pattern, callback) => {
     const { UNSUBSCRIBE } = this.commands;
-    const message = this.getMessage(UNSUBSCRIBE, pattern);
+    const message = this.fmtMessage(UNSUBSCRIBE, pattern);
     const _pattern = JSON.stringify(pattern);
 
-    this.connect()
+    this.initSocket()
       .addEventCallback(UNSUBSCRIBE, callback, _pattern)
       .send(message);
   };
@@ -255,9 +289,9 @@ class WSSub {
    */
   list = evt_callback => {
     const { LIST } = this.commands;
-    const message = this.getMessage(LIST);
+    const message = this.fmtMessage(LIST);
 
-    this.addEventCallback(LIST, evt_callback).send(message);
+    this.initSocket().addEventCallback(LIST, evt_callback).send(message);
   };
 
   /**
@@ -270,7 +304,7 @@ class WSSub {
     const { EXECUTE } = this.commands;
     const message = { event: EXECUTE, callback: remote_callback, ...data };
 
-    this.connect().addEventCallback(EXECUTE, evt_callback).send(message);
+    this.initSocket().addEventCallback(EXECUTE, evt_callback).send(message);
   };
 
   /**
@@ -279,7 +313,7 @@ class WSSub {
    * @param {function} callback function to execute on event
    */
   onEvent = (event, callback) => {
-    this.addEventCallback(event, callback);
+    this.initSocket().addEventCallback(event, callback);
   };
 
   /**
@@ -287,6 +321,7 @@ class WSSub {
    */
   close = () => {
     this.websocket.close();
+    this.websocket = null;
   };
 
   /**
@@ -461,7 +496,7 @@ class WSSub {
    */
   put = (scope, name, value, callback = undefined) => {
     let url = this.REST_API + scope + "/" + name + "/";
-    console.log("database put", url);
+
     if (name === undefined) {
       url = this.REST_API + scope + "/";
     }
