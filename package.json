@@ -42,6 +42,7 @@
   "dependencies": {
     "@babel/runtime": "^7.10.5",
     "jwt-decode": "^2.2.0",
-    "monet": "^0.9.1"
+    "monet": "^0.9.1",
+    "rxjs": "^6.6.3"
   }
 }
