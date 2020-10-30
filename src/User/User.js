@@ -9,7 +9,7 @@ class User {
     this.TIMEOUT = 3000; // milisec
   }
 
-  getData = async () => {
+  getData = () => {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${Authentication.getToken()}`
