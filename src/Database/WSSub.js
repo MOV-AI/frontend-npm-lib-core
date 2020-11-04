@@ -481,7 +481,13 @@ class WSSub {
     const formData = new FormData();
     formData.append("name", key);
     formData.append(`data`, value);
-    fetch(url, { method: "POST", body: formData })
+    fetch(url, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${getToken()}`
+      }
+    })
       .then(res => res.json())
       .then(callback);
   };
