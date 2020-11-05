@@ -18,18 +18,25 @@ Authentication.getRefreshToken = () => {
 };
 
 Authentication.getTokenData = () => {
-  const token = Authentication.getToken();
-  const message = jwtDecode(token).message;
+  try {
+    const token = Authentication.getToken();
+    const message = jwtDecode(token).message;
 
-  const tokenData = {
-    message: message,
-    auth_token: false,
-    refresh_token: Authentication.getRefreshToken(),
-    error: false,
-    access_token: token
-  };
+    const tokenData = {
+      message: message,
+      auth_token: false,
+      refresh_token: Authentication.getRefreshToken(),
+      error: false,
+      access_token: token
+    };
 
-  return tokenData;
+    return tokenData;
+  } catch (error) {
+    return {
+      message: {},
+      error: true
+    };
+  }
 };
 
 Authentication.login = async (username, password, remember) => {
