@@ -1,17 +1,4 @@
-import Authentication from "../Authentication/Authentication";
-const { getToken } = Authentication;
-
 const RestBase = {};
-
-/**
- * Get headers with authorization token
- */
-RestBase.getHeaders = () => {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${getToken()}`
-  };
-};
 
 /**
  * Encodes the values of an object
@@ -45,8 +32,14 @@ RestBase.getUrl = ({ path, search = {} }) => {
  * @param {String} method Request method
  * @param {Object} body Request payload
  */
-RestBase._request = ({ path, method = "GET", body = {}, search }) => {
-  const headers = RestBase.getHeaders();
+RestBase._request = ({
+  path,
+  method = "GET",
+  body = {},
+  search,
+  customHeaders = {}
+}) => {
+  const headers = customHeaders;
   const url = RestBase.getUrl({ path, search });
   const skipBody = ["HEAD", "GET"];
 
@@ -54,6 +47,7 @@ RestBase._request = ({ path, method = "GET", body = {}, search }) => {
     method,
     headers
   };
+  console.log("payload", payload);
 
   if (!skipBody.includes(method)) payload.body = JSON.stringify(body);
 
@@ -71,8 +65,8 @@ RestBase._request = ({ path, method = "GET", body = {}, search }) => {
  * @param {String} search Search parameters
  */
 
-RestBase.get = ({ path, search }) => {
-  return RestBase._request({ path, search });
+RestBase.get = ({ path, search, customHeaders = {} }) => {
+  return RestBase._request({ path, search, customHeaders });
 };
 
 /**
@@ -80,10 +74,10 @@ RestBase.get = ({ path, search }) => {
  * @param {String} path Relative path
  * @param {Object} body Request payload
  */
-RestBase.post = ({ path, body }) => {
+RestBase.post = ({ path, body, customHeaders = {} }) => {
   const method = "POST";
 
-  return RestBase._request({ path, method, body });
+  return RestBase._request({ path, method, body, customHeaders });
 };
 
 /**
@@ -91,20 +85,20 @@ RestBase.post = ({ path, body }) => {
  * @param {String} path Relative path
  * @param {Object} body Request payload
  */
-RestBase.put = ({ path, body }) => {
+RestBase.put = ({ path, body, customHeaders = {} }) => {
   const method = "PUT";
 
-  return RestBase._request({ path, method, body });
+  return RestBase._request({ path, method, body, customHeaders });
 };
 
 /**
  * Execute DELETE request
  * @param {String} path Relative path
  */
-RestBase.delete = ({ path, body }) => {
+RestBase.delete = ({ path, body, customHeaders = {} }) => {
   const method = "DELETE";
 
-  return RestBase._request({ path, method, body });
+  return RestBase._request({ path, method, body, customHeaders });
 };
 
 /**
@@ -113,13 +107,13 @@ RestBase.delete = ({ path, body }) => {
  * @param {String} key Key to insert in the package
  * @param {String} value Value of the key
  */
-RestBase.upload = ({ packageName, key, value }) => {
+RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
   const path = `upload/${packageName}/`;
   const body = new FormData();
   body.append("name", key);
   body.append("data", value);
 
-  return RestBase.post({ path, body });
+  return RestBase.post({ path, body, customHeaders });
 };
 
 /**
@@ -128,11 +122,13 @@ RestBase.upload = ({ packageName, key, value }) => {
  * @param {String} func Function in the callback
  * @param {Object} args Args to pass to the function
  */
-RestBase.cloudFunction = ({ cbName, func = "", args }) => {
+RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
   const path = `function/${cbName}/`;
   const body = { func, args };
 
-  return RestBase.post({ path, body }).then(response => response.json());
+  return RestBase.post({ path, body, customHeaders }).then(response =>
+    response.json()
+  );
 };
 
 RestBase.validScope = scope => ["global", "fleet"].includes(scope);
@@ -156,21 +152,25 @@ RestBase.validateVar = (key, scope) => {
   });
 };
 
-RestBase.getVar = ({ key, scope = "global" }) => {
+RestBase.getVar = ({ key, scope = "global", customHeaders = {} }) => {
   RestBase.validateVar(key, scope);
 
   const path = `v1/database/${scope}/${key}/`;
 
-  return RestBase.get({ path }).then(response => response.json());
+  return RestBase.get({ path, customHeaders }).then(response =>
+    response.json()
+  );
 };
 
-RestBase.setVar = ({ key, value, scope = "global" }) => {
+RestBase.setVar = ({ key, value, scope = "global", customHeaders = {} }) => {
   RestBase.validateVar(key, scope);
 
   const path = `v1/database/`;
   const body = { key, scope, value };
 
-  return RestBase.post({ path, body }).then(response => response.json());
+  return RestBase.post({ path, body, customHeaders }).then(response =>
+    response.json()
+  );
 };
 
 export default RestBase;

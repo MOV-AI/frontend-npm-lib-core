@@ -1,26 +1,29 @@
 import Authentication from "../Authentication/Authentication";
-const { checkLogin, AuthException } = Authentication;
+const { checkLogin, AuthException, getToken } = Authentication;
 
 const withAuth = (obj, props = {}) => {
   const handler = {
-    shouldCheckLogin: ["search"],
-
     __checkLogin: (target, prop) => {
-      return checkLogin().then(res => {
-        if (!res) {
-          throw new AuthException("Login error");
-        }
+      return args =>
+        checkLogin().then(res => {
+          // check login error
+          if (!res) {
+            throw new AuthException("Login error");
+          }
 
-        return Reflect.has(target, prop)
-          ? Reflect.get(target, prop)
-          : undefined;
-      });
+          // inject authorization headers
+          const customHeaders = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`
+          };
+
+          // return the original call with custom headers and original arguments
+          return Reflect.get(target, prop)({ customHeaders, ...args });
+        });
     },
 
     get: function (target, prop) {
-      return this.shouldCheckLogin.includes(prop)
-        ? this.__checkLogin(target, prop)
-        : Reflect.get(target, prop);
+      return this.__checkLogin(target, prop);
     }
   };
 
