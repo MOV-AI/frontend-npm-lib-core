@@ -4,6 +4,7 @@ const Authentication = {};
 
 Authentication.AuthException = function (message) {
   this.message = message;
+  this.statusText = message;
   this.name = "AuthException";
 };
 
