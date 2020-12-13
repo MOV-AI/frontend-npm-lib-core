@@ -82,11 +82,12 @@ Authentication.login = async (username, password, remember) => {
   }
 };
 
-Authentication.logout = () => {
+Authentication.logout = redirect => {
   window.localStorage.removeItem("movai.token");
   window.localStorage.removeItem("movai.refreshToken");
   window.localStorage.removeItem("movai.tokenRemember");
   window.sessionStorage.removeItem("movai.session");
+  window.location.replace(redirect || window.location.origin);
 };
 
 Authentication.checkLogin = async () => {
