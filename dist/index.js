@@ -2222,6 +2222,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_3___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+
 
 
 /**
@@ -2303,6 +2308,7 @@ var DocumentV1 = /*#__PURE__*/function () {
       _this.subscriber.onUpdate(function () {
         var _this$subscriber$get;
 
+        if (!_this.subscriber) return;
         _this.data = ((_this$subscriber$get = _this.subscriber.get(_this.name)) === null || _this$subscriber$get === void 0 ? void 0 : _this$subscriber$get.obj) || {};
         callback(_this.data);
       });
@@ -2347,16 +2353,17 @@ var DocumentV1 = /*#__PURE__*/function () {
      */
     value: function create(_ref2) {
       var type = _ref2.type,
-          name = _ref2.name;
+          name = _ref2.name,
+          _ref2$body = _ref2.body,
+          body = _ref2$body === void 0 ? {} : _ref2$body;
       var path = "v1/".concat(type, "/");
-      var body = {
-        data: {
-          Label: name
-        }
-      };
       return _Rest_Rest__WEBPACK_IMPORTED_MODULE_6__["default"].post({
         path: path,
-        body: body
+        body: {
+          data: _objectSpread(_objectSpread({}, body), {}, {
+            Label: name
+          })
+        }
       });
     }
     /**
@@ -2670,7 +2677,6 @@ RestBase._request = function (_ref2) {
     method: method,
     headers: headers
   };
-  console.log("payload", payload);
   if (!skipBody.includes(method)) payload.body = JSON.stringify(body);
   return fetch(url, payload).then(function (response) {
     if (!response.ok) {

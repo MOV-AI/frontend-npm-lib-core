@@ -47,7 +47,6 @@ RestBase._request = ({
     method,
     headers
   };
-  console.log("payload", payload);
 
   if (!skipBody.includes(method)) payload.body = JSON.stringify(body);
 

@@ -87,6 +87,7 @@ class DocumentV1 {
     ]);
 
     this.subscriber.onUpdate(() => {
+      if (!this.subscriber) return;
       this.data = this.subscriber.get(this.name)?.obj || {};
       callback(this.data);
     });
@@ -107,11 +108,10 @@ class DocumentV1 {
    * @param {String} type Type of the document
    * @param {String} name Name of the document
    */
-  static create({ type, name }) {
+  static create({ type, name, body = {} }) {
     const path = `v1/${type}/`;
-    const body = { data: { Label: name } };
 
-    return Rest.post({ path, body });
+    return Rest.post({ path, body: { data: { ...body, Label: name } } });
   }
 
   /**
