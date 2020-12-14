@@ -2458,7 +2458,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
           name = _assertThisInitialize.name,
           version = _assertThisInitialize.version;
 
-      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version, "/");
+      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version);
       return Rest.get({
         path: path
       }).then(function (data) {
@@ -2472,7 +2472,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
           type = _assertThisInitialize2.type,
           name = _assertThisInitialize2.name;
 
-      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version, "/");
+      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version);
       return Rest.put({
         path: path,
         body: body
@@ -2528,7 +2528,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
       var type = _ref2.type,
           name = _ref2.name,
           workspace = _ref2.workspace;
-      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/");
+      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name);
       var body = {
         Label: name
       };
@@ -2553,7 +2553,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
           body = _ref3.body,
           _ref3$workspace = _ref3.workspace,
           workspace = _ref3$workspace === void 0 ? "global" : _ref3$workspace;
-      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/");
+      var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name);
       return Rest["delete"]({
         path: path,
         body: body
@@ -2566,14 +2566,14 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
      */
 
   }, {
-    key: "getAll",
-    value: function getAll(_ref4) {
+    key: "getDocs",
+    value: function getDocs(_ref4) {
       var workspace = _ref4.workspace,
           type = _ref4.type;
 
-      var _type = type ? "".concat(type, "/") : "";
+      var _type = type ? "/".concat(type) : "";
 
-      var path = "v2/db/".concat(workspace, "/").concat(_type);
+      var path = "v2/db/".concat(workspace).concat(_type);
       return Rest.get({
         path: path
       });
@@ -3479,6 +3479,24 @@ Workspace["delete"] = function () {
 
 Workspace.getAll = function () {
   var path = "v2/db/";
+  return _Rest_Rest__WEBPACK_IMPORTED_MODULE_0__["default"].get({
+    path: path
+  });
+};
+/**
+ * Get all existing documents in a workspace
+ * @param {String} workspace workspace to search
+ * @param {String} type filter documents by type
+ */
+
+
+Workspace.getDocs = function (_ref) {
+  var workspace = _ref.workspace,
+      type = _ref.type;
+
+  var _type = type ? "/".concat(type) : "";
+
+  var path = "v2/db/".concat(workspace).concat(_type);
   return _Rest_Rest__WEBPACK_IMPORTED_MODULE_0__["default"].get({
     path: path
   });

@@ -18,4 +18,16 @@ Workspace.getAll = () => {
   return Rest.get({ path });
 };
 
+/**
+ * Get all existing documents in a workspace
+ * @param {String} workspace workspace to search
+ * @param {String} type filter documents by type
+ */
+Workspace.getDocs = ({ workspace, type }) => {
+  const _type = type ? `/${type}` : "";
+  const path = `v2/db/${workspace}${_type}`;
+
+  return Rest.get({ path });
+};
+
 export default Workspace;

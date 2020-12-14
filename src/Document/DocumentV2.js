@@ -93,9 +93,9 @@ class DocumentV2 extends DocumentV1 {
    * @param {String} workspace workspace to search
    * @param {String} type filter documents by type
    */
-  static getAll({ workspace, type }) {
-    const _type = type ? `${type}` : "";
-    const path = `v2/db/${workspace}/${_type}`;
+  static getDocs({ workspace, type }) {
+    const _type = type ? `/${type}` : "";
+    const path = `v2/db/${workspace}${_type}`;
 
     return Rest.get({ path });
   }
