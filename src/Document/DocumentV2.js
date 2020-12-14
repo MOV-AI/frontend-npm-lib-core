@@ -9,7 +9,7 @@ class DocumentV2 extends DocumentV1 {
    */
   read = () => {
     const { workspace, type, name, version } = this;
-    const path = `v2/db/${workspace}/${type}/${name}/${version}/`;
+    const path = `v2/db/${workspace}/${type}/${name}/${version}`;
 
     return Rest.get({ path }).then(data => {
       this.data = data;
@@ -23,7 +23,7 @@ class DocumentV2 extends DocumentV1 {
    */
   update = body => {
     const { type, name } = this;
-    const path = `v2/db/${workspace}/${type}/${name}/${version}/`;
+    const path = `v2/db/${workspace}/${type}/${name}/${version}`;
 
     return Rest.put({ path, body });
   };
@@ -69,7 +69,7 @@ class DocumentV2 extends DocumentV1 {
    * @param {String} workspace Workspace of the document
    */
   static create({ type, name, workspace }) {
-    const path = `v2/db/${workspace}/${type}/${name}/`;
+    const path = `v2/db/${workspace}/${type}/${name}`;
     const body = { Label: name };
 
     return Rest.post({ path, body });
@@ -83,7 +83,7 @@ class DocumentV2 extends DocumentV1 {
    * @param {String} workspace Workspace of the document
    */
   static delete({ type, name, body, workspace = "global" }) {
-    const path = `v2/db/${workspace}/${type}/${name}/`;
+    const path = `v2/db/${workspace}/${type}/${name}`;
 
     return Rest.delete({ path, body });
   }
@@ -94,7 +94,7 @@ class DocumentV2 extends DocumentV1 {
    * @param {String} type filter documents by type
    */
   static getAll({ workspace, type }) {
-    const _type = type ? `${type}/` : "";
+    const _type = type ? `${type}` : "";
     const path = `v2/db/${workspace}/${_type}`;
 
     return Rest.get({ path });
