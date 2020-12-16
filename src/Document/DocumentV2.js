@@ -1,4 +1,5 @@
 import DocumentV1 from "./DocumentV1";
+import Rest from "../Rest/Rest";
 
 /**
  * Document class to use with the Rest api V2
@@ -22,7 +23,7 @@ class DocumentV2 extends DocumentV1 {
    * @param {Object} body Request payload
    */
   update = body => {
-    const { type, name } = this;
+    const { workspace, type, name, version } = this;
     const path = `v2/db/${workspace}/${type}/${name}/${version}`;
 
     return Rest.put({ path, body });
