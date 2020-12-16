@@ -13,7 +13,7 @@ Workspace.delete = () => {
  * Get a list of all locally available workspaces
  */
 Workspace.getAll = () => {
-  const path = "v2/db/";
+  const path = "v2/db";
 
   return Rest.get({ path });
 };
