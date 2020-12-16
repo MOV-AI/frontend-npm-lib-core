@@ -2418,6 +2418,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @babel/runtime/helpers/esm/defineProperty */ "@babel/runtime/helpers/esm/defineProperty");
 /* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _DocumentV1__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./DocumentV1 */ "./src/Document/DocumentV1.js");
+/* harmony import */ var _Rest_Rest__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Rest/Rest */ "./src/Rest/Rest.js");
 
 
 
@@ -2429,6 +2430,7 @@ __webpack_require__.r(__webpack_exports__);
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 
 
 /**
@@ -2459,7 +2461,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
           version = _assertThisInitialize.version;
 
       var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version);
-      return Rest.get({
+      return _Rest_Rest__WEBPACK_IMPORTED_MODULE_8__["default"].get({
         path: path
       }).then(function (data) {
         _this.data = data;
@@ -2469,11 +2471,13 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
 
     _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_6___default()(_babel_runtime_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this), "update", function (body) {
       var _assertThisInitialize2 = _babel_runtime_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this),
+          workspace = _assertThisInitialize2.workspace,
           type = _assertThisInitialize2.type,
-          name = _assertThisInitialize2.name;
+          name = _assertThisInitialize2.name,
+          version = _assertThisInitialize2.version;
 
       var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version);
-      return Rest.put({
+      return _Rest_Rest__WEBPACK_IMPORTED_MODULE_8__["default"].put({
         path: path,
         body: body
       });
@@ -2532,7 +2536,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
       var body = {
         Label: name
       };
-      return Rest.post({
+      return _Rest_Rest__WEBPACK_IMPORTED_MODULE_8__["default"].post({
         path: path,
         body: body
       });
@@ -2554,7 +2558,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
           _ref3$workspace = _ref3.workspace,
           workspace = _ref3$workspace === void 0 ? "global" : _ref3$workspace;
       var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name);
-      return Rest["delete"]({
+      return _Rest_Rest__WEBPACK_IMPORTED_MODULE_8__["default"]["delete"]({
         path: path,
         body: body
       });
@@ -2574,7 +2578,7 @@ var DocumentV2 = /*#__PURE__*/function (_DocumentV) {
       var _type = type ? "/".concat(type) : "";
 
       var path = "v2/db/".concat(workspace).concat(_type);
-      return Rest.get({
+      return _Rest_Rest__WEBPACK_IMPORTED_MODULE_8__["default"].get({
         path: path
       });
     }
@@ -2965,15 +2969,63 @@ var Snapshot = {};
  *  @param {String} version Source version of the snapshot
  */
 
-Snapshot.create = function (_ref) {
+Snapshot._create = function (_ref) {
   var target = _ref.target,
-      source = _ref.source;
-  var body = {
-    src: "".concat(source.workspace, "/").concat(source.type, "/").concat(source.name, "/").concat(source.version, "/")
-  };
-  var path = "v2/db/".concat(target.workspace || source.workspace, "/").concat(target.type, "/").concat(target.name, "/").concat(target.version, "/");
+      _ref$body = _ref.body,
+      body = _ref$body === void 0 ? {} : _ref$body;
+  var workspace = target.workspace,
+      type = target.type,
+      name = target.name,
+      version = target.version;
+  var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version);
   return _Rest_Rest__WEBPACK_IMPORTED_MODULE_0__["default"].post({
     path: path,
+    body: body
+  });
+};
+/**
+ * Create a snapshot from a specific document
+ * @param {Object} target Object with the following params
+ *  @param {String} workspace Target workspace where the document will be
+ *  @param {String} type Type of the document
+ *  @param {String} name Source name of the document
+ *  @param {String} version Source version of the snapshot
+ * @param {Object} body Document data
+ */
+
+
+Snapshot.create = function (_ref2) {
+  var target = _ref2.target,
+      _ref2$body = _ref2.body,
+      body = _ref2$body === void 0 ? {} : _ref2$body;
+
+  Snapshot._create({
+    target: target,
+    body: {
+      data: body
+    }
+  });
+};
+/**
+ * Create document by referencing an existing document
+ * @param {Object} target Object with the following params
+ * @param {Object} source Object with the following params
+ *  @param {String} workspace Target workspace where the document will be
+ *  @param {String} type Type of the document
+ *  @param {String} name Source name of the document
+ *  @param {String} version Source version of the snapshot
+ */
+
+
+Snapshot.createByRef = function (_ref3) {
+  var target = _ref3.target,
+      source = _ref3.source;
+  var body = {
+    src: "".concat(source.workspace, "/").concat(source.type, "/").concat(source.name, "/").concat(source.version)
+  };
+  return Snapshot._create({
+    target: target,
+    source: source,
     body: body
   });
 };
@@ -2994,12 +3046,12 @@ Snapshot["delete"] = function () {
  */
 
 
-Snapshot.read = function (_ref2) {
-  var workspace = _ref2.workspace,
-      type = _ref2.type,
-      name = _ref2.name,
-      version = _ref2.version;
-  var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version, "/");
+Snapshot.read = function (_ref4) {
+  var workspace = _ref4.workspace,
+      type = _ref4.type,
+      name = _ref4.name,
+      version = _ref4.version;
+  var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/").concat(version);
   return _Rest_Rest__WEBPACK_IMPORTED_MODULE_0__["default"].get({
     path: path
   });
@@ -3015,11 +3067,11 @@ Snapshot.read = function (_ref2) {
  */
 
 
-Snapshot.restore = function (_ref3) {
-  var target = _ref3.target,
-      source = _ref3.source;
+Snapshot.restore = function (_ref5) {
+  var target = _ref5.target,
+      source = _ref5.source;
   target.workspace = "global";
-  return Snapshot.create({
+  return Snapshot.createByRef({
     target: target,
     source: source
   });
@@ -3032,11 +3084,11 @@ Snapshot.restore = function (_ref3) {
  */
 
 
-Snapshot.getAll = function (_ref4) {
-  var workspace = _ref4.workspace,
-      type = _ref4.type,
-      name = _ref4.name;
-  var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name, "/");
+Snapshot.getAll = function (_ref6) {
+  var workspace = _ref6.workspace,
+      type = _ref6.type,
+      name = _ref6.name;
+  var path = "v2/db/".concat(workspace, "/").concat(type, "/").concat(name);
   return _Rest_Rest__WEBPACK_IMPORTED_MODULE_0__["default"].get({
     path: path
   });
@@ -3478,7 +3530,7 @@ Workspace["delete"] = function () {
 
 
 Workspace.getAll = function () {
-  var path = "v2/db/";
+  var path = "v2/db";
   return _Rest_Rest__WEBPACK_IMPORTED_MODULE_0__["default"].get({
     path: path
   });
