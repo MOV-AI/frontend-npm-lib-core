@@ -23,9 +23,10 @@ Workspace.getAll = () => {
  * @param {String} workspace workspace to search
  * @param {String} type filter documents by type
  */
-Workspace.getDocs = ({ workspace, type }) => {
+Workspace.getDocs = ({ workspace, type, id }) => {
   const _type = type ? `/${type}` : "";
-  const path = `v2/db/${workspace}${_type}`;
+  const _id = type ? (id ? `/${id}` : "") : "";
+  const path = `v2/db/${workspace}${_type}${_id}`;
 
   return Rest.get({ path });
 };
