@@ -22,11 +22,12 @@ Workspace.getAll = () => {
  * Get all existing documents in a workspace
  * @param {String} workspace workspace to search
  * @param {String} type filter documents by type
+ * @param {String} id further filter documents by type and id
  */
-Workspace.getDocs = ({ workspace, type, id }) => {
-  const _type = type ? `/${type}` : "";
-  const _id = type ? (id ? `/${id}` : "") : "";
-  const path = `v2/db/${workspace}${_type}${_id}`;
+Workspace.getDocs = ({ workspace, scope, id }) => {
+  const _scope = scope ? `/${scope}` : "";
+  const _id = scope ? (id ? `/${id}` : "") : "";
+  const path = `v2/db/${workspace}${_scope}${_id}`;
 
   return Rest.get({ path });
 };

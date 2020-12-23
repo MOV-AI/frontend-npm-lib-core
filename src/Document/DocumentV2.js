@@ -93,13 +93,15 @@ class DocumentV2 extends DocumentV1 {
    * Get all existing documents in a workspace
    * @param {String} workspace workspace to search
    * @param {String} type filter documents by type
+   * @param {String} id further filter documents by type and id
    */
-  static getDocs({ workspace, type }) {
-    const _type = type ? `/${type}` : "";
-    const path = `v2/db/${workspace}${_type}`;
+  static getDocs = ({ workspace, scope, id }) => {
+    const _scope = scope ? `/${scope}` : "";
+    const _id = scope ? (id ? `/${id}` : "") : "";
+    const path = `v2/db/${workspace}${_scope}${_id}`;
 
     return Rest.get({ path });
-  }
+  };
 }
 
 export default DocumentV2;
