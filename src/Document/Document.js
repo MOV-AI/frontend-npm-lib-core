@@ -33,6 +33,26 @@ class Document {
   static delete(args, docVersion = "v1") {
     return withDocVersion(docVersion).delete(args);
   }
+
+  /**
+   * Parse path into an object
+   * @param {String} path The path to parse
+   * @param {String} dtype Default type
+   *
+   * @return {Object} An object with workspace, type, name, version
+   */
+
+  static parsePath(path, dtype = "Node") {
+    // expecting a leading slash
+    const [_, _workspace, _type, _name, _version] = path.split("/");
+
+    const workspace = _workspace || "global";
+    const type = _type || dtype;
+    const name = _name || path;
+    const version = _version || "-";
+
+    return { workspace, type, name, version };
+  }
 }
 
 export default Document;
