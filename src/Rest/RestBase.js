@@ -107,7 +107,7 @@ RestBase.delete = ({ path, body, customHeaders = {} }) => {
  * @param {String} value Value of the key
  */
 RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
-  const path = `upload/${packageName}/`;
+  const path = `v1/upload/${packageName}/`;
   const body = new FormData();
   body.append("name", key);
   body.append("data", value);
@@ -122,7 +122,7 @@ RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
  * @param {Object} args Args to pass to the function
  */
 RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
-  const path = `function/${cbName}/`;
+  const path = `v1/function/${cbName}/`;
   const body = { func, args };
 
   return RestBase.post({ path, body, customHeaders }).then(response =>
