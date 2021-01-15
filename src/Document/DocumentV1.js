@@ -34,7 +34,15 @@ class DocumentV1 {
    * Get document read only status
    */
   get readOnly() {
-    return Boolean(this.version);
+    return this.workspace !== "global";
+  }
+
+  /**
+   * Get document url
+   */
+  get url() {
+    const { workspace, type, name, version } = this;
+    return `/${workspace}/${type}/${name}/${version}`;
   }
 
   /** Document handlers */
