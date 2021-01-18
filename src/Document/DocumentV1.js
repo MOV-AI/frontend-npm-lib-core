@@ -6,21 +6,21 @@ import Rest from "../Rest/Rest";
  * Document class to use with the Rest api V1
  */
 class DocumentV1 {
-  constructor({ type, name, workspace = "global", version, uri }) {
-    this._init(type, name, workspace, version, uri);
+  constructor({ type, name, workspace = "global", version, path }) {
+    this._init(type, name, workspace, version, path);
   }
 
   /** Initialization */
-  _init = (type, name, workspace, version, uri) => {
-    this._parseArgs(workspace, type, name, version, uri);
+  _init = (type, name, workspace, version, path) => {
+    this._parseArgs(workspace, type, name, version, path);
     this.subscriber = undefined;
     this.database = MasterDB;
     this.data = {};
   };
 
   /** Parse instance args */
-  _parseArgs = (workspace, type, name, version, uri) => {
-    const [_workspace, _type, _name, _version] = (uri || "").split("/");
+  _parseArgs = (workspace, type, name, version, path) => {
+    const [_workspace, _type, _name, _version] = (path || "").split("/");
 
     this.workspace = _workspace || workspace;
     this.type = _type || type;
@@ -39,10 +39,18 @@ class DocumentV1 {
 
   /**
    * Get document url
+   * Same as path
    */
   get url() {
+    return this.path;
+  }
+
+  /**
+   * Get document path
+   */
+  get path() {
     const { workspace, type, name, version } = this;
-    return `/${workspace}/${type}/${name}/${version}`;
+    return `${workspace}/${type}/${name}/${version}`;
   }
 
   /** Document handlers */
@@ -51,7 +59,7 @@ class DocumentV1 {
    * Get document data
    */
   read = () => {
-    const { workspace, type, name } = this;
+    const { type, name } = this;
     const path = `v1/${type}/${name}/`;
 
     return Rest.get({ path }).then(data => {
