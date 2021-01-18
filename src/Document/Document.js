@@ -42,16 +42,16 @@ class Document {
    * @return {Object} An object with workspace, type, name, version
    */
 
-  static parsePath(path, dtype = "Node") {
-    // expecting a leading slash
-    const [_, _workspace, _type, _name, _version] = path.split("/");
+  static parsePath(_path, dtype = "Node") {
+    const spl = _path.split("/");
 
-    const workspace = _workspace || "global";
-    const type = _type || dtype;
-    const name = _name || path;
-    const version = _version || "-";
+    const workspace = spl.length > 1 ? spl[0] : "global";
+    const type = spl[1] || dtype;
+    const name = spl[2] || _path;
+    const version = spl[3] || "-";
+    const path = `${workspace}/${type}/${name}/${version}`;
 
-    return { workspace, type, name, version };
+    return { workspace, type, name, version, path };
   }
 }
 
