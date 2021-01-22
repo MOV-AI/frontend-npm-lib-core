@@ -10,6 +10,10 @@ import WSSub from "./src/Database/WSSub";
 import User from "./src/User/User";
 import BaseModel from "./src/Database/Models/BaseModel";
 import DataManagerBase from "./src/Database/Manager/DataManagerBase";
+import Document from "./src/Document/Document";
+import Workspace from "./src/Workspace/Workspace";
+import Snapshot from "./src/Snapshot/Snapshot";
+import Rest from "./src/Rest/Rest";
 
 export {
   Authentication,
@@ -23,5 +27,9 @@ export {
   WSSub,
   User,
   BaseModel,
-  DataManagerBase
+  DataManagerBase,
+  Document,
+  Workspace,
+  Snapshot,
+  Rest
 };
