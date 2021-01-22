@@ -48,7 +48,7 @@ class Document {
     const workspace = spl.length > 1 ? spl[0] : "global";
     const type = spl[1] || dtype;
     const name = spl[2] || _path;
-    const version = spl[3] || "-";
+    const version = spl[3] || "__UNVERSIONED__";
     const path = `${workspace}/${type}/${name}/${version}`;
 
     return { workspace, type, name, version, path };
