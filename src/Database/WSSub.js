@@ -139,11 +139,11 @@ class WSSub {
       // try to resend if the connection is not yet open
       this.getState() !== WebSocket.OPEN
         ? setTimeout(
-          this.send,
-          this.RESEND_TIMEOUT,
-          message,
-          retry + 1
-        )
+            this.send,
+            this.RESEND_TIMEOUT,
+            message,
+            retry + 1
+          )
         : this.websocket.send(JSON.stringify(message));
     } catch (error) {
       console.error(error);
