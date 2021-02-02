@@ -64,7 +64,12 @@ Authentication.login = async (username, password, remember) => {
     });
 
     const { status } = response;
-    let data = await response.json();
+    const contentType = response.headers.get("content-type");
+    const isJsonType = contentType && contentType.includes("application/json");
+    let data = 
+      isJsonType 
+        ? await response.json() 
+        : { error: response.statusText };
 
     if (status === 200) {
       window.localStorage.setItem("movai.token", data["access_token"]);
@@ -78,8 +83,8 @@ Authentication.login = async (username, password, remember) => {
 
     return data;
   } catch (e) {
-    // ToDo Add exception error message
-    throw e;
+    // Returns exception error message
+    return { error: e.toString() }
   }
 };
 
@@ -138,9 +143,14 @@ Authentication.checkLogin = async () => {
       });
 
       const { status } = response;
-      let data = await response.json();
+      const contentType = response.headers.get("content-type");
+      const isJsonType = contentType && contentType.includes("application/json");
+      let data = 
+        isJsonType 
+          ? await response.json() 
+          : null;
 
-      if (status === 200) {
+      if (status === 200 && data) {
         window.localStorage.setItem("movai.token", data["access_token"]);
         window.localStorage.setItem(
           "movai.refreshToken",
