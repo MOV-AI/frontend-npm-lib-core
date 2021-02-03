@@ -58,13 +58,18 @@ class DocumentV1 {
   /**
    * Get document data
    */
-  read = () => {
+  read = (apiVersion = "v1") => {
     const { type, name } = this;
-    const path = `v1/${type}/${name}/`;
+    const path = 
+      apiVersion === "v1" 
+      ? `v1/${type}/${name}/`
+      : `v2/db/${this.path}`;
 
     return Rest.get({ path }).then(data => {
       this.data = data;
-      return data;
+      return apiVersion === "v1" 
+        ? data
+        : data[type][name];
     });
   };
 
