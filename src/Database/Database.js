@@ -180,13 +180,15 @@ class Database {
     checkLogin().then(res => {
       fetch(url)
         .then(response => response.json())
-
         .then(data => {
           if (callback) {
             callback(data);
           } else {
             //NOTHING
           }
+        })
+        .catch(e => {
+          console.log(e);
         });
     });
   };
@@ -222,6 +224,8 @@ class Database {
         if (callback) {
           callback(res);
         }
+      }).catch(e => {
+        console.log(e);
       });
     });
   };
@@ -308,7 +312,11 @@ class Database {
     formData.append(`data`, value);
     fetch(url, { method: "POST", body: formData })
       .then(res => res.json())
-      .then(callback);
+      .then(callback)
+      .catch(e => {
+        console.log('upload error', e);
+        callback(undefined);
+      });
   };
 
   /**
@@ -442,7 +450,12 @@ class Database {
         }
       }).then(res => {
         if (callback) {
-          res.json().then(data => callback(data));
+          res.json()
+            .then(data => callback(data))
+            .catch(e => { 
+              console.log(e); 
+              callback(undefined); 
+            });
         }
       });
     });

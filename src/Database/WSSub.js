@@ -362,6 +362,9 @@ class WSSub {
           } else {
             //NOTHING
           }
+        })
+        .catch(e => {
+          console.log(e);
         });
     });
   };
@@ -623,7 +626,9 @@ class WSSub {
         }
       }).then(res => {
         if (callback) {
-          res.json().then(data => callback(data));
+          res.json()
+            .then(data => callback(data))
+            .catch(e => console.log(e));
         }
       });
     });
