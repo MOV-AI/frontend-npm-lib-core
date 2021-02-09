@@ -420,7 +420,7 @@ class WSSub {
         throw new AuthException("login error");
       }
 
-      fetchTimeout(url, {
+      this.fetchTimeout(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
