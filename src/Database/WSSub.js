@@ -31,6 +31,15 @@ class WSSub {
     this.evt_callbacks = new Map();
   }
 
+  fetchTimeout = (url, options, timeout = 5000) => {
+    return Promise.race([
+      fetch(url, options),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Timeout")), timeout)
+      )
+    ]);
+  };
+
   /**
    * get the connection state
    * https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
@@ -411,7 +420,7 @@ class WSSub {
         throw new AuthException("login error");
       }
 
-      fetch(url, {
+      fetchTimeout(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
