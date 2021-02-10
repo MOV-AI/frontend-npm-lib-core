@@ -29,13 +29,18 @@ class WSSub {
     this.sub_callbacks = new Map();
     // map with callbacks related with event subscription
     this.evt_callbacks = new Map();
+    // to abort a pending fetch
+    this.controller = new AbortController();
   }
 
   fetchTimeout = (url, options, timeout = 5000) => {
     return Promise.race([
-      fetch(url, options),
+      fetch(url, { ...options, signal: this.controller.signal }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout")), timeout)
+        setTimeout(() => {
+          this.controller.abort();
+          reject(new Error("Timeout"));
+        }, timeout)
       )
     ]);
   };
