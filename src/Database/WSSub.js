@@ -30,19 +30,33 @@ class WSSub {
     // map with callbacks related with event subscription
     this.evt_callbacks = new Map();
     // to abort a pending fetch
-    this.controller = new AbortController();
   }
 
   fetchTimeout = (url, options, timeout = 5000) => {
     return Promise.race([
-      fetch(url, { ...options, signal: this.controller.signal }),
+      fetch(url, { ...options, signal: controller.signal }),
       new Promise((_, reject) =>
         setTimeout(() => {
-          this.controller.abort();
+          controller.abort();
           reject(new Error("Timeout"));
         }, timeout)
       )
     ]);
+  };
+
+  fetchWithTimeout = async (url, options) => {
+    const { timeout = 5000 } = options;
+
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+
+    return response;
   };
 
   /**
@@ -419,32 +433,46 @@ class WSSub {
    * @param callback function
    * @memberof Database
    */
-  get = (url, callback = undefined) => {
+  get = async (url, callback = undefined) => {
     checkLogin().then(res => {
       if (!res) {
         throw new AuthException("login error");
       }
 
-      this.fetchTimeout(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
+      try {
+        const response = await fetchWithTimeout(url, {
+          timeout: 6000
+        });
+        const res = await response.json();
+        if(callback){
+          callback(res);
         }
-      })
-        .then(res => {
-          if (callback) {
-            res
-              .json()
-              .then(data => {
-                callback(data, res);
-              })
-              .catch(e => {
-                callback(undefined, e);
-              });
-          }
-        })
-        .catch(e => callback(undefined, e));
+      } catch (error) {
+        // Timeouts if the request takes longer than 6 seconds
+        callback(undefined, e)
+        console.error('AbortError: Timeout error');
+      }
+
+      // this.fetchTimeout(url, {
+      //   method: "GET",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${getToken()}`
+      //   }
+      // })
+      //   .then(res => {
+      //     if (callback) {
+      //       res
+      //         .json()
+      //         .then(data => {
+      //           callback(data, res);
+      //         })
+      //         .catch(e => {
+      //           callback(undefined, e);
+      //         });
+      //     }
+      //   })
+      //   .catch(e => callback(undefined, e));
     });
   };
 
