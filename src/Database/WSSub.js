@@ -434,7 +434,7 @@ class WSSub {
    * @memberof Database
    */
   get = async (url, callback = undefined) => {
-    checkLogin().then(res => {
+    checkLogin().then(async res => {
       if (!res) {
         throw new AuthException("login error");
       }
@@ -444,13 +444,13 @@ class WSSub {
           timeout: 6000
         });
         const res = await response.json();
-        if(callback){
+        if (callback) {
           callback(res);
         }
       } catch (error) {
         // Timeouts if the request takes longer than 6 seconds
-        callback(undefined, e)
-        console.error('AbortError: Timeout error');
+        callback(undefined, e);
+        console.error("AbortError: Timeout error");
       }
 
       // this.fetchTimeout(url, {
