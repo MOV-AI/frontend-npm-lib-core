@@ -44,21 +44,6 @@ class WSSub {
     ]);
   };
 
-  fetchWithTimeout = async (url, options) => {
-    const { timeout = 5000 } = options;
-
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
-    clearTimeout(id);
-
-    return response;
-  };
-
   /**
    * get the connection state
    * https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
@@ -438,41 +423,26 @@ class WSSub {
       if (!res) {
         throw new AuthException("login error");
       }
-
-      try {
-        const response = await fetchWithTimeout(url, {
-          timeout: 6000
-        });
-        const res = await response.json();
-        if (callback) {
-          callback(res);
+      this.fetchTimeout(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`
         }
-      } catch (error) {
-        // Timeouts if the request takes longer than 6 seconds
-        callback(undefined, e);
-        console.error("AbortError: Timeout error");
-      }
-
-      // this.fetchTimeout(url, {
-      //   method: "GET",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${getToken()}`
-      //   }
-      // })
-      //   .then(res => {
-      //     if (callback) {
-      //       res
-      //         .json()
-      //         .then(data => {
-      //           callback(data, res);
-      //         })
-      //         .catch(e => {
-      //           callback(undefined, e);
-      //         });
-      //     }
-      //   })
-      //   .catch(e => callback(undefined, e));
+      })
+        .then(res => {
+          if (callback) {
+            res
+              .json()
+              .then(data => {
+                callback(data, res);
+              })
+              .catch(e => {
+                callback(undefined, e);
+              });
+          }
+        })
+        .catch(e => callback(undefined, e));
     });
   };
 
