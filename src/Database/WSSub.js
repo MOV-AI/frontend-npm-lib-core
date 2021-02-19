@@ -29,7 +29,19 @@ class WSSub {
     this.sub_callbacks = new Map();
     // map with callbacks related with event subscription
     this.evt_callbacks = new Map();
+    // to abort a pending fetch
   }
+
+  fetchTimeout = (url, options, timeout = 5000) => {
+    return Promise.race([
+      fetch(url, options),
+      new Promise((_, reject) =>
+        setTimeout(() => {
+          reject(new Error("Timeout"));
+        }, timeout)
+      )
+    ]);
+  };
 
   /**
    * get the connection state
@@ -138,12 +150,7 @@ class WSSub {
       // stringify the message before sending it
       // try to resend if the connection is not yet open
       this.getState() !== WebSocket.OPEN
-        ? setTimeout(
-            this.send,
-            this.RESEND_TIMEOUT,
-            message,
-            retry + 1
-          )
+        ? setTimeout(this.send, this.RESEND_TIMEOUT, message, retry + 1)
         : this.websocket.send(JSON.stringify(message));
     } catch (error) {
       console.error(error);
@@ -410,30 +417,31 @@ class WSSub {
    * @param callback function
    * @memberof Database
    */
-  get = (url, callback = undefined) => {
-    checkLogin().then(res => {
+  get = async (url, callback = undefined) => {
+    checkLogin().then(async res => {
       if (!res) {
         throw new AuthException("login error");
       }
-
-      fetch(url, {
+      this.fetchTimeout(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
-        if (callback) {
-          res
-            .json()
-            .then(data => {
-              callback(data, res);
-            })
-            .catch(e => {
-              callback(undefined, e);
-            });
-        }
-      });
+      })
+        .then(res => {
+          if (callback) {
+            res
+              .json()
+              .then(data => {
+                callback(data, res);
+              })
+              .catch(e => {
+                callback(undefined, e);
+              });
+          }
+        })
+        .catch(e => callback(undefined, e));
     });
   };
 
@@ -626,7 +634,8 @@ class WSSub {
         }
       }).then(res => {
         if (callback) {
-          res.json()
+          res
+            .json()
             .then(data => callback(data))
             .catch(e => console.log(e));
         }
