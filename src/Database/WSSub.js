@@ -34,10 +34,9 @@ class WSSub {
 
   fetchTimeout = (url, options, timeout = 5000) => {
     return Promise.race([
-      fetch(url, { ...options, signal: controller.signal }),
+      fetch(url, options),
       new Promise((_, reject) =>
         setTimeout(() => {
-          controller.abort();
           reject(new Error("Timeout"));
         }, timeout)
       )
