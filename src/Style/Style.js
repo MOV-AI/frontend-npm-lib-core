@@ -1,4 +1,6 @@
-import icons from "../../resources/fonts/movai.woff";
+import icons from "../../resources/fonts/icomoon.woff";
+
+// font generated in https://icomoon.io/
 
 const Style = `
 @font-face {
@@ -24,6 +26,109 @@ const Style = `
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-widget:before {
+  content: "\\e900";
+}
+.icon-tree:before {
+  content: "\\e903";
+}
+.icon-Statistics:before {
+  content: "\\e906";
+}
+.icon-Scenes:before {
+  content: "\\e907";
+}
+.icon-Sad:before {
+  content: "\\e908";
+}
+.icon-repeat:before {
+  content: "\\e909";
+}
+.icon-packages:before {
+  content: "\\e90c";
+}
+.icon-outline-off:before {
+  content: "\\e90d";
+}
+.icon-outline:before {
+  content: "\\e90e";
+}
+.icon-out:before {
+  content: "\\e90f";
+}
+.icon-Nodes:before {
+  content: "\\e911";
+}
+.icon-Layouts:before {
+  content: "\\e913";
+}
+.icon-info:before {
+  content: "\\e914";
+}
+.icon-in:before {
+  content: "\\e915";
+}
+.icon-Happy:before {
+  content: "\\e916";
+}
+.icon-grid:before {
+  content: "\\e917";
+}
+.icon-Filters:before {
+  content: "\\e918";
+}
+.icon-expand_more:before {
+  content: "\\e919";
+}
+.icon-expand_less:before {
+  content: "\\e91a";
+}
+.icon-Empty:before {
+  content: "\\e91b";
+}
+.icon-edit:before {
+  content: "\\e91c";
+}
+.icon-drag_indicator:before {
+  content: "\\e91d";
+}
+.icon-download:before {
+  content: "\\e91e";
+}
+.icon-details:before {
+  content: "\\e91f";
+}
+.icon-delete:before {
+  content: "\\e920";
+}
+.icon-create_new_folder:before {
+  content: "\\e921";
+}
+.icon-chevron_right:before {
+  content: "\\e923";
+}
+.icon-chevron_left:before {
+  content: "\\e924";
+}
+.icon-heck_circle:before {
+  content: "\\e925";
+}
+.icon-carts:before {
+  content: "\\e926";
+}
+.icon-Callbacks:before {
+  content: "\\e928";
+}
+.icon-Annotations:before {
+  content: "\\e929";
+}
+.icon-add:before {
+  content: "\\e92b";
+}
+`;
+export default Style;
+
+const previousStyle = `
 .icon-AddGlobal:before {
   content: "\\e900";
 }
@@ -63,19 +168,19 @@ const Style = `
   margin-left: -1em;
   color: rgb(250, 250, 250);
 }
-.icon-tree_24px:before {
+.icon-tree:before {
   content: "\\e90b";
 }
-.icon-expand_more_24px:before {
+.icon-expand_more:before {
   content: "\\e90c";
 }
-.icon-expand_less_24px:before {
+.icon-expand_less:before {
   content: "\\e90d";
 }
-.icon-chevron_right_24px:before {
+.icon-chevron_right:before {
   content: "\\e90e";
 }
-.icon-chevron_left_24px:before {
+.icon-chevron_left:before {
   content: "\\e90f";
 }
 .icon-Statistics:before {
@@ -114,13 +219,13 @@ const Style = `
 .icon-Annotations:before {
   content: "\\e91b";
 }
-.icon-create_new_folder_24px:before {
+.icon-create_new_folder:before {
   content: "\\e91c";
 }
-.icon-widgets_24px:before {
+.icon-widgets:before {
   content: "\\e91d";
 }
-.icon-log_24px:before {
+.icon-log:before {
   content: "\\e91e";
 }
 .icon-outlined_hidden:before {
@@ -141,14 +246,14 @@ const Style = `
   content: "\\e923";
   color: #2091b7;
 }
-.icon-details_24px:before {
+.icon-details:before {
   content: "\\e924";
 }
 .icon-delete:before {
   content: "\\e925";
   color: #2091b7;
 }
-.icon-check_circle_24px-copy:before {
+.icon-check_circle-copy:before {
   content: "\\e926";
 }
 .icon-add:before {
@@ -159,4 +264,3 @@ const Style = `
   content: "\\e928";
 }
 `;
-export default Style;
