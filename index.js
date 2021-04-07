@@ -1,4 +1,6 @@
 import Authentication from "./src/Authentication/Authentication";
+import { BROADCAST_EVENTS } from "./src/Utils/constants";
+import BroadcastChannel from "./src/BroadcastChannel/BroadcastChannel";
 import Utils from "./src/Utils/Utils";
 import Database from "./src/Database/Database";
 import MasterDB from "./src/Database/MasterDB";
@@ -28,6 +30,8 @@ export {
   User,
   BaseModel,
   DataManagerBase,
+  BroadcastChannel,
+  BROADCAST_EVENTS,
   Document,
   Workspace,
   Snapshot,
