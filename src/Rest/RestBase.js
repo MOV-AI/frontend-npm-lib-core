@@ -33,6 +33,7 @@ RestBase.getUrl = ({ path, search = {} }) => {
  * @param {Object} body Request payload
  */
 RestBase._request = ({
+  url,
   path,
   method = "GET",
   body = {},
@@ -40,7 +41,7 @@ RestBase._request = ({
   customHeaders = {}
 }) => {
   const headers = customHeaders;
-  const url = RestBase.getUrl({ path, search });
+  const requestUrl = url ? url : RestBase.getUrl({ path, search });
   const skipBody = ["HEAD", "GET"];
 
   const payload = {
@@ -50,7 +51,7 @@ RestBase._request = ({
 
   if (!skipBody.includes(method)) payload.body = JSON.stringify(body);
 
-  return fetch(url, payload).then(response => {
+  return fetch(requestUrl, payload).then(response => {
     if (!response.ok) {
       return Promise.reject(response);
     }
@@ -64,8 +65,8 @@ RestBase._request = ({
  * @param {String} search Search parameters
  */
 
-RestBase.get = ({ path, search, customHeaders = {} }) => {
-  return RestBase._request({ path, search, customHeaders });
+RestBase.get = ({ url, path, search, customHeaders = {} }) => {
+  return RestBase._request({ url, path, search, customHeaders });
 };
 
 /**
@@ -73,10 +74,10 @@ RestBase.get = ({ path, search, customHeaders = {} }) => {
  * @param {String} path Relative path
  * @param {Object} body Request payload
  */
-RestBase.post = ({ path, body, customHeaders = {} }) => {
+RestBase.post = ({ url, path, body, customHeaders = {} }) => {
   const method = "POST";
 
-  return RestBase._request({ path, method, body, customHeaders });
+  return RestBase._request({ url, path, method, body, customHeaders });
 };
 
 /**
@@ -84,20 +85,20 @@ RestBase.post = ({ path, body, customHeaders = {} }) => {
  * @param {String} path Relative path
  * @param {Object} body Request payload
  */
-RestBase.put = ({ path, body, customHeaders = {} }) => {
+RestBase.put = ({ url, path, body, customHeaders = {} }) => {
   const method = "PUT";
 
-  return RestBase._request({ path, method, body, customHeaders });
+  return RestBase._request({ url, path, method, body, customHeaders });
 };
 
 /**
  * Execute DELETE request
  * @param {String} path Relative path
  */
-RestBase.delete = ({ path, body, customHeaders = {} }) => {
+RestBase.delete = ({ url, path, body, customHeaders = {} }) => {
   const method = "DELETE";
 
-  return RestBase._request({ path, method, body, customHeaders });
+  return RestBase._request({ url, path, method, body, customHeaders });
 };
 
 /**

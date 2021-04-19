@@ -1,6 +1,7 @@
 import Authentication from "./src/Authentication/Authentication";
 import { BROADCAST_EVENTS } from "./src/Utils/constants";
 import BroadcastChannel from "./src/BroadcastChannel/BroadcastChannel";
+import RobotManager from "./src/RobotManager/RobotManager";
 import Utils from "./src/Utils/Utils";
 import Database from "./src/Database/Database";
 import MasterDB from "./src/Database/MasterDB";
@@ -33,6 +34,7 @@ export {
   BroadcastChannel,
   BROADCAST_EVENTS,
   Document,
+  RobotManager,
   Workspace,
   Snapshot,
   Rest
