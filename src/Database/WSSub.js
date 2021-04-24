@@ -2,6 +2,14 @@ import AuthWebSocket from "../AuthWebSocket/AuthWebSocket";
 import Authentication from "../Authentication/Authentication";
 const { getToken, AuthException, checkLogin } = Authentication;
 
+const WSSUB_STATES = {
+  NOT_INIT: 0,
+  INIT: 1,
+  CONNECTING: 2,
+  OPEN: 3,
+  CLOSED: 4
+};
+
 /**
  * WSSub - class to handle redis subscribers using authenticated websockets
  */
@@ -57,6 +65,7 @@ class WSSub {
 
   initSocket = () => {
     if (this.websocket) return this;
+    this.status = WSSUB_STATES.INIT;
 
     const { url, onOpen, onClose, onError, onMessage, onAuthError } = this;
 
@@ -78,6 +87,7 @@ class WSSub {
    * connection initialization
    */
   connect = () => {
+    this.status = WSSUB_STATES.CONNECTING;
     this.websocket.createSocket();
 
     return this;
@@ -87,6 +97,12 @@ class WSSub {
    * try to reconnect
    */
   reConnect = () => {
+    const { CONNECTING, OPEN } = WSSUB_STATES;
+
+    if ([CONNECTING, OPEN].includes(this.status)) return;
+
+    this.status = CONNECTING;
+
     setTimeout(this.connect, this.RECONN_TIMEOUT);
   };
 
@@ -185,6 +201,8 @@ class WSSub {
    * triggered when the socket opens
    */
   onOpen = evt => {
+    this.status = WSSUB_STATES.OPEN;
+
     // send current subscriptions to the server
     this.reSubscribe();
     this.dispatch("onopen");
@@ -195,6 +213,7 @@ class WSSub {
    */
   onClose = evt => {
     this.dispatch("onclose");
+    this.status = WSSUB_STATES.CLOSED;
 
     // reconnect if the connection was not closed on purpose
     if (evt.code !== this.NORMAL_CLOSE_EVT) {
