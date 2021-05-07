@@ -16,18 +16,18 @@ export default class UndoManager {
     this.redoStack = new Queue(this.size);
   }
 
-  undo() {
+  undo(paramsObject) {
     const undoAbleAction = this.undoStack.pop();
     if (undoAbleAction) {
-      undoAbleAction.undoAction();
+      undoAbleAction.undoAction(paramsObject);
       this.redoStack.push(undoAbleAction);
     }
   }
 
-  redo() {
+  redo(paramsObject) {
     const undoAbleAction = this.redoStack.pop();
     if (undoAbleAction) {
-      undoAbleAction.doAction();
+      undoAbleAction.doAction(paramsObject);
       this.undoStack.push(undoAbleAction);
     }
   }

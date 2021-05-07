@@ -1,5 +1,6 @@
 import AuthWebSocket from "../AuthWebSocket/AuthWebSocket";
 import Authentication from "../Authentication/Authentication";
+import { throwError } from "rxjs";
 const { getToken, AuthException, checkLogin } = Authentication;
 
 const WSSUB_STATES = {
@@ -638,13 +639,13 @@ class WSSub {
    * @memberof Database
    */
   cloudFunction = (cloudFunction, func = "", args, callback = undefined) => {
-    checkLogin().then(res => {
+    return checkLogin().then(res => {
       if (!res) {
         throw new AuthException("login error");
       }
 
       const url = this.REST_API + "function/" + cloudFunction + "/";
-      fetch(url, {
+      return fetch(url, {
         method: "POST",
         body: JSON.stringify({ func: func, args: args }),
         headers: {
