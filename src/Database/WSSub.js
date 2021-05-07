@@ -1,6 +1,5 @@
 import AuthWebSocket from "../AuthWebSocket/AuthWebSocket";
 import Authentication from "../Authentication/Authentication";
-import { throwError } from "rxjs";
 const { getToken, AuthException, checkLogin } = Authentication;
 
 const WSSUB_STATES = {
