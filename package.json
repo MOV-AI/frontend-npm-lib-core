@@ -1,6 +1,6 @@
 {
   "name": "mov-fe-lib-core",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "The Mov.AI's core frontend library.",
   "main": "./dist/index.js",
   "scripts": {
