@@ -28,18 +28,24 @@ class Robot {
    * Subscribe to a robot property from redis
    *
    * @param {String} property: Property name
+   * @param {String} propValue: Property value
    * @param {Function} loadCallback: Function to be called on data load
    * @param {Function} updateCallback: Function to be called on data updated
    */
-  subscribe(property, loadCallback = () => {}, updateCallback = () => {}) {
+  subscribe({
+    property,
+    propValue = "*",
+    onLoad = () => {},
+    onUpdate = () => {}
+  }) {
     MasterDB.subscribe(
       {
         Scope: Robot.SCOPE,
         Name: this.id,
-        [property]: "*"
+        [property]: propValue
       },
-      update => updateCallback(update),
-      data => loadCallback(data)
+      update => onUpdate(update),
+      data => onLoad(data)
     );
   }
 
@@ -47,12 +53,13 @@ class Robot {
    * Unsubscribe to a robot property from redis
    *
    * @param {String} property: Property name
+   * @param {String} propValue: Property value
    */
-  unsubscribe(property) {
+  unsubscribe({ property, propValue = "*" }) {
     MasterDB.unsubscribe({
       Scope: Robot.SCOPE,
       Name: this.id,
-      [property]: "*"
+      [property]: propValue
     });
   }
 
