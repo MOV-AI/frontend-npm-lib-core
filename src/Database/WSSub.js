@@ -10,16 +10,22 @@ const WSSUB_STATES = {
   CLOSED: 4
 };
 
+const CONNECTION = {
+  online: 0,
+  offline: 1
+};
+
 /**
  * WSSub - class to handle redis subscribers using authenticated websockets
  */
 class WSSub {
   constructor() {
-    this.host = `${window.location.hostname}:${window.location.port}`;
     const isHttps = window.location.protocol === "https:";
+    this.host = `${window.location.hostname}:${window.location.port}`;
     this.url = `${isHttps ? "wss" : "ws"}://${this.host}/ws/subscriber`;
     this.REST_API = `${window.location.protocol}//${this.host}/api/v1/`;
     this.RECONN_TIMEOUT = 3000;
+    this.RECONN_VALIDATION_TIMEOUT = 5000;
     this.RESEND_TIMEOUT = 1000;
     this.RETRIES = 3;
     this.NORMAL_CLOSE_EVT = 1000;
@@ -31,6 +37,10 @@ class WSSub {
       LIST: "list",
       EXECUTE: "execute"
     };
+
+    this.onOnline = () => {};
+    this.onOffline = () => {};
+    this.connectionState = CONNECTION.online;
 
     this.websocket = null;
     // map with callbacks related with pattern subscription
@@ -261,6 +271,69 @@ class WSSub {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  /**
+   * Start offline validation
+   * @param {Object} callback
+   *  {
+   *    onOnline  -> function to be called when the user is back online
+   *    onOffline -> function to be called when the user is offline
+   *  }
+   * @returns MasterDB instance
+   */
+  offlineValidation = ({
+    onOnline = this.onOnline,
+    onOffline = this.onOffline
+  }) => {
+    this.onOnline = onOnline;
+    this.onOffline = onOffline;
+    // Set interval to send heartbeat
+    clearInterval(this.connectionCheckTimeout);
+    this.connectionCheckTimeout = setInterval(
+      this.checkConnection,
+      this.RECONN_VALIDATION_TIMEOUT
+    );
+    // Return MasterDB instance
+    return this;
+  };
+
+  /**
+   * Retry connection
+   * @returns connection (heartbeat) promise
+   */
+  retryConnection = () => {
+    // Check connection again
+    const connectionPromise = this.checkConnection();
+    // Clear interval to start again
+    clearInterval(this.connectionCheckTimeout);
+    this.connectionCheckTimeout = setInterval(
+      this.checkConnection,
+      this.RECONN_VALIDATION_TIMEOUT
+    );
+    // Return promise
+    return connectionPromise;
+  };
+
+  /**
+   * Check connection state by doing requests
+   * @returns Heartbeat fetch promise
+   */
+  checkConnection = () => {
+    return fetch(`/token-verify/`, {
+      method: "POST",
+      body: JSON.stringify({ token: "" })
+    })
+      .then(res => {
+        if (this.connectionState === CONNECTION.online) return;
+        this.connectionState = CONNECTION.online;
+        this.onOnline();
+      })
+      .catch(err => {
+        if (this.connectionState === CONNECTION.offline) return;
+        this.connectionState = CONNECTION.offline;
+        this.onOffline();
+      });
   };
 
   /**
