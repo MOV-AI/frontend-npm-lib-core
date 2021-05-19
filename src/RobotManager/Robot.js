@@ -8,11 +8,11 @@ class Robot {
     this.id = id;
     this.ip = ip;
     this.name = name;
-    this.logs = null;
+    this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
       timeout: null,
-      time: 5000
+      time: 3000
     };
     this.logSubscriptions = {};
     this.onGetIPCallback = () => {};
@@ -129,7 +129,7 @@ class Robot {
     if (this.logger.status !== LOGGER_STATUS.running) return; // Or if logger status is not "running"
     if (!this.ip) return; // Or if robot has no IP
     // Get logs from server
-    const url = `http://${this.ip}/api/v1/logs/?level=info,error,warning,critical&limit=1&tags=ui`;
+    const url = `http://${this.ip}/api/v1/logs/?level=info,error,warning,critical&limit=50&tags=ui`;
     Rest.get({ url })
       .then(response => {
         if (!response || !response.data || !response.data.length) return;
