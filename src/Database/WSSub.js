@@ -729,7 +729,10 @@ class WSSub {
           res
             .json()
             .then(data => callback(data))
-            .catch(e => console.log(e));
+            .catch(e => {
+              console.log("cloudFunction error", e);
+              callback({ result: false, error: e });
+            });
         }
       });
     });
