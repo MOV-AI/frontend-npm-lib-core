@@ -17,8 +17,8 @@ class BroadcastChannel {
    * @param {Function} callback: function to be executed when the event is triggered
    */
   subscribe = (event, callback) => {
-    if (this.subscribed_events.hasOwnProperty(event)) return;
-    this.subscribed_events[event] = callback;
+    const currentEvents = this.subscribed_events[event] || [];
+    this.subscribed_events[event] = [...currentEvents, callback];
     console.log("BroadcastChannel subscribe to", event);
   };
 
@@ -72,8 +72,10 @@ class BroadcastChannel {
     // Ignore message if target is not appName
     if (messageData.target !== this.appName) return;
     // Call subscribed event callback
-    this.subscribed_events[messageData.event](messageData);
-    console.log("BroadcastChannel postMessage from", messageData.source);
+    this.subscribed_events[messageData.event].forEach(callback => {
+      callback(messageData);
+    });
+    console.log("BroadcastChannel _onMessage from", messageData.source);
   };
 }
 
