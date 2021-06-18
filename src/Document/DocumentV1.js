@@ -60,16 +60,12 @@ class DocumentV1 {
    */
   read = (apiVersion = "v1") => {
     const { type, name } = this;
-    const path = 
-      apiVersion === "v1" 
-      ? `v1/${type}/${name}/`
-      : `v2/db/${this.path}`;
+    const path =
+      apiVersion === "v1" ? `v1/${type}/${name}/` : `v2/db/${this.path}`;
 
     return Rest.get({ path }).then(data => {
       this.data = data;
-      return apiVersion === "v1" 
-        ? data
-        : data[type][name];
+      return apiVersion === "v1" ? data : data[type][name];
     });
   };
 
@@ -82,6 +78,18 @@ class DocumentV1 {
     const path = `v1/${type}/${name}/`;
 
     return Rest.put({ path, body });
+  };
+
+  /**
+   * Overwrite document using POST
+   * @param {Object} body : Request body
+   * @returns Request promise
+   */
+  overwrite = body => {
+    const { type, name } = this;
+    const path = `v1/${type}/${name}/`;
+
+    return Rest.post({ path, body: { data: { ...body } } });
   };
 
   /** Subscribers */
