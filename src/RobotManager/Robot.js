@@ -115,6 +115,14 @@ class Robot {
     if (Object.keys(this.logSubscriptions).length === 0) this.stopLogger();
   }
 
+  /**
+   * Refresh logs
+   */
+  refreshLogs() {
+    clearTimeout(this.logger.timeout);
+    this._getLogs();
+  }
+
   //========================================================================================
   /*                                                                                      *
    *                                   Private functions                                  *
