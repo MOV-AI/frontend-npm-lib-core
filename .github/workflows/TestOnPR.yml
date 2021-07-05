@@ -18,13 +18,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          persist-​credentials: false
-      - uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.BB_SSH_PRIVATE_KEY }}
       - run: npm ci --loglevel verbose
       - run: npm run test
-      - run: npm run coverage
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
 
-      
