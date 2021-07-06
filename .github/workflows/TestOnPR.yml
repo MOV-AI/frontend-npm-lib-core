@@ -25,6 +25,9 @@ jobs:
         run: npm ci --loglevel verbose
       - name: Build
         run: npm run build
+      - name: Check NPM log on failure
+        if: ${{ failure() }}
+        run: cat /github/home/.npm/_logs/*.log
       - name: Run tests
         run: npm run test
       - name: Publish
