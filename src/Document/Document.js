@@ -1,5 +1,6 @@
 import DocumentV1 from "./DocumentV1";
 import DocumentV2 from "./DocumentV2";
+import Rest from "../Rest/Rest";
 
 const withDocVersion = function (docVersion) {
   return {
@@ -52,6 +53,29 @@ class Document {
     const path = `${workspace}/${type}/${name}/${version}`;
 
     return { workspace, type, name, version, path };
+  }
+
+  /**
+   * Check if document exists in redis or archive
+   *
+   * @param {*} data
+   * {
+   *  name      : document name
+   *  scope     : document scope (Annotation, Callback, ...)
+   *  version   : document version
+   *  workspace : workspace (global, user1, user2, ...)
+   * }
+   * @returns {Boolean} True if document already exists and False otherwise
+   */
+  static exists({ name, scope, version, workspace = "global" }) {
+    const path = `v2/db/${workspace}/${scope}/${name}/${version}`;
+    return Rest.get({ path })
+      .then(data => {
+        return !!data[scope];
+      })
+      .catch(err => {
+        return err.status === 500 ? false : true;
+      });
   }
 }
 
