@@ -126,9 +126,7 @@ RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
   const path = `v1/function/${cbName}/`;
   const body = { func, args };
 
-  return RestBase.post({ path, body, customHeaders }).then(response =>
-    response.json()
-  );
+  return RestBase.post({ path, body, customHeaders });
 };
 
 RestBase.validScope = scope => ["global", "fleet"].includes(scope);
