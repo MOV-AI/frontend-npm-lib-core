@@ -14,7 +14,7 @@ on:
 
 jobs:
   Deploy-NPM-Component:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == false
     runs-on: ubuntu-20.04
     container:
       image: registry.cloud.mov.ai/devops/npm-buildserver:latest
