@@ -12,6 +12,7 @@ on:
 jobs:
   # required, as github uses a dynamic user on each run to checkout and execute. It causes permissions issues.
   Find-Container-Info:
+    if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     outputs:
       containerUser: ${{ steps.get-user.outputs.containerUser }}
