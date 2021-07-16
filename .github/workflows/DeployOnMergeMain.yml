@@ -13,6 +13,17 @@ on:
       - 'package-lock.json'
 
 jobs:
+
+  configure:
+    runs-on: ubuntu-latest
+    outputs:
+      containerUser: ${{ steps.get-user.outputs.containerUser }}
+    
+    steps:
+      - id: get-user
+        run: echo "::set-output name=containerUser::`id -u`:`id -g`"
+    
+
   Deploy-NPM-Component:
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-20.04
@@ -21,12 +32,13 @@ jobs:
       credentials:
         username: ${{secrets.PORTUS_APP_USER}} 
         password: ${{secrets.PORTUS_APP_TOKEN}}
+      options: --user ${{ needs.configure.outputs.containerUser }}
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
     - name: Checkout    
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         token: ${{ secrets.NPM_TOKEN }}
 
