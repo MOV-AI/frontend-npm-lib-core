@@ -25,6 +25,7 @@ jobs:
     
 
   Deploy-NPM-Component:
+    needs: configure
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-20.04
     container:
