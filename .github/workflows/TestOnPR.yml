@@ -42,6 +42,5 @@ jobs:
       if: ${{ failure() }}
       run: cat /github/home/.npm/_logs/*.log
 
-    # temporary comment till tests are fixed
-    #- name: Run tests
-    #  run: npm run test
+    - name: Run tests
+      run: npm run test
