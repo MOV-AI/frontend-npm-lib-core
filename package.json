@@ -1,5 +1,5 @@
 {
-  "name": "mov-fe-lib-core",
+  "name": "@mov-ai/mov-fe-lib-core",
   "version": "1.0.26",
   "description": "The Mov.AI's core frontend library.",
   "main": "./dist/index.js",

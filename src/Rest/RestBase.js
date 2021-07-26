@@ -2,7 +2,7 @@ const RestBase = {};
 
 /**
  * Encodes the values of an object
- * @param {Object} data Object to encode
+ * @param {Object} data - Object to encode
  */
 RestBase.encodeURI = data => {
   const output = {};
@@ -14,7 +14,7 @@ RestBase.encodeURI = data => {
 
 /**
  * Get composed url
- * @param {String} path Relative path
+ * @param {String} path - Relative path
  */
 RestBase.getUrl = ({ path, search = {} }) => {
   const host = `${window.location.hostname}:${window.location.port}`;
@@ -28,9 +28,9 @@ RestBase.getUrl = ({ path, search = {} }) => {
 
 /**
  * Execute request
- * @param {String} path Relative path
- * @param {String} method Request method
- * @param {Object} body Request payload
+ * @param {String} path - Relative path
+ * @param {String} method - Request method
+ * @param {Object} body - Request payload
  */
 RestBase._request = ({
   url,
@@ -61,8 +61,8 @@ RestBase._request = ({
 
 /**
  * Execute GET request
- * @param {String} path Relative path
- * @param {String} search Search parameters
+ * @param {String} path - Relative path
+ * @param {String} search - Search parameters
  */
 
 RestBase.get = ({ url, path, search, customHeaders = {} }) => {
@@ -71,8 +71,8 @@ RestBase.get = ({ url, path, search, customHeaders = {} }) => {
 
 /**
  * Execute POST request
- * @param {String} path Relative path
- * @param {Object} body Request payload
+ * @param {String} path - Relative path
+ * @param {Object} body - Request payload
  */
 RestBase.post = ({ url, path, body, customHeaders = {} }) => {
   const method = "POST";
@@ -82,8 +82,8 @@ RestBase.post = ({ url, path, body, customHeaders = {} }) => {
 
 /**
  * Execute PUT request
- * @param {String} path Relative path
- * @param {Object} body Request payload
+ * @param {String} path - Relative path
+ * @param {Object} body - Request payload
  */
 RestBase.put = ({ url, path, body, customHeaders = {} }) => {
   const method = "PUT";
@@ -93,7 +93,7 @@ RestBase.put = ({ url, path, body, customHeaders = {} }) => {
 
 /**
  * Execute DELETE request
- * @param {String} path Relative path
+ * @param {String} path - Relative path
  */
 RestBase.delete = ({ url, path, body, customHeaders = {} }) => {
   const method = "DELETE";
@@ -103,9 +103,9 @@ RestBase.delete = ({ url, path, body, customHeaders = {} }) => {
 
 /**
  * Upload file to a specific Package
- * @param {String} packageName Package name
- * @param {String} key Key to insert in the package
- * @param {String} value Value of the key
+ * @param {String} packageName - Package name
+ * @param {String} key - Key to insert in the package
+ * @param {String} value - Value of the key
  */
 RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
   const path = `v1/upload/${packageName}/`;
@@ -118,9 +118,9 @@ RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
 
 /**
  * Execute remote procedure call
- * @param {String} cbName Callback name
- * @param {String} func Function in the callback
- * @param {Object} args Args to pass to the function
+ * @param {String} cbName - Callback name
+ * @param {String} func - Function in the callback
+ * @param {Object} args - Args to pass to the function
  */
 RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
   const path = `v1/function/${cbName}/`;
