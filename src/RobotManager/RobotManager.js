@@ -5,6 +5,8 @@ import Robot from "./Robot";
 class RobotManager {
   constructor() {
     if (instance) return instance;
+    this.isDataLoaded = false;
+    this.subscribedOnDataLoadList = [];
     this.randomId = Util.randomGuid();
     this.robots = {};
     this.cachedRobots = {};
@@ -17,14 +19,21 @@ class RobotManager {
       { Scope: "Robot", RobotName: "*", IP: "*" },
       () => {},
       data => {
+        this.isDataLoaded = true;
         if (data.value) {
           this.cachedRobots = data.value.Robot;
         }
+        this.subscribedOnDataLoadList.forEach(cb => cb(this.cachedRobots));
       }
     );
   }
 
-  getAll() {
+  getAll(onDataLoaded = () => {}) {
+    if (this.isDataLoaded) {
+      onDataLoaded(this.cachedRobots);
+    } else {
+      this.subscribedOnDataLoadList.push(onDataLoaded);
+    }
     return this.cachedRobots;
   }
 
