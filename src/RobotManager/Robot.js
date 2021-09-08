@@ -1,13 +1,15 @@
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
 import Rest from "../Rest/Rest";
+import Document from "../Document/Document";
 import { LOGGER_STATUS } from "../Utils/constants";
 
 class Robot {
-  constructor(id, ip = "", name = "") {
+  constructor(id, data = { IP: "", RobotName: "" }) {
     this.id = id;
-    this.ip = ip;
-    this.name = name;
+    this.ip = data.IP;
+    this.name = data.RobotName;
+    this.data = data;
     this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
@@ -16,6 +18,15 @@ class Robot {
     };
     this.logSubscriptions = {};
     this.onGetIPCallback = () => {};
+    this.api = new Document(
+      {
+        workspace: "global",
+        type: "Robot",
+        name: this.id,
+        version: "-"
+      },
+      "v2"
+    );
   }
 
   //========================================================================================
@@ -60,6 +71,20 @@ class Robot {
       Scope: Robot.SCOPE,
       Name: this.id,
       [property]: propValue
+    });
+  }
+
+  /**
+   * Get robot data from redis
+   */
+  getData() {
+    this.api.read().then(data => {
+      const robotData = data?.Robot?.[this.id];
+      if (robotData) {
+        this.data = robotData;
+        this.ip = robotData.IP;
+        this.name = robotData.RobotName;
+      }
     });
   }
 
