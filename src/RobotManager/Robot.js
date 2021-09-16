@@ -17,6 +17,7 @@ class Robot {
       time: 3000
     };
     this.logSubscriptions = {};
+    this.dataSubscriptions = {};
     this.onGetIPCallback = () => {};
     this.api = new Document(
       {
@@ -114,6 +115,26 @@ class Robot {
   stopLogger() {
     this.logger.status = LOGGER_STATUS.paused;
     clearTimeout(this.logger.timeout);
+  }
+
+  /**
+   * Subscribe to the robot logs
+   *
+   * @param {Function} callback: Function to be called on get logs
+   */
+  subscribeToData(callback) {
+    const subscriptionId = Util.randomGuid();
+    this.dataSubscriptions[subscriptionId] = { send: callback };
+    return subscriptionId;
+  }
+
+  /**
+   * Send updated data to subscribed components
+   */
+  sendUpdates() {
+    Object.keys(this.dataSubscriptions).forEach(key => {
+      this.dataSubscriptions[key].send(this.data);
+    });
   }
 
   /**
