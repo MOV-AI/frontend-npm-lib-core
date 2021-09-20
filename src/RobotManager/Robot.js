@@ -1,13 +1,15 @@
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
 import Rest from "../Rest/Rest";
+import Document from "../Document/Document";
 import { LOGGER_STATUS } from "../Utils/constants";
 
 class Robot {
-  constructor(id, ip = "", name = "") {
+  constructor(id, data = { IP: "", RobotName: "" }) {
     this.id = id;
-    this.ip = ip;
-    this.name = name;
+    this.ip = data.IP;
+    this.name = data.RobotName;
+    this.data = data;
     this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
@@ -15,7 +17,17 @@ class Robot {
       time: 3000
     };
     this.logSubscriptions = {};
+    this.dataSubscriptions = {};
     this.onGetIPCallback = () => {};
+    this.api = new Document(
+      {
+        workspace: "global",
+        type: "Robot",
+        name: this.id,
+        version: "-"
+      },
+      "v2"
+    );
   }
 
   //========================================================================================
@@ -64,6 +76,20 @@ class Robot {
   }
 
   /**
+   * Get robot data from redis
+   */
+  getData() {
+    this.api.read().then(data => {
+      const robotData = data?.Robot?.[this.id];
+      if (robotData) {
+        this.data = robotData;
+        this.ip = robotData.IP;
+        this.name = robotData.RobotName;
+      }
+    });
+  }
+
+  /**
    * Unsubscribe to a robot property from redis
    *
    * @param {Function} callback: Function to be called on robot IP data load
@@ -89,6 +115,26 @@ class Robot {
   stopLogger() {
     this.logger.status = LOGGER_STATUS.paused;
     clearTimeout(this.logger.timeout);
+  }
+
+  /**
+   * Subscribe to the robot logs
+   *
+   * @param {Function} callback: Function to be called on get logs
+   */
+  subscribeToData(callback) {
+    const subscriptionId = Util.randomGuid();
+    this.dataSubscriptions[subscriptionId] = { send: callback };
+    return subscriptionId;
+  }
+
+  /**
+   * Send updated data to subscribed components
+   */
+  sendUpdates() {
+    Object.keys(this.dataSubscriptions).forEach(key => {
+      this.dataSubscriptions[key].send(this.data);
+    });
   }
 
   /**
