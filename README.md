@@ -1,5 +1,7 @@
 # MOV.AI Core
 
+![Movai](https://www.mov.ai/wp-content/uploads/2021/06/MOV.AI-logo-3.png)
+
 The Mov.AI's core frontend library.
 
 Here we place all reusable/common code regarding frontend.
