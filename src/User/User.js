@@ -58,6 +58,11 @@ class User {
     const data = await this.getData();
     return data?.response?.Superuser || false;
   };
+
+  getAllowedApps = async () => {
+    const data = await this.getData();
+    return data?.response?.Resources?.Applications || [];
+  };
 }
 
 export default User;

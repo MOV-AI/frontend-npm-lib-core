@@ -9,13 +9,15 @@ Authentication.AuthException = function (message) {
 };
 
 Authentication.getToken = () => {
-  const token = window.localStorage.getItem("movai.token");
-  return token ? token : false;
+  return window.localStorage.getItem("movai.token") || false;
 };
 
 Authentication.getRefreshToken = () => {
-  const refreshToken = window.localStorage.getItem("movai.refreshToken");
-  return refreshToken ? refreshToken : false;
+  return window.localStorage.getItem("movai.refreshToken") || false;
+};
+
+Authentication.getRememberToken = () => {
+  return window.localStorage.getItem("movai.tokenRemember") || false;
 };
 
 Authentication.getTokenData = () => {
@@ -40,82 +42,82 @@ Authentication.getTokenData = () => {
   }
 };
 
-Authentication.login = async (username, password, remember) => {
+Authentication.getSessionFlag = () => {
+  return window.sessionStorage.getItem("movai.session") || false;
+};
+
+Authentication.storeTokens = (data, remember) => {
+  window.localStorage.setItem("movai.token", data["access_token"]);
+  window.localStorage.setItem("movai.refreshToken", data["refresh_token"]);
+  window.localStorage.setItem(
+    "movai.tokenRemember",
+    remember == "undefined" ? false : remember
+  );
+  window.sessionStorage.setItem("movai.session", true);
+};
+
+Authentication.deleteTokens = () => {
   // Cleanup...
   window.localStorage.removeItem("movai.token");
   window.localStorage.removeItem("movai.refreshToken");
   window.localStorage.removeItem("movai.tokenRemember");
   window.sessionStorage.removeItem("movai.session");
+};
 
-  let headers = {};
-  headers["Content-Type"] = "application/json";
-
-  const url = `/token-auth/`;
-
+Authentication.login = async (username, password, remember = false) => {
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        username: username,
-        password: password,
-        remember: remember
-      })
-    });
+    Authentication.deleteTokens();
+
+    const url = `/token-auth/`;
+    const body = {
+      username: username,
+      password: password,
+      remember: remember
+    };
+
+    const response = await Authentication.request({ url, body });
 
     const { status } = response;
     const contentType = response.headers.get("content-type");
-    const isJsonType = contentType && contentType.includes("application/json");
-    let data = 
-      isJsonType 
-        ? await response.json() 
-        : { error: response.statusText };
+    const isJsonType = contentType?.includes("application/json");
+    const data = isJsonType
+      ? await response.json()
+      : { error: response.statusText };
 
     if (status === 200) {
-      window.localStorage.setItem("movai.token", data["access_token"]);
-      window.localStorage.setItem("movai.refreshToken", data["refresh_token"]);
-      window.localStorage.setItem(
-        "movai.tokenRemember",
-        remember == "undefined" ? false : remember
-      );
-      window.sessionStorage.setItem("movai.session", true);
+      Authentication.storeTokens(data, remember);
     }
 
     return data;
   } catch (e) {
     // Returns exception error message
-    return { error: e.toString() }
+    return { error: e.toString() };
   }
 };
 
 Authentication.logout = redirect => {
-  window.localStorage.removeItem("movai.token");
-  window.localStorage.removeItem("movai.refreshToken");
-  window.localStorage.removeItem("movai.tokenRemember");
-  window.sessionStorage.removeItem("movai.session");
+  Authentication.deleteTokens();
   window.location.replace(redirect || window.location.origin);
 };
 
 Authentication.checkLogin = async () => {
-  const token = window.localStorage.getItem("movai.token");
-  const refreshToken = window.localStorage.getItem("movai.refreshToken");
-  const tokenRemember = window.localStorage.getItem("movai.tokenRemember");
-  const sessionFlag = window.sessionStorage.getItem("movai.session");
+  const token = Authentication.getToken();
+  const refreshToken = Authentication.getRefreshToken();
+  const tokenRemember = Authentication.getRememberToken();
+  const sessionFlag = Authentication.getSessionFlag();
 
   if (token === null || refreshToken === null) {
     return false;
   }
 
-  let tokenData = null;
   try {
-    tokenData = jwtDecode(token);
+    const tokenData = jwtDecode(token);
+    // Check if token expired
+    if (tokenData["exp"] > new Date().getTime() / 1000) {
+      return true;
+    }
   } catch (e) {
     return false;
-  }
-
-  // Check if token expired
-  if (tokenData["exp"] > new Date().getTime() / 1000) {
-    return true;
   }
 
   // Check SessionStorage flag
@@ -124,46 +126,42 @@ Authentication.checkLogin = async () => {
     return false;
   }
 
-  // Token has expired... Get new Token
-  if (refreshToken) {
-    // Try to get new token
-    try {
-      // Refresh Token
-      const refreshTokenData = jwtDecode(refreshToken);
-      if (refreshTokenData["exp"] < new Date().getTime() / 1000) {
-        throw "refresh token has expired";
+  return await Authentication.refreshTokens();
+};
+
+Authentication.request = ({ url, body }) => {
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+};
+
+Authentication.refreshTokens = async (remember = false) => {
+  const refreshToken = Authentication.getRefreshToken();
+
+  const url = `/token-refresh/`;
+  const body = {
+    token: refreshToken
+  };
+
+  return Authentication.request({ url, body })
+    .then(response => {
+      if (response.status != 200) {
+        throw new Error("Not Allowed");
       }
-
-      const url = `/token-refresh/`;
-      const headers = { "Content-Type": "application/json" };
-      const response = await fetch(url, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ token: refreshToken })
-      });
-
-      const { status } = response;
-      const contentType = response.headers.get("content-type");
-      const isJsonType = contentType && contentType.includes("application/json");
-      let data = 
-        isJsonType 
-          ? await response.json() 
-          : null;
-
-      if (status === 200 && data) {
-        window.localStorage.setItem("movai.token", data["access_token"]);
-        window.localStorage.setItem(
-          "movai.refreshToken",
-          data["refresh_token"]
-        );
-        return true;
-      }
-    } catch (e) {
-      // Pass
-    }
-  }
-
-  return false;
+      return response.json();
+    })
+    .then(data => {
+      Authentication.storeTokens(data, remember);
+      return true;
+    })
+    .catch(error => {
+      Authentication.deleteTokens();
+      return false;
+    });
 };
 
 export default Authentication;
