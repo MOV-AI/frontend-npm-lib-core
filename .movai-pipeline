@@ -1,6 +1,0 @@
----
--
-    name: movai-core-npm
-    stack: nodejs
-    auto: true
-    lib: true
