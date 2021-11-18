@@ -44,7 +44,7 @@ Sometimes we want to insert undoAbleActions in the queue of the UndoManager.
 let state = 4;
 const undoManager = new UndoManager();
 undoManager.addIt(addOne); // state = 4, queue : [addOne]
-undoManager.doIt(addTree); // state = 4, queue : [addOne, addTree]
+undoManager.addIt(addTree); // state = 4, queue : [addOne, addTree]
 undoManager.undo(); // state = 1, queue : [addOne]
 undoManager.undo(); // state = 0, queue : []
 undoManager.redo(); // state = 1, queue : [addOne]
