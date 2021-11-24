@@ -176,7 +176,7 @@ class WSSub {
       // stringify the message before sending it
       // try to resend if the connection is not yet open
       this.getState() !== WebSocket.OPEN
-         ? setTimeout(this.send, this.RESEND_TIMEOUT, message, retry + 1)
+        ? setTimeout(this.send, this.RESEND_TIMEOUT, message, retry + 1)
         : this.websocket.send(JSON.stringify(message));
     } catch (error) {
       console.error(error);
@@ -211,7 +211,6 @@ class WSSub {
    * triggered when the socket opens
    */
   onOpen = evt => {
-
     this.status = WSSUB_STATES.OPEN;
 
     // send current subscriptions to the server
