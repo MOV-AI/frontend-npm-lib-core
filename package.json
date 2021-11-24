@@ -1,6 +1,6 @@
 {
   "name": "@mov-ai/mov-fe-lib-core",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "The Mov.AI's core frontend library.",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mov-ai"
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "build": "webpack --mode=production",
-    "buildDev": "webpack --mode=development --watch=true",
+    "buildDev": "webpack --mode=development --watch",
     "clean": "rm -r node_modules; rm package-lock.json"
   },
   "repository": {
