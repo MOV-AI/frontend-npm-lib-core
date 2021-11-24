@@ -350,8 +350,11 @@ class WSSub {
 
     this.initSocket()
       .addSubscriberCallback(callback, _pattern)
-      .addEventCallback(SUBSCRIBE, evt_callback, _pattern)
-      .send(message);
+      .addEventCallback(SUBSCRIBE, evt_callback, _pattern);
+
+      if(this.getState() === WebSocket.OPEN){
+        this.send(message);
+      }
   };
 
   /**

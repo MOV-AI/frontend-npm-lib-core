@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "build": "webpack --mode=production",
-    "buildDev": "webpack --mode=development --watch=true",
+    "buildDev": "webpack --mode=development --watch",
     "clean": "rm -r node_modules; rm package-lock.json"
   },
   "repository": {
