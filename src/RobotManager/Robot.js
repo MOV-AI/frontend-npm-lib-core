@@ -131,9 +131,9 @@ class Robot {
   /**
    * Send updated data to subscribed components
    */
-  sendUpdates() {
+  sendUpdates(_event) {
     Object.keys(this.dataSubscriptions).forEach(key => {
-      this.dataSubscriptions[key].send(this.data);
+      this.dataSubscriptions[key].send(this.data, _event);
     });
   }
 
@@ -159,6 +159,16 @@ class Robot {
     if (!subscriptionId || !this.logSubscriptions[subscriptionId]) return;
     delete this.logSubscriptions[subscriptionId];
     if (Object.keys(this.logSubscriptions).length === 0) this.stopLogger();
+  }
+
+  /**
+   * Unsubscribe to the robot data
+   *
+   * @param {String} subscriptionId: Subscription id that needs to be canceled
+   */
+  unsubscribeToData(subscriptionId) {
+    if (!subscriptionId || !this.dataSubscriptions[subscriptionId]) return;
+    delete this.dataSubscriptions[subscriptionId];
   }
 
   /**

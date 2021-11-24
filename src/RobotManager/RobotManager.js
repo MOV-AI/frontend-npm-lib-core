@@ -32,14 +32,16 @@ class RobotManager {
       data => {
         // Apply changes to update local robots
         const robots = data.key["Robot"];
-        this._applyChanges(robots);
+        const dataEventType = data.event;
+        this._applyChanges(robots, dataEventType);
+
         // Set changed robots
         const changedRobots = {};
         Object.keys(robots).forEach(robotId => {
           changedRobots[robotId] = this.cachedRobots[robotId];
         });
         // Call subscribed onChange functions
-        this.subscribedOnDataChange.forEach(cb => cb(changedRobots));
+        this.subscribedOnDataChange.forEach(cb => cb(changedRobots, dataEventType));
       },
       data => {
         this.isDataLoaded = true;
@@ -116,7 +118,7 @@ class RobotManager {
    * Apply robot changes to cachedRobots and robots
    * @param {Object} robots : Robots changes
    */
-  _applyChanges = robots => {
+  _applyChanges = (robots, _event) => {
     Object.keys(robots).forEach(robotId => {
       const obj = _get(robots, robotId, {});
       // Set robot object if nto yet created
@@ -130,7 +132,7 @@ class RobotManager {
         this.robots[robotId]["data"][key] = obj[key];
       });
       // Send updated data to subscribed components
-      this.robots[robotId].sendUpdates();
+      this.robots[robotId].sendUpdates(_event);
     });
   };
 }
