@@ -1,4 +1,4 @@
-import lodash from "lodash";
+import _isEmpty from "lodash/isEmpty";
 import { BehaviorSubject } from "rxjs";
 
 export default class DataManagerBase {
@@ -10,7 +10,7 @@ export default class DataManagerBase {
   }
 
   _initialize = () => {
-    if (lodash.isEmpty(this.models)) {
+    if (_isEmpty(this.models)) {
       throw new Error("No models added");
     }
 
