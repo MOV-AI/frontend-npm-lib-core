@@ -1,7 +1,8 @@
+import _get from "lodash/get";
+import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
 import Robot from "./Robot";
-import _get from "lodash/get";
 
 /**
  * RobotManager class : handles cached data and subscription
@@ -128,8 +129,8 @@ class RobotManager {
       }
       // Update cached and robot data attribute
       Object.keys(obj).forEach(key => {
-        this.cachedRobots[robotId][key] = obj[key];
-        this.robots[robotId]["data"][key] = obj[key];
+        this.cachedRobots[robotId][key] = _merge(this.cachedRobots[robotId][key], obj[key]);
+        this.robots[robotId]["data"][key] = _merge(this.robots[robotId]["data"][key], obj[key]);
       });
       // Send updated data to subscribed components
       this.robots[robotId].sendUpdates(_event);

@@ -1,5 +1,8 @@
 import { Subject, BehaviorSubject } from "rxjs";
-import lodash from "lodash";
+import _isEmpty from "lodash/isEmpty";
+import _get from "lodash/get";
+import _omit from "lodash/omit";
+import _merge from "lodash/merge";
 
 import Utils from "../../Utils/Utils";
 //import RestApi from "../../RestApi";
@@ -96,9 +99,9 @@ export default class BaseModel {
   removeEmpty = (obj, path) => {
     let new_obj = null;
 
-    if (lodash.isEmpty(lodash.get(obj, path, {}))) {
+    if (_isEmpty(_get(obj, path, {}))) {
       // remove empty
-      new_obj = lodash.omit(obj, path);
+      new_obj = _omit(obj, path);
 
       const up_path = path.split(".");
       // check up level is empty
@@ -115,7 +118,7 @@ export default class BaseModel {
    */
 
   _onDataChange = data => {
-    const obj = lodash.get(data, `key.${this.model}`, {});
+    const obj = _get(data, `key.${this.model}`, {});
 
     Object.keys(obj).forEach(key => {
       const entry = this._get_or_create(key);
@@ -124,15 +127,15 @@ export default class BaseModel {
         // deleting an entry
         const path = Object.keys(Utils.flattenObject(obj[key]))[0];
 
-        entry.obj = this.removeEmpty(lodash.omit(entry.obj, path), path);
+        entry.obj = this.removeEmpty(_omit(entry.obj, path), path);
 
         // completly remove object
-        if (lodash.isEmpty(entry.obj)) {
+        if (_isEmpty(entry.obj)) {
           this.remove(key);
         }
       } else {
         // updating an entry
-        lodash.merge(entry.obj, obj[key]);
+        _merge(entry.obj, obj[key]);
       }
 
       this._subject.next({ data: entry, event: data.event });
@@ -140,7 +143,7 @@ export default class BaseModel {
   };
 
   _onDataLoad = data => {
-    const obj = lodash.get(data, `value.${this.model}`, {});
+    const obj = _get(data, `value.${this.model}`, {});
 
     Object.keys(obj).forEach(key => {
       /*this.add(key, {
@@ -148,7 +151,7 @@ export default class BaseModel {
         id: key
       });*/
       const entry = this._get_or_create(key);
-      lodash.merge(entry.obj, obj[key]);
+      _merge(entry.obj, obj[key]);
     });
 
     if (--this.nr_patterns <= 0) {
