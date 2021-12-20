@@ -11,8 +11,8 @@ class RobotManager {
   constructor() {
     if (instance) return instance;
     this.isDataLoaded = false;
-    this.subscribedOnDataLoad = [];
-    this.subscribedOnDataChange = [];
+    this.subscribedOnDataLoad = {};
+    this.subscribedOnDataChange = {};
     this.randomId = Util.randomGuid();
     this.robots = {};
     this.cachedRobots = {};
@@ -42,7 +42,9 @@ class RobotManager {
           changedRobots[robotId] = this.cachedRobots[robotId];
         });
         // Call subscribed onChange functions
-        this.subscribedOnDataChange.forEach(cb => cb(changedRobots, dataEventType));
+        Object.keys(this.subscribedOnDataChange).forEach(key => {
+          this.subscribedOnDataChange[key].callback(changedRobots, dataEventType);
+        });
       },
       data => {
         this.isDataLoaded = true;
@@ -53,7 +55,9 @@ class RobotManager {
           });
         }
         // Call subscribed onLoad functions
-        this.subscribedOnDataLoad.forEach(cb => cb(this.cachedRobots));
+        Object.keys(this.subscribedOnDataLoad).forEach(key => {
+          this.subscribedOnDataLoad[key].callback(this.cachedRobots);
+        });
       }
     );
   }
@@ -66,10 +70,22 @@ class RobotManager {
 
   /**
    * Subscribe to changes in robots
-   * @param {function} cb : Callback to be called for all property changes at any robot in DB
+   * @param {function} callback : Callback to be called for all property changes at any robot in DB
    */
-  subscribeToChanges(cb) {
-    this.subscribedOnDataChange.push(cb);
+  subscribeToChanges(callback) {
+    const subscriptionId = Util.randomGuid();
+    this.subscribedOnDataChange[subscriptionId] = { callback };
+    return subscriptionId;
+  }
+
+  /**
+   * Unsubscribe to changes in robots
+   *
+   * @param {String} subscriptionId: Subscription id that needs to be canceled
+   */
+  unsubscribeToChanges(subscriptionId) {
+    if (!subscriptionId || !this.subscribedOnDataChange[subscriptionId]) return;
+    delete this.subscribedOnDataChange[subscriptionId];
   }
 
   /**
@@ -77,11 +93,11 @@ class RobotManager {
    * @param {Function} onDataLoaded : Function to be called on data first load
    * @returns {Object} All cached robots
    */
-  getAll(onDataLoaded = () => {}) {
+  getAll(onDataLoaded = () => { }) {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedRobots);
     } else {
-      this.subscribedOnDataLoad.push(onDataLoaded);
+      this.subscribedOnDataLoad[subscriptionId] = { callback: onDataLoaded };
     }
     return this.cachedRobots;
   }
