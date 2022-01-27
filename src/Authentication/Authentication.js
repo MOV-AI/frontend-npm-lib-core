@@ -64,7 +64,12 @@ Authentication.deleteTokens = () => {
   window.sessionStorage.removeItem("movai.session");
 };
 
-Authentication.login = async (username, password, remember = false) => {
+Authentication.login = async (
+  username,
+  password,
+  remember = false,
+  ldap = ""
+) => {
   try {
     Authentication.deleteTokens();
 
@@ -127,6 +132,20 @@ Authentication.checkLogin = async () => {
   }
 
   return await Authentication.refreshTokens();
+};
+
+const INTERNAL_AUTHENTICATION = 0;
+Authentication.DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
+
+Authentication.getProviders = () => {
+  return new Promise(resolve =>
+    setTimeout(() => {
+      resolve([
+        { id: INTERNAL_AUTHENTICATION, text: "Internal" },
+        { id: 1, text: "Ldap" }
+      ]);
+    }, 2000)
+  );
 };
 
 Authentication.request = ({ url, body }) => {
