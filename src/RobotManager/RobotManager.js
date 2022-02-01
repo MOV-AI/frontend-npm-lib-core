@@ -43,7 +43,10 @@ class RobotManager {
         });
         // Call subscribed onChange functions
         Object.keys(this.subscribedOnDataChange).forEach(key => {
-          this.subscribedOnDataChange[key].callback(changedRobots, dataEventType);
+          this.subscribedOnDataChange[key].callback(
+            changedRobots,
+            dataEventType
+          );
         });
       },
       data => {
@@ -93,10 +96,11 @@ class RobotManager {
    * @param {Function} onDataLoaded : Function to be called on data first load
    * @returns {Object} All cached robots
    */
-  getAll(onDataLoaded = () => { }) {
+  getAll(onDataLoaded = () => {}) {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedRobots);
     } else {
+      const subscriptionId = Util.randomGuid();
       this.subscribedOnDataLoad[subscriptionId] = { callback: onDataLoaded };
     }
     return this.cachedRobots;
@@ -145,8 +149,14 @@ class RobotManager {
       }
       // Update cached and robot data attribute
       Object.keys(obj).forEach(key => {
-        this.cachedRobots[robotId][key] = _merge(this.cachedRobots[robotId][key], obj[key]);
-        this.robots[robotId]["data"][key] = _merge(this.robots[robotId]["data"][key], obj[key]);
+        this.cachedRobots[robotId][key] = _merge(
+          this.cachedRobots[robotId][key],
+          obj[key]
+        );
+        this.robots[robotId]["data"][key] = _merge(
+          this.robots[robotId]["data"][key],
+          obj[key]
+        );
       });
       // Send updated data to subscribed components
       this.robots[robotId].sendUpdates(_event);
