@@ -1,4 +1,6 @@
 import { Maybe } from "monet";
+import { ALPHANUMERIC_REGEX } from "./constants";
+import _isEmpty from "lodash/isEmpty";
 
 const Utils = {};
 
@@ -93,6 +95,16 @@ Utils.randomGuid = () => {
       v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+};
+
+Utils.validateEntityName = entityName => {
+  const validExpression = entityName.search(ALPHANUMERIC_REGEX) !== -1;
+  const notAllowed = ["__"];
+  return (
+    !_isEmpty(entityName) &&
+    validExpression &&
+    !notAllowed.includes(entityName.toLowerCase())
+  );
 };
 
 export default Utils;
