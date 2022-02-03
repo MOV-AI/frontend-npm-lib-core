@@ -97,13 +97,18 @@ Utils.randomGuid = () => {
   });
 };
 
-Utils.validateEntityName = entityName => {
+/**
+ * Document name validation
+ * @param {string} entityName
+ * @param {[string]} notAllowedWords
+ * @returns {boolean} Result of validation
+ */
+Utils.validateEntityName = (entityName, notAllowedWords = ["__"]) => {
   const validExpression = entityName.search(ALPHANUMERIC_REGEX) !== -1;
-  const notAllowed = ["__"];
   return (
     !_isEmpty(entityName) &&
     validExpression &&
-    !notAllowed.includes(entityName.toLowerCase())
+    !notAllowedWords.includes(entityName.toLowerCase())
   );
 };
 
