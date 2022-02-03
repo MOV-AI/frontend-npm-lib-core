@@ -13,3 +13,5 @@ export const LOGGER_STATUS = {
   paused: 2,
   terminated: 3
 };
+
+export const ALPHANUMERIC_REGEX = /^[\w][0-9A-Za-z-]*(_[0-9A-Za-z-]+)*[_]?$/;
