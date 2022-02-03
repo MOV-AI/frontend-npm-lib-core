@@ -101,10 +101,15 @@ Utils.randomGuid = () => {
  * Document name validation
  * @param {string} entityName
  * @param {[string]} notAllowedWords
+ * @param {string} regex
  * @returns {boolean} Result of validation
  */
-Utils.validateEntityName = (entityName, notAllowedWords = ["__"]) => {
-  const validExpression = entityName.search(ALPHANUMERIC_REGEX) !== -1;
+Utils.validateEntityName = (
+  entityName,
+  notAllowedWords = ["__"],
+  regex = ALPHANUMERIC_REGEX
+) => {
+  const validExpression = entityName.search(regex) !== -1;
   return (
     !_isEmpty(entityName) &&
     validExpression &&
