@@ -1,4 +1,6 @@
 import { Maybe } from "monet";
+import { ALPHANUMERIC_REGEX } from "./constants";
+import _isEmpty from "lodash/isEmpty";
 
 const Utils = {};
 
@@ -93,6 +95,26 @@ Utils.randomGuid = () => {
       v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+};
+
+/**
+ * Document name validation
+ * @param {string} entityName
+ * @param {[string]} notAllowedWords
+ * @param {string} regex
+ * @returns {boolean} Result of validation
+ */
+Utils.validateEntityName = (
+  entityName,
+  notAllowedWords = ["__"],
+  regex = ALPHANUMERIC_REGEX
+) => {
+  const validExpression = entityName.search(regex) !== -1;
+  return (
+    !_isEmpty(entityName) &&
+    validExpression &&
+    !notAllowedWords.includes(entityName.toLowerCase())
+  );
 };
 
 export default Utils;
