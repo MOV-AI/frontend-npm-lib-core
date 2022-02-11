@@ -191,12 +191,15 @@ class Robot {
   _getLogs() {
     if (Object.keys(this.logSubscriptions).length === 0) return; // Stop if there's no active subscriptions
     if (this.logger.status !== LOGGER_STATUS.running) return; // Or if logger status is not "running"
-    if (!this.ip) return; // Or if robot has no IP
+    if (!this.name) return; // Or if robot has no name
+
+    const protocol = window.location.protocol;
+    const host = window.location.hostname;
     // Get logs from server
-    const url = `http://${this.ip}/api/v1/logs/?level=info,error,warning,critical&limit=50&tags=ui`;
+    const url = `${protocol}//${host}/api/v1/logs/${this.name}?limit=22&level=info,error,warning,critical&tags=ui`;
     Rest.get({ url })
       .then(response => {
-        if (!response || !response.data || !response.data.length) return;
+        if (!response || !response.data) return;
         // Cache log data and send response to active subscriptions
         this.logs = response.data;
         for (const key in this.logSubscriptions) {
