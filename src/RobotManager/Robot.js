@@ -196,7 +196,7 @@ class Robot {
     const protocol = window.location.protocol;
     const host = window.location.hostname;
     // Get logs from server
-    const url = `${protocol}//${host}/api/v1/logs/${this.name}?limit=22&level=info,error,warning,critical&tags=ui`;
+    const url = `${protocol}//${host}/api/v1/logs/${this.name}?limit=50&level=info,error,warning,critical&tags=ui`;
     Rest.get({ url })
       .then(response => {
         if (!response || !response.data) return;
