@@ -160,7 +160,7 @@ class RobotManager {
           );
         } else {
           this.cachedRobots[robotId][key] = obj[key];
-          this.robots[robotId]["data"][key] = obj[key];
+          this.robots[robotId].data[key] = obj[key];
         }
       });
       // Send updated data to subscribed components
