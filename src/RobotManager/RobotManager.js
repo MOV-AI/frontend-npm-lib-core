@@ -142,21 +142,26 @@ class RobotManager {
   _applyChanges = (robots, _event) => {
     Object.keys(robots).forEach(robotId => {
       const obj = _get(robots, robotId, {});
-      // Set robot object if nto yet created
+      // Set robot object if not yet created
       if (!this.robots[robotId]) {
         this.cachedRobots[robotId] = obj;
         this.robots[robotId] = new Robot(robotId, obj);
       }
       // Update cached and robot data attribute
       Object.keys(obj).forEach(key => {
-        this.cachedRobots[robotId][key] = _merge(
-          this.cachedRobots[robotId][key],
-          obj[key]
-        );
-        this.robots[robotId]["data"][key] = _merge(
-          this.robots[robotId]["data"][key],
-          obj[key]
-        );
+        if (typeof obj[key] === "object") {
+          this.cachedRobots[robotId][key] = _merge(
+            this.cachedRobots[robotId][key],
+            obj[key]
+          );
+          this.robots[robotId].data[key] = _merge(
+            this.robots[robotId].data[key],
+            obj[key]
+          );
+        } else {
+          this.cachedRobots[robotId][key] = obj[key];
+          this.robots[robotId].data[key] = obj[key];
+        }
       });
       // Send updated data to subscribed components
       this.robots[robotId].sendUpdates(_event);
