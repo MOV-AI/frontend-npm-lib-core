@@ -154,8 +154,8 @@ class RobotManager {
             this.cachedRobots[robotId][key],
             obj[key]
           );
-          this.robots[robotId]["data"][key] = _merge(
-            this.robots[robotId]["data"][key],
+          this.robots[robotId].data[key] = _merge(
+            this.robots[robotId].data[key],
             obj[key]
           );
         } else {
