@@ -6,20 +6,13 @@
     const { Utils, Database, Authentication, MasterDB } = Movai;
     Utils.range(0, 10).forEach(x => console.log(x));
 
-    Authentication.login("pedro", "movai", true)
+    Authentication.login("movai", "movai", true)
       .then(data => {
         MasterDB.subscribe(
           { Scope: "Robot", Name: "*", Status: "*" },
           data => console.log("Data Update", data),
           data => console.log("Data", data)
         );
-        // setInterval(
-        //   () =>
-        //     MasterDB.cloudFunction("backend.Statistics", "getStats", [], res =>
-        //       console.log("Statistics", res)
-        //     ),
-        //   1000
-        // );
       })
       .catch(e => console.log("Caught exception", e));
   </script>
