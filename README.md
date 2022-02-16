@@ -18,6 +18,7 @@ It's main use will be to build Mov.AI applications.
 
 4) Test updates
 
+
 5) Build mov.ai core: 
 	* `npm run build`
 6) Push changes 
