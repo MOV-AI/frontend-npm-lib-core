@@ -2,6 +2,10 @@ import jwtDecode from "jwt-decode";
 
 const Authentication = {};
 
+const INTERNAL_AUTHENTICATION = "internal";
+const DEFAULT_PROVIDERS = [{ id: INTERNAL_AUTHENTICATION, text: "Internal" }];
+Authentication.DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
+
 Authentication.AuthException = function (message) {
   this.message = message;
   this.statusText = message;
@@ -68,7 +72,7 @@ Authentication.login = async (
   username,
   password,
   remember = false,
-  ldap = ""
+  domain = INTERNAL_AUTHENTICATION
 ) => {
   try {
     Authentication.deleteTokens();
@@ -77,7 +81,8 @@ Authentication.login = async (
     const body = {
       username: username,
       password: password,
-      remember: remember
+      remember: remember,
+      domain
     };
 
     const response = await Authentication.request({ url, body });
@@ -134,17 +139,30 @@ Authentication.checkLogin = async () => {
   return await Authentication.refreshTokens();
 };
 
-const INTERNAL_AUTHENTICATION = 0;
-Authentication.DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
-
 Authentication.getProviders = () => {
-  return new Promise(resolve =>
-    setTimeout(() => {
-      resolve([
-        { id: INTERNAL_AUTHENTICATION, text: "Internal" },
-        { id: 1, text: "Ldap" }
-      ]);
-    }, 2000)
+  const headers = {
+    "Content-Type": "application/json"
+  };
+  const url = `/status/`;
+
+  return new Promise((resolve, reject) =>
+    fetch(url, { headers })
+      .then(response => {
+        // request error
+        if (!response.ok) {
+          reject({ error: response.statusText });
+        }
+        return response
+          .json()
+          .then(resolve)
+          .catch(error => {
+            reject({ error });
+          });
+      })
+      .catch(error => {
+        console.log("Error Fetching Providers: ", error);
+        resolve(DEFAULT_PROVIDERS);
+      })
   );
 };
 
