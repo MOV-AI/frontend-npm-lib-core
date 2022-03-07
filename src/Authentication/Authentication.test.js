@@ -23,7 +23,7 @@ test("Get Providers when fetch is successfull", () => {
   });
 });
 
-test("Get Providers when API is not successfull", () => {
+test("Get Providers when fetch is not successfull", () => {
   fetch.mockImplementationOnce(() =>
     Promise.resolve({
       ok: false
