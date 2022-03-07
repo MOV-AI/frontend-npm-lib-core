@@ -3,7 +3,7 @@ import jwtDecode from "jwt-decode";
 const Authentication = {};
 
 const INTERNAL_AUTHENTICATION = "internal";
-const DEFAULT_PROVIDERS = [{ id: INTERNAL_AUTHENTICATION, text: "Internal" }];
+const DEFAULT_PROVIDERS = [INTERNAL_AUTHENTICATION];
 Authentication.DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
 
 Authentication.AuthException = function (message) {
@@ -144,24 +144,22 @@ Authentication.getProviders = () => {
     "Content-Type": "application/json"
   };
   const url = `/status/`;
-
-  return new Promise((resolve, reject) =>
+  return new Promise(resolve =>
     fetch(url, { headers })
       .then(response => {
-        // request error
         if (!response.ok) {
-          reject({ error: response.statusText });
+          throw new Error({ error: response.statusText });
         }
         return response
           .json()
           .then(resolve)
           .catch(error => {
-            reject({ error });
+            throw new Error({ error });
           });
       })
       .catch(error => {
         console.log("Error Fetching Providers: ", error);
-        resolve(DEFAULT_PROVIDERS);
+        resolve({ domains: DEFAULT_PROVIDERS });
       })
   );
 };
