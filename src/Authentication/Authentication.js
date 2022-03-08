@@ -2,6 +2,10 @@ import jwtDecode from "jwt-decode";
 
 const Authentication = {};
 
+const INTERNAL_AUTHENTICATION = "internal";
+const DEFAULT_PROVIDERS = [INTERNAL_AUTHENTICATION];
+Authentication.DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
+
 Authentication.AuthException = function (message) {
   this.message = message;
   this.statusText = message;
@@ -64,7 +68,12 @@ Authentication.deleteTokens = () => {
   window.sessionStorage.removeItem("movai.session");
 };
 
-Authentication.login = async (username, password, remember = false) => {
+Authentication.login = async (
+  username,
+  password,
+  remember = false,
+  domain = INTERNAL_AUTHENTICATION
+) => {
   try {
     Authentication.deleteTokens();
 
@@ -72,7 +81,8 @@ Authentication.login = async (username, password, remember = false) => {
     const body = {
       username: username,
       password: password,
-      remember: remember
+      remember: remember,
+      domain
     };
 
     const response = await Authentication.request({ url, body });
@@ -127,6 +137,31 @@ Authentication.checkLogin = async () => {
   }
 
   return await Authentication.refreshTokens();
+};
+
+Authentication.getProviders = () => {
+  const headers = {
+    "Content-Type": "application/json"
+  };
+  const url = `/status/`;
+  return new Promise(resolve =>
+    fetch(url, { headers })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error({ error: response.statusText });
+        }
+        return response
+          .json()
+          .then(resolve)
+          .catch(error => {
+            throw new Error({ error });
+          });
+      })
+      .catch(error => {
+        console.log("Error Fetching Providers: ", error);
+        resolve({ domains: DEFAULT_PROVIDERS });
+      })
+  );
 };
 
 Authentication.request = ({ url, body }) => {
