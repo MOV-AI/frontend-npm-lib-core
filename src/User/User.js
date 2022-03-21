@@ -1,9 +1,16 @@
-import Authentication from "../Authentication/Authentication";
+import Authentication, {
+  NEW_TOKEN_VERSION_ID
+} from "../Authentication/Authentication";
+import Rest from "../Rest/Rest";
+import PermissionSingleton from "../Permission/Permission";
+import Utils from "../Utils/Utils";
+
+const APPLICATIONS_SCOPE = "Applications";
 
 class User {
   constructor() {
-    this.baseUrl = `${window.location.origin}/api/v1/User`;
     this.tokenData = Authentication.getTokenData();
+    this.baseUrl = this.getBaseUrl();
     this.data = null;
     this.timestamp = null;
     this.TIMEOUT = 3000; // milisec
@@ -14,8 +21,6 @@ class User {
       "Content-Type": "application/json",
       Authorization: `Bearer ${Authentication.getToken()}`
     };
-    const { name } = this.tokenData.message;
-    const url = `${this.baseUrl}/${name}/`;
 
     return new Promise((resolve, reject) => {
       const currTime = new Date().getTime();
@@ -27,7 +32,7 @@ class User {
 
       this.timestamp = currTime;
 
-      fetch(url, { headers })
+      fetch(this.baseUrl, { headers })
         .then(response => {
           // request error
           if (!response.ok) {
@@ -39,7 +44,14 @@ class User {
             .json()
             .then(data => {
               this.data = data;
-              resolve({ response: data });
+              const userData = data?.info ?? data;
+              resolve({
+                response: {
+                  ...userData,
+                  Label: userData.account_name || userData.Label,
+                  Superuser: userData.super_user || userData.Superuser
+                }
+              });
             })
             .catch(error => {
               this.data = null;
@@ -55,14 +67,44 @@ class User {
   };
 
   isSuperUser = async () => {
-    const data = await this.getData();
-    return data?.response?.Superuser || false;
+    const { response: user } = await this.getData();
+    if (this.isNewToken()) {
+      return user?.info?.super_user ?? false;
+    }
+    return user?.Superuser || false;
   };
 
   getAllowedApps = async () => {
-    const data = await this.getData();
-    return data?.response?.Resources?.Applications || [];
+    const { response: user } = await this.getData();
+    const userWithPermissions = await User.withPermissions(user);
+
+    const applications =
+      userWithPermissions.permissionsByScope[APPLICATIONS_SCOPE];
+    console.log("applications: ", applications);
+    return applications || [];
   };
+
+  getBaseUrl = () => {
+    if (this.isNewToken()) {
+      const { domain_name, account_name } =
+        this.tokenData[NEW_TOKEN_VERSION_ID];
+      return `${window.location.origin}/api/v2/acl/${domain_name}/users/${account_name}/`;
+    }
+    const name = this.tokenData.message?.name;
+    if (!name) return ``;
+    return `${window.location.origin}/api/v1/User/${name}/`;
+  };
+
+  static withPermissions = async user => {
+    user["allRoles"] = await Rest.get({
+      path: "v1/Role/"
+    });
+    user["allResourcesPermissions"] = await PermissionSingleton.getAll();
+    user["resourcesPermissions"] = Utils.parseUserData(user);
+    return user;
+  };
+
+  isNewToken = () => !!this.tokenData[NEW_TOKEN_VERSION_ID];
 }
 
 export default User;

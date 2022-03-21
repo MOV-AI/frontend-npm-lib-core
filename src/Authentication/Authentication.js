@@ -1,5 +1,7 @@
 import jwtDecode from "jwt-decode";
 
+export const NEW_TOKEN_VERSION_ID = "v2";
+
 const Authentication = {};
 
 const INTERNAL_AUTHENTICATION = "internal";
@@ -27,15 +29,18 @@ Authentication.getRememberToken = () => {
 Authentication.getTokenData = () => {
   try {
     const token = Authentication.getToken();
-    const message = jwtDecode(token).message;
-
+    const decodedToken = jwtDecode(token);
     const tokenData = {
-      message: message,
+      message: decodedToken.message || { name: decodedToken.account_name },
       auth_token: false,
       refresh_token: Authentication.getRefreshToken(),
       error: false,
       access_token: token
     };
+    const isNewTokenVersion = !!decodedToken.domain_name;
+    if (isNewTokenVersion) {
+      tokenData[NEW_TOKEN_VERSION_ID] = decodedToken;
+    }
 
     return tokenData;
   } catch (error) {
