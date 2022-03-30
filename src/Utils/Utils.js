@@ -126,7 +126,7 @@ Utils.validateEntityName = (
 Utils.parseUserData = user => {
   const resourcesParsedData = [];
   const permissionsByResourceType = Utils.getPermissionsByScope(user);
-  user.permissionsByScope = permissionsByResourceType;
+  user.Resources = permissionsByResourceType;
   for (let [resourceType, resourcePermissions] of Object.entries(
     user.allResourcesPermissions
   )) {
@@ -167,10 +167,10 @@ Utils.parseUserData = user => {
  * @returns {object} Dictionary with list of permissions by scope
  */
 Utils.getPermissionsByScope = user => {
-  let userRoles = user["Role"] || user["roles"];
+  let userRoles = user.Role || user.roles || user.Roles;
   if (!Array.isArray(userRoles)) userRoles = [userRoles];
   return userRoles.reduce((prev, role) => {
-    const selectedRoleResources = user.allRoles?.[role]?.["Resources"] ?? {};
+    const selectedRoleResources = user.allRoles?.[role]?.Resources ?? {};
     Object.entries(selectedRoleResources).forEach(
       ([resourceType, permissions]) => {
         if (!prev[resourceType]) prev[resourceType] = [];

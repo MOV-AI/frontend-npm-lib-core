@@ -1,5 +1,6 @@
 import Rest from "../Rest/Rest";
 
+export const APPLICATIONS_PERMISSION_SCOPE = "Applications";
 class Permission {
   cachedPermissions;
 

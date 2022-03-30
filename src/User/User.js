@@ -2,10 +2,12 @@ import Authentication, {
   NEW_TOKEN_VERSION_ID
 } from "../Authentication/Authentication";
 import Rest from "../Rest/Rest";
-import PermissionSingleton from "../Permission/Permission";
+import PermissionSingleton, {
+  APPLICATIONS_PERMISSION_SCOPE
+} from "../Permission/Permission";
 import Utils from "../Utils/Utils";
 
-const APPLICATIONS_SCOPE = "Applications";
+export const INTERNAL_USER_API_ROUTE = "v2/InternalUser";
 
 class User {
   constructor() {
@@ -44,12 +46,12 @@ class User {
             .json()
             .then(data => {
               this.data = data;
-              const userData = data?.info ?? data;
+              const user = data?.info ?? data;
               resolve({
                 response: {
-                  ...userData,
-                  Label: userData.account_name || userData.Label,
-                  Superuser: userData.super_user || userData.Superuser
+                  ...user,
+                  Label: user.account_name || user.Label || user.AccountName,
+                  Superuser: user.super_user || user.Superuser || user.SuperUser
                 }
               });
             })
@@ -77,17 +79,19 @@ class User {
   getAllowedApps = async () => {
     const { response: user } = await this.getData();
     const userWithPermissions = await User.withPermissions(user);
-
-    const applications =
-      userWithPermissions.permissionsByScope[APPLICATIONS_SCOPE];
-    console.log("applications: ", applications);
-    return applications || [];
+    console.log("applications: ", userWithPermissions.Applications);
+    return userWithPermissions.Applications || [];
   };
 
   getBaseUrl = () => {
     if (this.isNewToken()) {
+      const internalDomains = ["internal", "internal2"];
       const { domain_name, account_name } =
         this.tokenData[NEW_TOKEN_VERSION_ID];
+
+      if (internalDomains.includes(domain_name))
+        return `${window.location.origin}/api/${INTERNAL_USER_API_ROUTE}/${account_name}/`;
+
       return `${window.location.origin}/api/v2/acl/${domain_name}/users/${account_name}/`;
     }
     const name = this.tokenData.message?.name;
@@ -95,12 +99,19 @@ class User {
     return `${window.location.origin}/api/v1/User/${name}/`;
   };
 
+  getCurrentUserWithPermissions = async () => {
+    const { response: user } = await this.getData();
+    const userWithPermissions = await User.withPermissions(user);
+    return userWithPermissions;
+  };
+
   static withPermissions = async user => {
-    user["allRoles"] = await Rest.get({
+    user.allRoles = await Rest.get({
       path: "v1/Role/"
     });
-    user["allResourcesPermissions"] = await PermissionSingleton.getAll();
-    user["resourcesPermissions"] = Utils.parseUserData(user);
+    user.allResourcesPermissions = await PermissionSingleton.getAll();
+    user.resourcesPermissions = Utils.parseUserData(user);
+    user.Applications = user.Resources[APPLICATIONS_PERMISSION_SCOPE];
     return user;
   };
 
