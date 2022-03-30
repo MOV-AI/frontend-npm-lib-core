@@ -130,13 +130,7 @@ Utils.parseUserData = user => {
   for (let [resourceType, resourcePermissions] of Object.entries(
     user.allResourcesPermissions
   )) {
-    let hasUserResource = false;
-    if (
-      user["Resources"] !== undefined &&
-      Object.keys(user["Resources"]).length !== 0
-    ) {
-      hasUserResource = user?.Resources?.[resourceType] ?? false;
-    }
+    const hasUserResource = user?.Resources?.[resourceType] ?? false;
 
     const resource = {
       name: resourcePermissions.Label || resourceType,
