@@ -5,6 +5,12 @@ export const NEW_TOKEN_VERSION_ID = "v2";
 const Authentication = {};
 
 const INTERNAL_AUTHENTICATION = "internal";
+const NEW_INTERNAL_AUTHENTICATION = "internal2";
+export const INTERNAL_AUTHENTICATIONS = [
+  INTERNAL_AUTHENTICATION,
+  NEW_INTERNAL_AUTHENTICATION
+];
+
 const DEFAULT_PROVIDERS = [INTERNAL_AUTHENTICATION];
 Authentication.DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
 
@@ -50,6 +56,8 @@ Authentication.getTokenData = () => {
     };
   }
 };
+
+Authentication.isNewToken = token => !!token[NEW_TOKEN_VERSION_ID];
 
 Authentication.getSessionFlag = () => {
   return window.sessionStorage.getItem("movai.session") || false;
