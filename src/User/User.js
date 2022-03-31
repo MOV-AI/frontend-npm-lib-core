@@ -65,7 +65,7 @@ class User {
   getAllowedApps = async () => {
     const { response: user } = await this.getData();
     const userWithPermissions = await User.withPermissions(user);
-    return userWithPermissions.Applications || [];
+    return userWithPermissions.Resources?.[APPLICATIONS_PERMISSION_SCOPE] || [];
   };
 
   getUserCall = () => {
@@ -83,7 +83,6 @@ class User {
 
   getCurrentUserWithPermissions = async () => {
     const { response: user } = await this.getData();
-    console.log("getCurrentUserWithPermissions: ", user);
     const userWithPermissions = await User.withPermissions(user);
     console.log("getCurrentUserWithPermissions after: ", userWithPermissions);
     return userWithPermissions;
@@ -93,7 +92,6 @@ class User {
     user.allRoles = await Role.getAll();
     user.allResourcesPermissions = await PermissionSingleton.getAll();
     user.resourcesPermissions = Utils.parseUserData(user);
-    user.Applications = user.Resources[APPLICATIONS_PERMISSION_SCOPE];
     return user;
   };
 
