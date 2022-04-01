@@ -78,7 +78,7 @@ class User {
     if (INTERNAL_AUTHENTICATIONS.includes(domain_name)) {
       return InternalUser.get(account_name);
     }
-    return AclObject.get(domain_name, account_name);
+    return AclObject.get({ domain_name, account_name });
   };
 
   getCurrentUserWithPermissions = async () => {

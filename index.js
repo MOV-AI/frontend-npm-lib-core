@@ -1,4 +1,7 @@
+import AclObject from "./src/AclObject/AclObject";
 import Authentication from "./src/Authentication/Authentication";
+import InternalUser from "./src/InternalUser/InternalUser";
+import Ldap from "./src/Ldap/Ldap";
 import { BROADCAST_EVENTS } from "./src/Utils/constants";
 import BroadcastChannel from "./src/BroadcastChannel/BroadcastChannel";
 import RobotManager from "./src/RobotManager/RobotManager";
@@ -19,7 +22,10 @@ import Snapshot from "./src/Snapshot/Snapshot";
 import Rest from "./src/Rest/Rest";
 
 export {
+  AclObject,
   Authentication,
+  InternalUser,
+  Ldap,
   Utils,
   Database,
   MasterDB,
