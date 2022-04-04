@@ -7,7 +7,7 @@ import PermissionSingleton, {
   APPLICATIONS_PERMISSION_SCOPE
 } from "../Permission/Permission";
 import Utils from "../Utils/Utils";
-import AclObject from "../AclObject/AclObject";
+import Acl from "../Acl/Acl";
 import InternalUser from "../InternalUser/InternalUser";
 import Role from "../Role/Role";
 
@@ -78,12 +78,13 @@ class User {
     if (INTERNAL_AUTHENTICATIONS.includes(domain_name)) {
       return InternalUser.get(account_name);
     }
-    return AclObject.get({ domain_name, account_name });
+    return Acl.get(domain_name, account_name);
   };
 
   getCurrentUserWithPermissions = async () => {
     const { response: user } = await this.getData();
     const userWithPermissions = await User.withPermissions(user);
+    console.log("getCurrentUserWithPermissions: ", userWithPermissions);
     return userWithPermissions;
   };
 

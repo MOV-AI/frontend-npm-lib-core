@@ -1,4 +1,4 @@
-import AclObject from "./src/AclObject/AclObject";
+import Acl from "./src/Acl/Acl";
 import Authentication from "./src/Authentication/Authentication";
 import InternalUser from "./src/InternalUser/InternalUser";
 import Ldap from "./src/Ldap/Ldap";
@@ -22,7 +22,7 @@ import Snapshot from "./src/Snapshot/Snapshot";
 import Rest from "./src/Rest/Rest";
 
 export {
-  AclObject,
+  Acl,
   Authentication,
   InternalUser,
   Ldap,

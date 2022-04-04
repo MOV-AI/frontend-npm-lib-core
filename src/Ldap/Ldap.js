@@ -1,4 +1,5 @@
 import Rest from "../Rest/Rest";
+import { ACL_API_ROUTE } from "../Acl/Acl";
 
 const LDAP_API_ROUTE = "v2/ldap/configuration";
 
@@ -42,6 +43,17 @@ class Ldap {
     Rest.delete({
       path: `${LDAP_API_ROUTE}/${domainName}/`
     });
+
+  static search = (domainName, resourceType, queryText = "") => {
+    if (!queryText) return Promise.resolve([]);
+    return Rest.get({
+      path: `${ACL_API_ROUTE}/${domainName}/${resourceType}_search/`,
+      search: { common_name: queryText }
+    }).catch(err => {
+      console.log("Error searching Ldap Data:", e.statusText);
+      throw e;
+    });
+  };
 
   static getProtocols = () => ({
     2: { id: 2, name: "PROTOCOL_SSLv3" },
