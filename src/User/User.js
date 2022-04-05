@@ -74,11 +74,11 @@ class User {
 
   /**
    * Reset user password
+   * @param {string} userId : userId to change password
    * @param {{new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
    */
-  resetPassword = async body => {
-    const userId = this.tokenData.message.name;
+  resetPassword = async (userId, body) => {
     return Rest.post({ path: `v1/User/${userId}/reset-password/`, body });
   };
 }
