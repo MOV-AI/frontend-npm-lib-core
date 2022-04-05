@@ -1,21 +1,26 @@
 import Authentication from "../Authentication/Authentication";
+import Rest from "../Rest/Rest";
 
 class User {
   constructor() {
-    this.baseUrl = `${window.location.origin}/api/v1/User`;
     this.tokenData = Authentication.getTokenData();
     this.data = null;
     this.timestamp = null;
     this.TIMEOUT = 3000; // milisec
   }
 
+  //========================================================================================
+  /*                                                                                      *
+   *                                    Public Methods                                    *
+   *                                                                                      */
+  //========================================================================================
+
+  /**
+   * Get user data
+   * @returns {Promise<User>}
+   */
   getData = () => {
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Authentication.getToken()}`
-    };
     const { name } = this.tokenData.message;
-    const url = `${this.baseUrl}/${name}/`;
 
     return new Promise((resolve, reject) => {
       const currTime = new Date().getTime();
@@ -27,24 +32,10 @@ class User {
 
       this.timestamp = currTime;
 
-      fetch(url, { headers })
+      Rest.get({ path: `v1/User/${name}/` })
         .then(response => {
-          // request error
-          if (!response.ok) {
-            reject({ error: response.statusText });
-          }
-
-          // parse response
-          response
-            .json()
-            .then(data => {
-              this.data = data;
-              resolve({ response: data });
-            })
-            .catch(error => {
-              this.data = null;
-              reject({ error });
-            });
+          this.data = response;
+          resolve({ response });
         })
         .catch(error => {
           // error while parsing request
@@ -54,14 +45,55 @@ class User {
     });
   };
 
+  /**
+   * Parse token to get superuser information
+   * @returns {boolean}
+   */
   isSuperUser = async () => {
     const data = await this.getData();
     return data?.response?.Superuser || false;
   };
 
+  /**
+   * Get allowed apps
+   * @returns {Promise<array>} List of allowed apps
+   */
   getAllowedApps = async () => {
     const data = await this.getData();
     return data?.response?.Resources?.Applications || [];
+  };
+
+  /**
+   * Change user password
+   * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
+   * @returns {Promise} Response promise
+   */
+  changePassword = async body => {
+    return Rest.post({ path: `v1/User/change-password/`, body });
+  };
+
+  /**
+   * Get authenticated username
+   * @returns {string} username
+   */
+  getUsername = () => {
+    return this.tokenData?.message?.name;
+  };
+
+  //========================================================================================
+  /*                                                                                      *
+   *                                    Static Methods                                    *
+   *                                                                                      */
+  //========================================================================================
+
+  /**
+   * Reset user password
+   * @param {string} userId : userId to change password
+   * @param {{new_password: string, confirm_password: string}} body : Request body
+   * @returns {Promise} Response promise
+   */
+  static resetPassword = async (userId, body) => {
+    return Rest.post({ path: `v1/User/${userId}/reset-password/`, body });
   };
 }
 
