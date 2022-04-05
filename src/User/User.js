@@ -81,6 +81,14 @@ class User {
   resetPassword = async (userId, body) => {
     return Rest.post({ path: `v1/User/${userId}/reset-password/`, body });
   };
+
+  /**
+   * Get authenticated username
+   * @returns {string} username
+   */
+  getUsername = () => {
+    return this.tokenData?.message?.name;
+  };
 }
 
 export default User;
