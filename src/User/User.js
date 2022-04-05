@@ -84,6 +84,7 @@ class User {
   getCurrentUserWithPermissions = async () => {
     const { response: user } = await this.getData();
     const userWithPermissions = await User.withPermissions(user);
+    /*For testing purposes - to be deleted after FP-1642 is merged */
     console.log("getCurrentUserWithPermissions: ", userWithPermissions);
     return userWithPermissions;
   };
