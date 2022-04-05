@@ -117,4 +117,61 @@ Utils.validateEntityName = (
   );
 };
 
+/**
+ * Build permissions
+ * @param {string} id
+ * @param {object} user
+ * @returns {[object]} List of permissions
+ */
+Utils.parseUserData = user => {
+  const resourcesParsedData = [];
+  const permissionsByResourceType = Utils.getPermissionsByScope(user);
+  user.Resources = permissionsByResourceType;
+  for (let [resourceType, resourcePermissions] of Object.entries(
+    user.allResourcesPermissions
+  )) {
+    const hasUserResource = user?.Resources?.[resourceType] ?? false;
+
+    const resource = {
+      name: resourcePermissions.Label || resourceType,
+      permissions: resourcePermissions.map(perm => {
+        const rolePermValue =
+          permissionsByResourceType[resourceType]?.includes(perm);
+        let permValue = rolePermValue;
+        if (hasUserResource !== false) {
+          permValue = hasUserResource.includes(perm);
+        }
+        return {
+          id: `${user.id}-${resourceType}-${perm}`,
+          name: perm,
+          roleDefault: rolePermValue,
+          resourceType: resourceType,
+          value: permValue
+        };
+      })
+    };
+    resourcesParsedData.push(resource);
+  }
+  return resourcesParsedData;
+};
+
+/**
+ * Get permissions by scope
+ * @param {object} user
+ * @returns {object} Dictionary with list of permissions by scope
+ */
+Utils.getPermissionsByScope = user => {
+  let userRoles = user.Role || user.roles || user.Roles;
+  if (!Array.isArray(userRoles)) userRoles = [userRoles];
+  return userRoles.reduce((prev, role) => {
+    const selectedRoleResources = user.allRoles?.[role]?.Resources ?? {};
+    Object.entries(selectedRoleResources).forEach(
+      ([resourceType, permissions]) => {
+        if (!prev[resourceType]) prev[resourceType] = [];
+        prev[resourceType] = [...prev[resourceType], ...permissions];
+      }
+    );
+    return prev;
+  }, {});
+};
 export default Utils;

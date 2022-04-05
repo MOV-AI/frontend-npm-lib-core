@@ -1,8 +1,16 @@
 import jwtDecode from "jwt-decode";
 
+export const NEW_TOKEN_VERSION_ID = "v2";
+
 const Authentication = {};
 
 const INTERNAL_AUTHENTICATION = "internal";
+const NEW_INTERNAL_AUTHENTICATION = "internal2";
+export const INTERNAL_AUTHENTICATIONS = [
+  INTERNAL_AUTHENTICATION,
+  NEW_INTERNAL_AUTHENTICATION
+];
+
 const DEFAULT_PROVIDERS = [INTERNAL_AUTHENTICATION];
 Authentication.DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
 
@@ -27,15 +35,18 @@ Authentication.getRememberToken = () => {
 Authentication.getTokenData = () => {
   try {
     const token = Authentication.getToken();
-    const message = jwtDecode(token).message;
-
+    const decodedToken = jwtDecode(token);
     const tokenData = {
-      message: message,
+      message: decodedToken.message || { name: decodedToken.account_name },
       auth_token: false,
       refresh_token: Authentication.getRefreshToken(),
       error: false,
       access_token: token
     };
+    const isNewTokenVersion = !!decodedToken.domain_name;
+    if (isNewTokenVersion) {
+      tokenData[NEW_TOKEN_VERSION_ID] = decodedToken;
+    }
 
     return tokenData;
   } catch (error) {
@@ -45,6 +56,8 @@ Authentication.getTokenData = () => {
     };
   }
 };
+
+Authentication.isNewToken = token => !!token[NEW_TOKEN_VERSION_ID];
 
 Authentication.getSessionFlag = () => {
   return window.sessionStorage.getItem("movai.session") || false;

@@ -15,3 +15,8 @@ export const LOGGER_STATUS = {
 };
 
 export const ALPHANUMERIC_REGEX = /^[\w][0-9A-Za-z-]*(_[0-9A-Za-z-]+)*[_]?$/;
+
+export const REQUEST_STATUS = {
+  SUCCESS: 200,
+  NOT_FOUND: 404
+};

@@ -1,5 +1,17 @@
-import Authentication from "../Authentication/Authentication";
+import Authentication, {
+  INTERNAL_AUTHENTICATIONS,
+  NEW_TOKEN_VERSION_ID
+} from "../Authentication/Authentication";
 import Rest from "../Rest/Rest";
+import PermissionSingleton, {
+  APPLICATIONS_PERMISSION_SCOPE
+} from "../Permission/Permission";
+import Utils from "../Utils/Utils";
+import Acl from "../Acl/Acl";
+import InternalUser from "../InternalUser/InternalUser";
+import Role from "../Role/Role";
+
+const USER_API_ROUTE = "v1/User";
 
 class User {
   constructor() {
@@ -20,8 +32,6 @@ class User {
    * @returns {Promise<User>}
    */
   getData = () => {
-    const { name } = this.tokenData.message;
-
     return new Promise((resolve, reject) => {
       const currTime = new Date().getTime();
 
@@ -32,10 +42,17 @@ class User {
 
       this.timestamp = currTime;
 
-      Rest.get({ path: `v1/User/${name}/` })
-        .then(response => {
-          this.data = response;
-          resolve({ response });
+      this.getUserCall()
+        .then(data => {
+          this.data = data;
+          const user = data?.info ?? data;
+          resolve({
+            response: {
+              ...user,
+              Label: user.account_name ?? user.Label ?? user.AccountName,
+              Superuser: user.super_user ?? user.Superuser ?? user.SuperUser
+            }
+          });
         })
         .catch(error => {
           // error while parsing request
@@ -50,8 +67,8 @@ class User {
    * @returns {boolean}
    */
   isSuperUser = async () => {
-    const data = await this.getData();
-    return data?.response?.Superuser || false;
+    const { response: user } = await this.getData();
+    return user?.Superuser ?? false;
   };
 
   /**
@@ -59,8 +76,49 @@ class User {
    * @returns {Promise<array>} List of allowed apps
    */
   getAllowedApps = async () => {
-    const data = await this.getData();
-    return data?.response?.Resources?.Applications || [];
+    const { response: user } = await this.getData();
+    const userWithPermissions = await User.withPermissions(user);
+    return userWithPermissions.Resources?.[APPLICATIONS_PERMISSION_SCOPE] || [];
+  };
+
+  getUserCall = () => {
+    if (!Authentication.isNewToken(this.tokenData)) {
+      return Rest.get({
+        path: `${USER_API_ROUTE}/${this.tokenData.message.name}/`
+      });
+    }
+    const { domain_name, account_name } = this.tokenData[NEW_TOKEN_VERSION_ID];
+    if (INTERNAL_AUTHENTICATIONS.includes(domain_name)) {
+      return InternalUser.get(account_name);
+    }
+    return Acl.get(domain_name, account_name);
+  };
+
+  getCurrentUserWithPermissions = async () => {
+    const { response: user } = await this.getData();
+    const userWithPermissions = await User.withPermissions(user);
+    /*For testing purposes - to be deleted after FP-1642 is merged */
+    console.log("getCurrentUserWithPermissions: ", userWithPermissions);
+    return userWithPermissions;
+  };
+
+  static withPermissions = async user => {
+    user.allRoles = await Role.getAll();
+    user.allResourcesPermissions = await PermissionSingleton.getAll();
+    user.resourcesPermissions = Utils.parseUserData(user);
+    return user;
+  };
+
+  /**
+   * Check if user has permission for a resource operation
+   * @param {{Superuser: boolean, Resources: object }} user : The User
+   * @param {string} resource : Resource or Scope
+   * @param {string} operation :  The operation on the scope - "read", "write", "create" or "delete"
+   * @returns {boolean} true if user has permission
+   */
+  static hasPermission = (user, resource, operation) => {
+    if (user.Superuser) return true;
+    return (user.Resources?.[resource] || []).includes(operation);
   };
 
   /**
