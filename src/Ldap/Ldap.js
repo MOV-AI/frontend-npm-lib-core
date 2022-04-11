@@ -1,7 +1,7 @@
 import Rest from "../Rest/Rest";
 import { ACL_API_ROUTE } from "../Acl/Acl";
 
-const LDAP_API_ROUTE = "v2/ldap/configuration";
+const LDAP_API_ROUTE = "v2/LdapConfig";
 
 class Ldap {
   constructor() {}
@@ -33,8 +33,14 @@ class Ldap {
       throw e;
     });
 
-  static saveDomain = (domainName, formData, method) =>
-    Rest[method]({
+  static createDomain = formData =>
+    Rest.post({
+      path: `${LDAP_API_ROUTE}/new`,
+      body: formData
+    });
+
+  static updateDomain = (domainName, formData) =>
+    Rest.put({
       path: `${LDAP_API_ROUTE}/${domainName}/`,
       body: formData
     });
