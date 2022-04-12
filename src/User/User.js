@@ -139,7 +139,8 @@ class User {
    * @returns {Promise} Response promise
    */
   changePassword = async body => {
-    return Rest.post({ path: `v1/User/change-password/`, body });
+    const currentUser = this.getUsername();
+    return InternalUser.changePassword(currentUser, body);
   };
 
   /**

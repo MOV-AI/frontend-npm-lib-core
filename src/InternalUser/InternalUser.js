@@ -23,9 +23,16 @@ class InternalUser {
     return Rest.delete({ path: `${INTERNAL_USER_API_ROUTE}/${name}/` });
   };
 
-  static changePassword = (userId, data) => {
+  static resetPassword = (userId, data) => {
     return Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/${userId}/reset-password/`,
+      body: data
+    });
+  };
+
+  static changePassword = (userName, data) => {
+    return Rest.post({
+      path: `${INTERNAL_USER_API_ROUTE}/${userName}/change-password/`,
       body: data
     });
   };
