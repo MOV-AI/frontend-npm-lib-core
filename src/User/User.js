@@ -129,8 +129,7 @@ class User {
    * @returns {Promise} Response promise
    */
   changePassword = body => {
-    const currentUser = this.getUsername();
-    return InternalUser.changePassword(currentUser, body);
+    return InternalUser.changePassword(body);
   };
 
   //========================================================================================
@@ -176,8 +175,8 @@ class User {
    * @param {{new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
    */
-  static resetPassword = async (userId, body) => {
-    return Rest.post({ path: `v1/User/${userId}/reset-password/`, body });
+  static resetPassword = (userId, body) => {
+    return InternalUser.resetPassword(userId, body);
   };
 }
 

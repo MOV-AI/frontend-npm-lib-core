@@ -30,9 +30,9 @@ class InternalUser {
     });
   };
 
-  static changePassword = (userName, data) => {
+  static changePassword = data => {
     return Rest.post({
-      path: `${INTERNAL_USER_API_ROUTE}/${userName}/change-password/`,
+      path: `${INTERNAL_USER_API_ROUTE}/change-password/`,
       body: data
     });
   };
