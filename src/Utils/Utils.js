@@ -137,7 +137,7 @@ Utils.getUserRoles = user => {
  */
 Utils.parseUserData = async user => {
   const resourcesParsedData = [];
-  let userRoles = Utils.getUserRoles(user);
+  const userRoles = Utils.getUserRoles(user);
   const permissionsByResourceType = await Utils.getPermissionsByScope(
     userRoles
   );
