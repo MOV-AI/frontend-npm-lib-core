@@ -102,10 +102,47 @@ class User {
       Superuser: this.getIsSuperUser(),
       Roles: roles
     };
+    /*For testing purposes - to be deleted after FP-1642 is merged */
     console.log("getCurrentUserWithPermissions: ", userWithPermissions);
     return userWithPermissions;
   };
 
+  /**
+   * Get authenticated username
+   * @returns {string} username
+   */
+  getUsername = () => {
+    return this.tokenData?.message?.name;
+  };
+
+  /**
+   * Get authenticated super user
+   * @returns {string} username
+   */
+  getIsSuperUser = () => {
+    return this.tokenData?.message?.superUser;
+  };
+
+  /**
+   * Change user password
+   * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
+   * @returns {Promise} Response promise
+   */
+  changePassword = body => {
+    const currentUser = this.getUsername();
+    return InternalUser.changePassword(currentUser, body);
+  };
+
+  //========================================================================================
+  /*                                                                                      *
+   *                                    Static Methods                                    *
+   *                                                                                      */
+  //========================================================================================
+
+  /**
+   * Adds the roles and old permissions properties to a user
+   * @returns {{ allRoles: [object], allResourcesPermissions: object, resourcesPermissions: object}} returns the user with permissions dictionaries
+   */
   static withPermissions = async user => {
     user.allRoles = await Role.getAll();
     user.allResourcesPermissions = await Permissions.getAll();
@@ -132,38 +169,6 @@ class User {
     if (user.Superuser) return true;
     return (user.Resources?.[resource] || []).includes(operation);
   };
-
-  /**
-   * Change user password
-   * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
-   * @returns {Promise} Response promise
-   */
-  changePassword = async body => {
-    const currentUser = this.getUsername();
-    return InternalUser.changePassword(currentUser, body);
-  };
-
-  /**
-   * Get authenticated username
-   * @returns {string} username
-   */
-  getUsername = () => {
-    return this.tokenData?.message?.name;
-  };
-
-  /**
-   * Get authenticated super user
-   * @returns {string} username
-   */
-  getIsSuperUser = () => {
-    return this.tokenData?.message?.superUser;
-  };
-
-  //========================================================================================
-  /*                                                                                      *
-   *                                    Static Methods                                    *
-   *                                                                                      */
-  //========================================================================================
 
   /**
    * Reset user password
