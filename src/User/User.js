@@ -3,7 +3,7 @@ import Authentication, {
   NEW_TOKEN_VERSION_ID
 } from "../Authentication/Authentication";
 import Rest from "../Rest/Rest";
-import PermissionSingleton, {
+import Permissions, {
   APPLICATIONS_PERMISSION_SCOPE
 } from "../Permission/Permission";
 import Utils from "../Utils/Utils";
@@ -76,9 +76,8 @@ class User {
    * @returns {Promise<array>} List of allowed apps
    */
   getAllowedApps = async () => {
-    const { response: user } = await this.getData();
-    const userWithPermissions = await User.withPermissions(user);
-    return userWithPermissions.Resources?.[APPLICATIONS_PERMISSION_SCOPE] || [];
+    const { Permissions } = await User.getCurrentPermissions();
+    return Permissions?.[APPLICATIONS_PERMISSION_SCOPE] || [];
   };
 
   getUserCall = () => {
@@ -95,18 +94,31 @@ class User {
   };
 
   getCurrentUserWithPermissions = async () => {
-    const { response: user } = await this.getData();
-    const userWithPermissions = await User.withPermissions(user);
-    /*For testing purposes - to be deleted after FP-1642 is merged */
+    const { Permissions: permissionsByScope, Roles: roles } =
+      await User.getCurrentPermissions();
+    const userWithPermissions = {
+      Label: this.getUsername(),
+      Resources: permissionsByScope,
+      Superuser: this.getIsSuperUser(),
+      Roles: roles
+    };
     console.log("getCurrentUserWithPermissions: ", userWithPermissions);
     return userWithPermissions;
   };
 
   static withPermissions = async user => {
     user.allRoles = await Role.getAll();
-    user.allResourcesPermissions = await PermissionSingleton.getAll();
-    user.resourcesPermissions = Utils.parseUserData(user);
+    user.allResourcesPermissions = await Permissions.getAll();
+    user.resourcesPermissions = await Utils.parseUserData(user);
     return user;
+  };
+
+  /**
+   * Get current user permissions
+   * @returns {{ Roles: [string], Permissions: {object}}} Returns the Roles and Permissions the current user has
+   */
+  static getCurrentPermissions = () => {
+    return Rest.get({ path: "v2/User/effective-permissions" });
   };
 
   /**
@@ -136,6 +148,14 @@ class User {
    */
   getUsername = () => {
     return this.tokenData?.message?.name;
+  };
+
+  /**
+   * Get authenticated super user
+   * @returns {string} username
+   */
+  getIsSuperUser = () => {
+    return this.tokenData?.message?.superUser;
   };
 
   //========================================================================================
