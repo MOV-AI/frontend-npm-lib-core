@@ -124,6 +124,15 @@ class User {
   };
 
   /**
+   * Checks if user is internal
+   * @returns {string} username
+   */
+  isInternalUser = () => {
+    const { domain_name } = this.tokenData[NEW_TOKEN_VERSION_ID];
+    return !domain_name || INTERNAL_AUTHENTICATIONS.includes(domain_name);
+  };
+
+  /**
    * Change user password
    * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
