@@ -2,19 +2,19 @@ import Rest from "../Rest/Rest";
 import User from "../User/User";
 import { REQUEST_STATUS } from "../Utils/constants";
 
-export const ACL_API_ROUTE = "v2/acl";
+export const ACL_API_ROUTE = "v2/Acl";
 
 class Acl {
   constructor() {}
 
   static get = (domainName, accountName) =>
     Rest.get({
-      path: `${ACL_API_ROUTE}/${domainName}/users/${accountName}/`
+      path: `${ACL_API_ROUTE}/${domainName}/user/${accountName}/`
     });
 
   static getUsersByDomain = domainName => {
     return Rest.get({
-      path: `${ACL_API_ROUTE}/${domainName}/users/`
+      path: `${ACL_API_ROUTE}/${domainName}/user/`
     }).catch(err => {
       if (err.status === REQUEST_STATUS.NOT_FOUND) return [];
       else throw err;
@@ -23,7 +23,7 @@ class Acl {
 
   static getGroupsByDomain = domainName => {
     return Rest.get({
-      path: `${ACL_API_ROUTE}/${domainName}/groups/`
+      path: `${ACL_API_ROUTE}/${domainName}/group/`
     }).catch(err => {
       if (err.status === REQUEST_STATUS.NOT_FOUND) return [];
       else throw err;

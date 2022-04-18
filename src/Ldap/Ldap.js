@@ -53,7 +53,7 @@ class Ldap {
   static search = (domainName, resourceType, queryText = "") => {
     if (!queryText) return Promise.resolve([]);
     return Rest.get({
-      path: `${ACL_API_ROUTE}/${domainName}/${resourceType}_search/`,
+      path: `${ACL_API_ROUTE}/${domainName}/${resourceType}/search`,
       search: { common_name: queryText }
     }).catch(err => {
       console.log("Error searching Ldap Data:", e.statusText);
