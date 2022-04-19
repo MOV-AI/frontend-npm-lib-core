@@ -6,7 +6,7 @@ class BaseUser {
     this.tokenData = Authentication.getTokenData();
     this.data = null;
     this.timestamp = null;
-    this.TIMEOUT = 3000; // milisec
+    this.TIMEOUT_MS = 3000;
   }
 
   getUsername = () => {
