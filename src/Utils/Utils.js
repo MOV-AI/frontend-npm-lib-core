@@ -202,7 +202,7 @@ const SAME_TAB = "_self";
  */
 const loadLayout = (e, ctrlKey = false) => {
   window.open(
-    `${window.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.EntryPoint}`,
+    `${window.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.URL}`,
     ctrlKey ? NEW_TAB : SAME_TAB
   );
 };
@@ -214,7 +214,7 @@ const loadLayout = (e, ctrlKey = false) => {
  */
 const loadApplication = (e, ctrlKey = false) => {
   window.open(
-    `${window.location.origin}/${API_VERSION}/${e.Package}/`,
+    `${window.location.origin}/${API_VERSION}/${e.URL}/`,
     ctrlKey ? NEW_TAB : SAME_TAB
   );
 };
@@ -224,7 +224,7 @@ const loadApplication = (e, ctrlKey = false) => {
  * @param {object} e application's object
  */
 const loadUrl = e => {
-  window.open(`${e.EntryPoint}`);
+  window.open(`${e.URL}`);
 };
 
 /**
@@ -232,7 +232,7 @@ const loadUrl = e => {
  * @param {object} event click event
  * @param {object} element resource data; must include Type, Package, EntryPoint
  */
-const loadResources = (event, element) => {
+Utils.loadResources = (event, element) => {
   const resourcesMap = {
     application: loadApplication,
     layout: loadLayout,
