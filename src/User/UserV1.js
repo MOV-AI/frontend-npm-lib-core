@@ -23,7 +23,7 @@ class UserV1 extends BaseUser {
       const currTime = new Date().getTime();
 
       // send cached value
-      if (currTime - this.timestamp <= this.TIMEOUT && this.data) {
+      if (currTime - this.timestamp <= this.TIMEOUT_MS && this.data) {
         return resolve({ response: this.data });
       }
 
@@ -55,6 +55,11 @@ class UserV1 extends BaseUser {
    * @returns {string} username
    */
   isInternalUser = () => true;
+
+  isSuperUser = () => {
+    console.log("isSuperUser: ", this.data);
+    return this.data.Superuser;
+  };
 
   /**
    * Change user password

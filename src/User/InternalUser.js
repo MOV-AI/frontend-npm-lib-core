@@ -16,7 +16,6 @@ class InternalUser extends BaseUser {
   };
 
   getCurrentPermissions = () => {
-    console.log("Get internal user permissions");
     return Rest.get({ path: "v2/User/effective-permissions" });
   };
 

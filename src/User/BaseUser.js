@@ -23,11 +23,12 @@ class BaseUser {
   };
 
   getCurrentUserWithPermissions = async () => {
-    const { Permissions, Roles } = await this.getCurrentPermissions();
+    const { Permissions, Roles, Superuser } =
+      await this.getCurrentPermissions();
     const userWithPermissions = {
       Label: this.getUsername(),
       Resources: Permissions,
-      Superuser: this.isSuperUser(),
+      Superuser: Superuser ?? this.isSuperUser(),
       Roles
     };
     return userWithPermissions;
