@@ -81,6 +81,23 @@ class User {
     return userWithPermissions.Resources?.[APPLICATIONS_PERMISSION_SCOPE] || [];
   };
 
+  /**
+   * Get all apps
+   * @returns {Promise<array>} List with all apps
+   */
+  getAllApps = async () => {
+    return Rest.get({ path: `v1/applications/` });
+  };
+
+  /**
+   * Change user password
+   * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
+   * @returns {Promise} Response promise
+   */
+  changePassword = async body => {
+    return Rest.post({ path: `v1/User/change-password/`, body });
+  };
+
   getUserCall = () => {
     if (!Authentication.isNewToken(this.tokenData)) {
       return Rest.get({
