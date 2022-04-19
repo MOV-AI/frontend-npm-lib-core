@@ -117,4 +117,59 @@ Utils.validateEntityName = (
   );
 };
 
+const API_VERSION = "api/v1/apps";
+const NEW_TAB = "_blank";
+const SAME_TAB = "_self";
+
+/**
+ * loadLayout - loads the requested layout
+ * @param {object} e application's object
+ * @param {boolean} ctrlKey ctrlKey pressed
+ *
+ * Currently, the layout viewer is distributed in the mov-fe-app-ide package
+ */
+const loadLayout = (e, ctrlKey = false) => {
+  window.open(
+    `${window.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.URL}`,
+    ctrlKey ? NEW_TAB : SAME_TAB
+  );
+};
+
+/**
+ * loads the requested application
+ * @param {object} e application's object
+ * @param {boolean} ctrlKey ctrlKey pressed
+ */
+const loadApplication = (e, ctrlKey = false) => {
+  window.open(
+    `${window.location.origin}/${API_VERSION}/${e.URL}/`,
+    ctrlKey ? NEW_TAB : SAME_TAB
+  );
+};
+
+/**
+ * loads the requested external page
+ * @param {object} e application's object
+ */
+const loadUrl = e => {
+  window.open(`${e.URL}`);
+};
+
+/**
+ *  load resource by type
+ * @param {object} event click event
+ * @param {object} element resource data; must include Type, Package, EntryPoint
+ */
+Utils.loadResources = (event, element) => {
+  const resourcesMap = {
+    application: loadApplication,
+    layout: loadLayout,
+    external: loadUrl,
+    default: loadUrl
+  };
+  const openInNew = event?.ctrlKey || event?.button === 1;
+  const loader = resourcesMap[element?.Type] || resourcesMap.default;
+  loader(element, openInNew);
+};
+
 export default Utils;
