@@ -119,13 +119,13 @@ class User {
 
   /**
    * Check if user has permission for a resource operation
-   * @param {{Superuser: boolean, Resources: object }} user : The User
+   * @param {{SuperUser: boolean, Resources: object }} user : The User
    * @param {string} resource : Resource or Scope
    * @param {string} operation :  The operation on the scope - "read", "write", "create" or "delete"
    * @returns {boolean} true if user has permission
    */
   static hasPermission = (user, resource, operation) => {
-    if (user.Superuser) return true;
+    if (user.SuperUser) return true;
     return (user.Resources?.[resource] || []).includes(operation);
   };
 }

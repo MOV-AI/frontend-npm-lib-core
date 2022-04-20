@@ -20,3 +20,7 @@ export const REQUEST_STATUS = {
   SUCCESS: 200,
   NOT_FOUND: 404
 };
+
+export const REQUEST_ERROR_CODES = {
+  NOT_ALLOWED: "Method Not Allowed"
+};

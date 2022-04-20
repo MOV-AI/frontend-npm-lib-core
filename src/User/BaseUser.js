@@ -1,5 +1,6 @@
 import Authentication from "../Authentication/Authentication";
 import { APPLICATIONS_PERMISSION_SCOPE } from "../Permission/Permission";
+import Rest from "../Rest/Rest";
 
 class BaseUser {
   constructor() {
@@ -18,17 +19,16 @@ class BaseUser {
   };
 
   getAllowedApps = async () => {
-    const { Permissions } = await this.getCurrentPermissions();
+    const { Permissions } = await this.getPermissions();
     return Permissions?.[APPLICATIONS_PERMISSION_SCOPE] || [];
   };
 
   getCurrentUserWithPermissions = async () => {
-    const { Permissions, Roles, Superuser } =
-      await this.getCurrentPermissions();
+    const { Permissions, Roles, SuperUser } = await this.getPermissions();
     const userWithPermissions = {
       Label: this.getUsername(),
       Resources: Permissions,
-      Superuser: Superuser ?? this.isSuperUser(),
+      SuperUser: SuperUser ?? this.isSuperUser(),
       Roles
     };
     return userWithPermissions;
@@ -38,8 +38,8 @@ class BaseUser {
     /* Implemented in derived classes */
   };
 
-  getCurrentPermissions = () => {
-    /* Implemented in derived classes */
+  getPermissions = () => {
+    return Rest.get({ path: "v2/User/effective-permissions" });
   };
 
   isInternalUser = () => {
@@ -47,6 +47,10 @@ class BaseUser {
   };
 
   changePassword = body => {
+    /* Implemented in derived classes */
+  };
+
+  resetPassword = body => {
     /* Implemented in derived classes */
   };
 }

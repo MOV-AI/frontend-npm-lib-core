@@ -15,10 +15,6 @@ class InternalUser extends BaseUser {
     return InternalUser.get(account_name);
   };
 
-  getCurrentPermissions = () => {
-    return Rest.get({ path: "v2/User/effective-permissions" });
-  };
-
   isInternalUser = _ => true;
 
   changePassword = body => {
@@ -29,7 +25,7 @@ class InternalUser extends BaseUser {
       ConfirmPassword: confirm_password
     };
     return Rest.post({
-      path: `${INTERNAL_USER_API_ROUTE}/change-password/`,
+      path: `${INTERNAL_USER_API_ROUTE}/change-password`,
       body: model
     });
   };
@@ -59,7 +55,7 @@ class InternalUser extends BaseUser {
 
   static resetPassword = (userId, data) => {
     return Rest.post({
-      path: `${INTERNAL_USER_API_ROUTE}/${userId}/reset-password/`,
+      path: `${INTERNAL_USER_API_ROUTE}/${userId}/reset-password`,
       body: data
     });
   };

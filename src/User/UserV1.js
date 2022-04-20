@@ -2,7 +2,6 @@ import Rest from "../Rest/Rest";
 import BaseUser from "./BaseUser";
 
 const USER_API_ROUTE = "v1/User";
-
 class UserV1 extends BaseUser {
   constructor() {
     super();
@@ -14,10 +13,6 @@ class UserV1 extends BaseUser {
    *                                                                                      */
   //========================================================================================
 
-  /**
-   * Get user data
-   * @returns {Promise<User>}
-   */
   getData = () => {
     return new Promise((resolve, reject) => {
       const currTime = new Date().getTime();
@@ -34,38 +29,30 @@ class UserV1 extends BaseUser {
       })
         .then(data => {
           this.data = data;
-          resolve({ response: data });
+          resolve(data);
         })
         .catch(error => {
-          // error while parsing request
           this.data = null;
           reject({ error });
         });
     });
   };
 
-  getCurrentPermissions = () => {
-    return this.getData().then(({ response: user }) => {
-      return { ...user, Roles: [user.Role], Permissions: user.Resources };
+  getPermissions = () => {
+    return this.getData().then(user => {
+      return {
+        ...user,
+        Roles: [user.Role],
+        Permissions: user.Resources,
+        SuperUser: user.Superuser
+      };
     });
   };
 
-  /**
-   * Checks if user is internal
-   * @returns {string} username
-   */
   isInternalUser = () => true;
 
-  isSuperUser = () => {
-    console.log("isSuperUser: ", this.data);
-    return this.data.Superuser;
-  };
+  isSuperUser = () => this.data.Superuser;
 
-  /**
-   * Change user password
-   * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
-   * @returns {Promise} Response promise
-   */
   changePassword = body => {
     return Rest.post({ path: `v1/User/change-password/`, body });
   };
@@ -76,12 +63,6 @@ class UserV1 extends BaseUser {
    *                                                                                      */
   //========================================================================================
 
-  /**
-   * Reset user password
-   * @param {string} userId : userId to change password
-   * @param {{new_password: string, confirm_password: string}} body : Request body
-   * @returns {Promise} Response promise
-   */
   static resetPassword = (userId, body) => {
     return Rest.post({ path: `v1/User/${userId}/reset-password/`, body });
   };

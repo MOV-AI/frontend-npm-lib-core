@@ -1,4 +1,4 @@
-import Rest from "../Rest/Rest";
+import { REQUEST_ERROR_CODES } from "../Utils/constants";
 import BaseUser from "./BaseUser";
 
 class AclUser extends BaseUser {
@@ -11,18 +11,14 @@ class AclUser extends BaseUser {
   };
 
   changePassword = _ => {
-    /* Empty on purpose */
+    throw new Error(REQUEST_ERROR_CODES.NOT_ALLOWED);
   };
 
   resetPassword = _ => {
-    /* Empty on purpose */
+    throw new Error(REQUEST_ERROR_CODES.NOT_ALLOWED);
   };
 
   isInternalUser = _ => false;
-
-  getCurrentPermissions = () => {
-    return Rest.get({ path: "v2/User/effective-permissions" });
-  };
 }
 
 export default AclUser;
