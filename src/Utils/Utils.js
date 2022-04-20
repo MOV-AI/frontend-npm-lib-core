@@ -1,6 +1,7 @@
 import { Maybe } from "monet";
 import { ALPHANUMERIC_REGEX } from "./constants";
 import _isEmpty from "lodash/isEmpty";
+import Role from "../Role/Role";
 
 const Utils = {};
 
@@ -118,14 +119,28 @@ Utils.validateEntityName = (
 };
 
 /**
+ * Return user roles
+ * @param {object} user
+ * @returns {[string]} List of roles
+ */
+Utils.getUserRoles = user => {
+  let userRoles = user.Role || user.roles || user.Roles;
+  if (!Array.isArray(userRoles)) userRoles = [userRoles];
+  return userRoles;
+};
+
+/**
  * Build permissions
  * @param {string} id
  * @param {object} user
  * @returns {[object]} List of permissions
  */
-Utils.parseUserData = user => {
+Utils.parseUserData = async user => {
   const resourcesParsedData = [];
-  const permissionsByResourceType = Utils.getPermissionsByScope(user);
+  const userRoles = Utils.getUserRoles(user);
+  const permissionsByResourceType = await Utils.getPermissionsByScope(
+    userRoles
+  );
   user.Resources = permissionsByResourceType;
   for (let [resourceType, resourcePermissions] of Object.entries(
     user.allResourcesPermissions
@@ -160,11 +175,10 @@ Utils.parseUserData = user => {
  * @param {object} user
  * @returns {object} Dictionary with list of permissions by scope
  */
-Utils.getPermissionsByScope = user => {
-  let userRoles = user.Role || user.roles || user.Roles;
-  if (!Array.isArray(userRoles)) userRoles = [userRoles];
+Utils.getPermissionsByScope = async userRoles => {
+  const allRoles = await Role.getAll();
   return userRoles.reduce((prev, role) => {
-    const selectedRoleResources = user.allRoles?.[role]?.Resources ?? {};
+    const selectedRoleResources = allRoles?.[role]?.Resources ?? {};
     Object.entries(selectedRoleResources).forEach(
       ([resourceType, permissions]) => {
         if (!prev[resourceType]) prev[resourceType] = [];
