@@ -28,7 +28,7 @@ class BaseUser {
     const userWithPermissions = {
       Label: this.getUsername(),
       Resources: Permissions,
-      SuperUser: SuperUser ?? this.isSuperUser(),
+      Superuser: SuperUser ?? this.isSuperUser(),
       Roles
     };
     return userWithPermissions;

@@ -125,7 +125,7 @@ class User {
    * @returns {boolean} true if user has permission
    */
   static hasPermission = (user, resource, operation) => {
-    if (user.SuperUser) return true;
+    if (user.Superuser) return true;
     return (user.Resources?.[resource] || []).includes(operation);
   };
 }
