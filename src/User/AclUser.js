@@ -6,19 +6,19 @@ class AclUser extends BaseUser {
     super();
   }
 
-  getData = _ => {
+  getData = () => {
     return this.getCurrentUserWithPermissions();
   };
 
-  changePassword = _ => {
+  changePassword = () => {
     throw new Error(REQUEST_ERROR_CODES.NOT_ALLOWED);
   };
 
-  resetPassword = _ => {
+  resetPassword = () => {
     throw new Error(REQUEST_ERROR_CODES.NOT_ALLOWED);
   };
 
-  isInternalUser = _ => false;
+  isInternalUser = () => false;
 }
 
 export default AclUser;
