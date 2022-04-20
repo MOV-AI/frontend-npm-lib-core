@@ -15,7 +15,7 @@ class InternalUser extends BaseUser {
     return InternalUser.get(account_name);
   };
 
-  isInternalUser = _ => true;
+  isInternalUser = () => true;
 
   changePassword = body => {
     const { current_password, new_password, confirm_password } = body;
