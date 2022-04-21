@@ -29,7 +29,7 @@ class UserV1 extends BaseUser {
       })
         .then(data => {
           this.data = data;
-          resolve(data);
+          resolve({ response: data });
         })
         .catch(error => {
           this.data = null;
@@ -39,7 +39,7 @@ class UserV1 extends BaseUser {
   };
 
   getPermissions = () => {
-    return this.getData().then(user => {
+    return this.getData().then(({ response: user }) => {
       return {
         ...user,
         Roles: [user.Role],
