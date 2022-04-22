@@ -6,7 +6,7 @@ The Mov.AI's core frontend library.
 
 Here we place all reusable/common code regarding frontend.
 
-Its main use will be to build Mov.AI applications.
+It's main use will be to build Mov.AI applications.
 
 ## Building Mov.ai Core
 
