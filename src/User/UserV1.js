@@ -42,7 +42,7 @@ class UserV1 extends BaseUser {
     return this.getData().then(({ response: user }) => {
       return {
         ...user,
-        Roles: [user.Role],
+        Roles: (user.Role && [user.Role]) || [],
         Permissions: user.Resources,
         SuperUser: user.Superuser
       };
