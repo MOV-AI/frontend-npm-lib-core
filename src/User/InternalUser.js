@@ -59,6 +59,18 @@ class InternalUser extends BaseUser {
       body: data
     });
   };
+
+  static create = model =>
+    Rest.post({
+      path: `${INTERNAL_USER_API_ROUTE}/new/`,
+      body: model
+    });
+
+  static update = (userId, model) =>
+    Rest.put({
+      path: `${INTERNAL_USER_API_ROUTE}/${userId}/`,
+      body: model
+    });
 }
 
 export default InternalUser;
