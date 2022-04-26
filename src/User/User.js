@@ -128,6 +128,18 @@ class User {
     if (user.Superuser) return true;
     return (user.Resources?.[resource] || []).includes(operation);
   };
+
+  /**
+   * Create a new User entity
+   * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Post model
+   */
+  static create = model => InternalUser.create(model);
+
+  /**
+   * Update a new User
+   * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Put model
+   */
+  static update = (userId, model) => InternalUser.update(userId, model);
 }
 
 export default User;
