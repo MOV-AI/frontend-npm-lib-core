@@ -66,11 +66,16 @@ Authentication.getSessionFlag = () => {
   return window.sessionStorage.getItem("movai.session") || false;
 };
 
-Authentication.storeTokens = (data, remember) => {
+Authentication.storeTokens = (
+  data,
+  remember,
+  options = { storeRefreshToken: true }
+) => {
   window.localStorage.setItem("movai.token", data["access_token"]);
   const refreshToken = data["refresh_token"];
-  if (refreshToken)
+  if (options.storeRefreshToken && refreshToken) {
     window.localStorage.setItem("movai.refreshToken", refreshToken);
+  }
   window.localStorage.setItem(
     "movai.tokenRemember",
     remember == "undefined" ? false : remember
@@ -208,7 +213,7 @@ Authentication.refreshTokens = async (remember = false) => {
       return response.json();
     })
     .then(data => {
-      Authentication.storeTokens(data, remember);
+      Authentication.storeTokens(data, remember, { storeRefreshToken: false });
       return true;
     })
     .catch(error => {
