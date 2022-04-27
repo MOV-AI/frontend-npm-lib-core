@@ -1,5 +1,6 @@
 import Rest from "../Rest/Rest";
 import { ACL_API_ROUTE } from "../Acl/Acl";
+import Authentication from "../Authentication/Authentication";
 
 const LDAP_API_ROUTE = "v2/LdapConfig";
 
@@ -7,13 +8,9 @@ class Ldap {
   constructor() {}
 
   static getAllDomains = async () => {
-    const defaultDomains = ["internal"];
-    return fetch(`/status/`)
-      .then(response => response.json())
-      .then(response => {
-        if (!response.success) throw new Error();
-        return response.domains;
-      })
+    const defaultDomains = [Authentication.DEFAULT_PROVIDER];
+    return Authentication.getProviders()
+      .then(response => response.domains)
       .catch(err => defaultDomains);
   };
 

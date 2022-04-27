@@ -68,7 +68,9 @@ Authentication.getSessionFlag = () => {
 
 Authentication.storeTokens = (data, remember) => {
   window.localStorage.setItem("movai.token", data["access_token"]);
-  window.localStorage.setItem("movai.refreshToken", data["refresh_token"]);
+  const refreshToken = data["refresh_token"];
+  if (refreshToken)
+    window.localStorage.setItem("movai.refreshToken", refreshToken);
   window.localStorage.setItem(
     "movai.tokenRemember",
     remember == "undefined" ? false : remember
@@ -159,7 +161,7 @@ Authentication.getProviders = () => {
   const headers = {
     "Content-Type": "application/json"
   };
-  const url = `/status/`;
+  const url = `/domains/`;
   return new Promise(resolve =>
     fetch(url, { headers })
       .then(response => {
