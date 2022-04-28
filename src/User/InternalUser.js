@@ -17,13 +17,7 @@ class InternalUser extends BaseUser {
 
   isInternalUser = () => true;
 
-  changePassword = body => {
-    const { current_password, new_password, confirm_password } = body;
-    const model = {
-      CurrentPassword: current_password,
-      NewPassword: new_password,
-      ConfirmPassword: confirm_password
-    };
+  changePassword = model => {
     return Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/change-password`,
       body: model
@@ -53,10 +47,10 @@ class InternalUser extends BaseUser {
     return Rest.delete({ path: `${INTERNAL_USER_API_ROUTE}/${name}/` });
   };
 
-  static resetPassword = (userId, data) => {
+  static resetPassword = (userId, model) => {
     return Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/${userId}/reset-password`,
-      body: data
+      body: model
     });
   };
 
