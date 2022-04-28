@@ -189,6 +189,10 @@ Utils.getPermissionsByScope = async userRoles => {
   }, {});
 };
 
+const API_VERSION = "api/v1/apps";
+const NEW_TAB = "_blank";
+const SAME_TAB = "_self";
+
 /**
  * loadLayout - loads the requested layout
  * @param {object} e application's object
@@ -198,20 +202,20 @@ Utils.getPermissionsByScope = async userRoles => {
  */
 const loadLayout = (e, ctrlKey = false) => {
   window.open(
-    `${window.location.origin}/api/v1/apps/mov-fe-app-ide/?app_mode=1&layout_id=${e.EntryPoint}`,
-    ctrlKey ? "_blank" : "_self"
+    `${window.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.EntryPoint}`,
+    ctrlKey ? NEW_TAB : SAME_TAB
   );
 };
 
 /**
- * lloads the requested application
+ * loads the requested application
  * @param {object} e application's object
  * @param {boolean} ctrlKey ctrlKey pressed
  */
 const loadApplication = (e, ctrlKey = false) => {
   window.open(
-    `${window.location.origin}/api/v1/apps/${e.Package}/`,
-    ctrlKey ? "_blank" : "_self"
+    `${window.location.origin}/${API_VERSION}/${e.Package}/`,
+    ctrlKey ? NEW_TAB : SAME_TAB
   );
 };
 
