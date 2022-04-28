@@ -196,21 +196,21 @@ Utils.getPermissionsByScope = async userRoles => {
  *
  * Currently, the layout viewer is distributed in the mov-fe-app-ide package
  */
-Utils.loadLayout = (e, ctrlKey = false) => {
+const loadLayout = (e, ctrlKey = false) => {
   window.open(
-    `${window.location.origin}/api/v1/apps/mov-fe-app-ide/?app_mode=1&layout_id=${e.URL}`,
+    `${window.location.origin}/api/v1/apps/mov-fe-app-ide/?app_mode=1&layout_id=${e.EntryPoint}`,
     ctrlKey ? "_blank" : "_self"
   );
 };
 
 /**
- * loads the requested application
+ * lloads the requested application
  * @param {object} e application's object
  * @param {boolean} ctrlKey ctrlKey pressed
  */
-Utils.loadApplication = (e, ctrlKey = false) => {
+const loadApplication = (e, ctrlKey = false) => {
   window.open(
-    `${window.location.origin}/api/v1/apps/${e.URL}/`,
+    `${window.location.origin}/api/v1/apps/${e.Package}/`,
     ctrlKey ? "_blank" : "_self"
   );
 };
@@ -219,8 +219,8 @@ Utils.loadApplication = (e, ctrlKey = false) => {
  * loads the requested external page
  * @param {object} e application's object
  */
-Utils.loadUrl = e => {
-  window.open(`${e.URL}`);
+const loadUrl = e => {
+  window.open(`${e.EntryPoint}`);
 };
 
 /**
@@ -228,14 +228,14 @@ Utils.loadUrl = e => {
  * @param {object} event click event
  * @param {object} element resource data; must include Type, Package, EntryPoint
  */
-Utils.loadResources = (event, element) => {
+const loadResources = (event, element) => {
   const resourcesMap = {
     application: loadApplication,
     layout: loadLayout,
     external: loadUrl,
     default: loadUrl
   };
-  const openInNew = event.ctrlKey || event.button === 1;
+  const openInNew = event?.ctrlKey || event?.button === 1;
   const loader = resourcesMap[element?.Type] || resourcesMap.default;
   loader(element, openInNew);
 };
