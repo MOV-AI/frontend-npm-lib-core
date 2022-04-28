@@ -1,6 +1,6 @@
 import Acl from "./src/Acl/Acl";
 import Authentication from "./src/Authentication/Authentication";
-import InternalUser from "./src/InternalUser/InternalUser";
+import InternalUser from "./src/User/InternalUser";
 import Ldap from "./src/Ldap/Ldap";
 import { BROADCAST_EVENTS } from "./src/Utils/constants";
 import BroadcastChannel from "./src/BroadcastChannel/BroadcastChannel";

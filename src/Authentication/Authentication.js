@@ -37,7 +37,10 @@ Authentication.getTokenData = () => {
     const token = Authentication.getToken();
     const decodedToken = jwtDecode(token);
     const tokenData = {
-      message: decodedToken.message || { name: decodedToken.account_name },
+      message: {
+        name: decodedToken.message?.name ?? decodedToken.account_name,
+        superUser: decodedToken.message?.Superuser ?? decodedToken?.super_user
+      },
       auth_token: false,
       refresh_token: Authentication.getRefreshToken(),
       error: false,
