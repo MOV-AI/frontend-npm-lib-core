@@ -47,6 +47,14 @@ class User {
     return this.instance.getAllowedApps();
   };
 
+  /**
+   * Get all apps
+   * @returns {Promise<array>} List with all apps
+   */
+  getAllApps = async () => {
+    return Rest.get({ path: `v1/applications/` });
+  };
+
   getCurrentUserWithPermissions = async () => {
     const userWithPermissions =
       await this.instance.getCurrentUserWithPermissions();
