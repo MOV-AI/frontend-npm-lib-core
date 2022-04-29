@@ -2,6 +2,13 @@ import jwtDecode from "jwt-decode";
 
 export const NEW_TOKEN_VERSION_ID = "v2";
 
+const STORAGE_KEYS = {
+  TOKEN: "movai.token",
+  REFRESH_TOKEN: "movai.refreshToken",
+  TOKEN_REMEMBER: "movai.tokenRemember",
+  SESSION: "movai.session"
+};
+
 const Authentication = {};
 
 const INTERNAL_AUTHENTICATION = "internal";
@@ -21,15 +28,15 @@ Authentication.AuthException = function (message) {
 };
 
 Authentication.getToken = () => {
-  return window.localStorage.getItem("movai.token") || false;
+  return window.localStorage.getItem(STORAGE_KEYS.TOKEN) || false;
 };
 
 Authentication.getRefreshToken = () => {
-  return window.localStorage.getItem("movai.refreshToken") || false;
+  return window.localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) || false;
 };
 
 Authentication.getRememberToken = () => {
-  return window.localStorage.getItem("movai.tokenRemember") || false;
+  return window.localStorage.getItem(STORAGE_KEYS.TOKEN_REMEMBER) || false;
 };
 
 Authentication.getTokenData = () => {
@@ -63,25 +70,32 @@ Authentication.getTokenData = () => {
 Authentication.isNewToken = token => !!token[NEW_TOKEN_VERSION_ID];
 
 Authentication.getSessionFlag = () => {
-  return window.sessionStorage.getItem("movai.session") || false;
+  return window.sessionStorage.getItem(STORAGE_KEYS.SESSION) || false;
 };
 
-Authentication.storeTokens = (data, remember) => {
-  window.localStorage.setItem("movai.token", data["access_token"]);
-  window.localStorage.setItem("movai.refreshToken", data["refresh_token"]);
+Authentication.storeTokens = (
+  data,
+  remember,
+  options = { storeRefreshToken: true }
+) => {
+  window.localStorage.setItem(STORAGE_KEYS.TOKEN, data["access_token"]);
+  const refreshToken = data["refresh_token"];
+  if (options.storeRefreshToken && refreshToken) {
+    window.localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+  }
   window.localStorage.setItem(
-    "movai.tokenRemember",
+    STORAGE_KEYS.TOKEN_REMEMBER,
     remember == "undefined" ? false : remember
   );
-  window.sessionStorage.setItem("movai.session", true);
+  window.sessionStorage.setItem(STORAGE_KEYS.SESSION, true);
 };
 
 Authentication.deleteTokens = () => {
   // Cleanup...
-  window.localStorage.removeItem("movai.token");
-  window.localStorage.removeItem("movai.refreshToken");
-  window.localStorage.removeItem("movai.tokenRemember");
-  window.sessionStorage.removeItem("movai.session");
+  window.localStorage.removeItem(STORAGE_KEYS.TOKEN);
+  window.localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+  window.localStorage.removeItem(STORAGE_KEYS.TOKEN_REMEMBER);
+  window.sessionStorage.removeItem(STORAGE_KEYS.SESSION);
 };
 
 Authentication.login = async (
@@ -159,7 +173,7 @@ Authentication.getProviders = () => {
   const headers = {
     "Content-Type": "application/json"
   };
-  const url = `/status/`;
+  const url = `/domains/`;
   return new Promise(resolve =>
     fetch(url, { headers })
       .then(response => {
@@ -206,7 +220,7 @@ Authentication.refreshTokens = async (remember = false) => {
       return response.json();
     })
     .then(data => {
-      Authentication.storeTokens(data, remember);
+      Authentication.storeTokens(data, remember, { storeRefreshToken: false });
       return true;
     })
     .catch(error => {
