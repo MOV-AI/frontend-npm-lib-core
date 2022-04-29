@@ -8,6 +8,7 @@ import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
 import UserV1 from "./UserV1";
 import AclUser from "./AclUser";
+import Rest from "../Rest/Rest";
 
 class User {
   constructor() {
