@@ -64,6 +64,14 @@ class User {
   };
 
   /**
+   * Get all apps
+   * @returns {Promise<array>} List with all apps
+   */
+  getAllApps = async () => {
+    return Rest.get({ path: `v1/applications/` });
+  };
+
+  /**
    * Change user password
    * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
