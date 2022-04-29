@@ -1,4 +1,5 @@
 import Rest from "../Rest/Rest";
+import { mapToUserV1PasswordChangeModel } from "../Utils/Utils";
 import BaseUser from "./BaseUser";
 
 const USER_API_ROUTE = "v1/User";
@@ -54,7 +55,8 @@ class UserV1 extends BaseUser {
   isSuperUser = () => this.data.Superuser;
 
   changePassword = body => {
-    return Rest.post({ path: `v1/User/change-password/`, body });
+    const model = mapToUserV1PasswordChangeModel(body);
+    return Rest.post({ path: `v1/User/change-password/`, body: model });
   };
 
   //========================================================================================
@@ -64,7 +66,11 @@ class UserV1 extends BaseUser {
   //========================================================================================
 
   static resetPassword = (userId, body) => {
-    return Rest.post({ path: `v1/User/${userId}/reset-password/`, body });
+    const model = mapToUserV1PasswordChangeModel(body);
+    return Rest.post({
+      path: `v1/User/${userId}/reset-password/`,
+      body: model
+    });
   };
 }
 

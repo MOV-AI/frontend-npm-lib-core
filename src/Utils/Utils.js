@@ -245,3 +245,25 @@ Utils.loadResources = (event, element) => {
 };
 
 export default Utils;
+
+/**
+ * Maps new user password change model to old one
+ * @param {object} body Object corresponding to either old or new password change model
+ * @returns {object} Object corresponding to old model for V1 user
+ */
+export const mapToUserV1PasswordChangeModel = body => {
+  const {
+    current_password,
+    CurrentPassword,
+    new_password,
+    NewPassword,
+    confirm_password,
+    ConfirmPassword
+  } = body;
+  const model = {
+    current_password: current_password ?? CurrentPassword ?? "",
+    new_password: new_password ?? NewPassword,
+    confirm_password: confirm_password ?? ConfirmPassword
+  };
+  return model;
+};
