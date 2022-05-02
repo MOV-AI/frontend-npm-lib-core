@@ -8,12 +8,22 @@ import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
 import UserV1 from "./UserV1";
 import AclUser from "./AclUser";
+import Rest from "../Rest/Rest";
+import Application from "../Application/Application";
 
 class User {
   constructor() {
     this.tokenData = Authentication.getTokenData();
     this.instance = new (this.getUserClass())();
   }
+
+  /**
+   * Get all apps
+   * @returns {Promise<array>} List with all apps
+   */
+  getAllApps = () => {
+    return Application.getAll();
+  };
 
   /**
    * Get user class
@@ -45,14 +55,6 @@ class User {
    */
   getAllowedApps = async () => {
     return this.instance.getAllowedApps();
-  };
-
-  /**
-   * Get all apps
-   * @returns {Promise<array>} List with all apps
-   */
-  getAllApps = async () => {
-    return Rest.get({ path: `v1/applications/` });
   };
 
   getCurrentUserWithPermissions = async () => {
