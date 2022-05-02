@@ -61,7 +61,10 @@ Authentication.getTokenData = () => {
     return tokenData;
   } catch (error) {
     return {
-      message: {},
+      message: { name: "", superUser: false },
+      auth_token: false,
+      refresh_token: false,
+      access_token: false,
       error: true
     };
   }

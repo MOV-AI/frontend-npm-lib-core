@@ -1,5 +1,4 @@
 import Rest from "../Rest/Rest";
-import User from "../User/User";
 import { REQUEST_STATUS } from "../Utils/constants";
 
 export const ACL_API_ROUTE = "v2/Acl";

@@ -133,7 +133,7 @@ Utils.getUserRoles = user => {
  * Build permissions
  * @param {string} id
  * @param {object} user
- * @returns {[object]} List of permissions
+ * @returns {[ResourcePermission]} List of permissions
  */
 Utils.parseUserData = async user => {
   const resourcesParsedData = [];

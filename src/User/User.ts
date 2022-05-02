@@ -8,8 +8,20 @@ import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
 import UserV1 from "./UserV1";
 import AclUser from "./AclUser";
+import {
+  ChangePasswordModel,
+  PermissionType,
+  ResetPasswordModel,
+  Token,
+  UserModel,
+  UserPostModel,
+  UserPutModel
+} from "../models";
 
-class User {
+export class User {
+  private tokenData: Token;
+  private instance: UserV1 | InternalUser | AclUser;
+
   constructor() {
     this.tokenData = Authentication.getTokenData();
     this.instance = new (this.getUserClass())();
@@ -37,22 +49,6 @@ class User {
    */
   getData = async () => {
     return await this.instance.getData();
-  };
-
-  /**
-   * Get allowed apps
-   * @returns {Promise<array>} List of allowed apps
-   */
-  getAllowedApps = async () => {
-    return this.instance.getAllowedApps();
-  };
-
-  /**
-   * Get all apps
-   * @returns {Promise<array>} List with all apps
-   */
-  getAllApps = async () => {
-    return Rest.get({ path: `v1/applications/` });
   };
 
   getCurrentUserWithPermissions = async () => {
@@ -85,7 +81,9 @@ class User {
    */
   isInternalUser = () => {
     if (!Authentication.isNewToken(this.tokenData)) return true;
-    const { domain_name: domainName } = this.tokenData[NEW_TOKEN_VERSION_ID];
+    const { domain_name: domainName } = this.tokenData[
+      NEW_TOKEN_VERSION_ID
+    ] || { domain_name: "" };
     return INTERNAL_AUTHENTICATIONS.includes(domainName);
   };
 
@@ -94,7 +92,7 @@ class User {
    * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
    */
-  changePassword = body => {
+  changePassword = (body: ChangePasswordModel) => {
     return this.instance.changePassword(body);
   };
 
@@ -110,7 +108,7 @@ class User {
    * @param {{new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
    */
-  static resetPassword = (userId, body) => {
+  static resetPassword = (userId: string, body: ResetPasswordModel) => {
     return InternalUser.resetPassword(userId, body);
   };
 
@@ -118,7 +116,7 @@ class User {
    * Adds the roles and old permissions properties to a user
    * @returns {{ allRoles: [object], allResourcesPermissions: object, resourcesPermissions: object}} returns the user with permissions dictionaries
    */
-  static withPermissions = async user => {
+  static withPermissions = async (user: UserModel) => {
     user.allRoles = await Role.getAll();
     user.allResourcesPermissions = await Permissions.getAll();
     user.resourcesPermissions = await Utils.parseUserData(user);
@@ -132,7 +130,11 @@ class User {
    * @param {string} operation :  The operation on the scope - "read", "write", "create" or "delete"
    * @returns {boolean} true if user has permission
    */
-  static hasPermission = (user, resource, operation) => {
+  static hasPermission = (
+    user: UserModel,
+    resource: string,
+    operation: PermissionType
+  ) => {
     if (user.Superuser) return true;
     return (user.Resources?.[resource] || []).includes(operation);
   };
@@ -141,13 +143,12 @@ class User {
    * Create a new User entity
    * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Post model
    */
-  static create = model => InternalUser.create(model);
+  static create = (model: UserPostModel) => InternalUser.create(model);
 
   /**
    * Update a new User
    * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Put model
    */
-  static update = (userId, model) => InternalUser.update(userId, model);
+  static update = (userId: string, model: UserPutModel) =>
+    InternalUser.update(userId, model);
 }
-
-export default User;

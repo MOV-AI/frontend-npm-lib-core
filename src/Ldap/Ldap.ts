@@ -1,23 +1,28 @@
 import Rest from "../Rest/Rest";
 import { ACL_API_ROUTE } from "../Acl/Acl";
 import Authentication from "../Authentication/Authentication";
+import {
+  HttpResponse,
+  LdapDomainPostModel,
+  LdapDomainPutModel
+} from "../models";
 
 const LDAP_API_ROUTE = "v2/LdapConfig";
 
 class Ldap {
   constructor() {}
 
-  static getAllDomains = async () => {
+  static getAllDomains = async (): Promise<{ domains: string[] }> => {
     const defaultDomains = [Authentication.DEFAULT_PROVIDER];
     return Authentication.getProviders()
       .then(response => response.domains)
       .catch(err => defaultDomains);
   };
 
-  static getExternalDomains = () =>
+  static getExternalDomains = (): Promise<string[]> =>
     Rest.get({
       path: `${LDAP_API_ROUTE}/`
-    }).catch(e => {
+    }).catch((e: HttpResponse) => {
       console.log("Error getting Ldap Domains:", e.statusText);
       throw e;
     });
@@ -25,34 +30,38 @@ class Ldap {
   static getDomain = (domainName = "") =>
     Rest.get({
       path: `${LDAP_API_ROUTE}/${domainName}/`
-    }).catch(e => {
+    }).catch((e: HttpResponse) => {
       console.log("Error getting Ldap Data:", e.statusText);
       throw e;
     });
 
-  static createDomain = formData =>
+  static createDomain = (formData: LdapDomainPostModel) =>
     Rest.post({
       path: `${LDAP_API_ROUTE}/new`,
       body: formData
     });
 
-  static updateDomain = (domainName, formData) =>
+  static updateDomain = (domainName: string, formData: LdapDomainPutModel) =>
     Rest.put({
       path: `${LDAP_API_ROUTE}/${domainName}/`,
       body: formData
     });
 
-  static deleteDomain = domainName =>
+  static deleteDomain = (domainName: string) =>
     Rest.delete({
       path: `${LDAP_API_ROUTE}/${domainName}/`
     });
 
-  static search = (domainName, resourceType, queryText = "") => {
+  static search = (
+    domainName: string,
+    resourceType: "group" | "user",
+    queryText = ""
+  ) => {
     if (!queryText) return Promise.resolve([]);
     return Rest.get({
       path: `${ACL_API_ROUTE}/${domainName}/${resourceType}/search`,
       search: { common_name: queryText }
-    }).catch(err => {
+    }).catch((e: HttpResponse) => {
       console.log("Error searching Ldap Data:", e.statusText);
       throw e;
     });
