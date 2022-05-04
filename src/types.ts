@@ -9,10 +9,6 @@ export interface Token {
   [NEW_TOKEN_VERSION_ID]?: { domain_name: string };
 }
 
-export interface User {
-  Superuser: boolean;
-}
-
 export interface HttpResponse extends Error {
   error: any | null;
   ok: boolean;
@@ -23,8 +19,8 @@ export interface HttpResponse extends Error {
 export interface LdapDomain {
   DomainName: string;
   GroupsDN: string;
-  PrimaryHost: string | number;
-  PrimaryPort: number;
+  PrimaryHost: string;
+  PrimaryPort: string | number;
   SecondaryHost: string;
   SecondaryPort: string | number;
   SSLVersion: number;
@@ -34,7 +30,7 @@ export interface LdapDomain {
 }
 
 export interface LdapDomainUpdateModel extends LdapDomain {
-  Password: string;
+  Password?: string;
 }
 
 export interface LdapDomainPostModel extends LdapDomainUpdateModel {}
