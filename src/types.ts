@@ -20,24 +20,30 @@ export interface HttpResponse extends Error {
   status: number;
 }
 
-export interface LdapDomainUpdateModel {
+export interface LdapDomain {
   DomainName: string;
   GroupsDN: string;
-  PrimaryHost: string;
+  PrimaryHost: string | number;
   PrimaryPort: number;
   SecondaryHost: string;
-  SecondaryPort: number;
+  SecondaryPort: string | number;
   SSLVersion: number;
   Username: string;
   UsersDN: string;
+  _schema_version?: string;
 }
 
-export interface LdapDomainPostModel extends LdapDomainUpdateModel {
+export interface LdapDomainUpdateModel extends LdapDomain {
   Password: string;
 }
 
-export interface LdapDomainPutModel extends LdapDomainUpdateModel {
-  Password?: string;
+export interface LdapDomainPostModel extends LdapDomainUpdateModel {}
+
+export interface LdapDomainPutModel extends LdapDomainUpdateModel {}
+
+export interface LdapUpdateResult {
+  success: boolean;
+  message?: string;
 }
 
 export interface ChangePasswordModel {
@@ -71,7 +77,7 @@ export interface UserPostModel {
 }
 
 export interface UserPutModel {
-  Roles: [string];
+  Roles: string[];
   CommonName: string;
   Email: string;
   ReadOnly: boolean;
@@ -85,6 +91,19 @@ export interface ResourcePermission {
   roleDefault: boolean;
   resourceType: string;
   value: boolean;
+}
+
+export interface LdapResource {
+  AccountName: string;
+  CommonName: string;
+  DomainName: string;
+  ID: string;
+  ObjectType: string;
+  ReadOnly: boolean;
+  Roles: string[];
+  SuperUser: boolean;
+  SendReport: boolean;
+  _schema_version: string;
 }
 
 export type PermissionType = "create" | "read" | "write" | "delete";

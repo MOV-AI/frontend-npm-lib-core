@@ -16,7 +16,7 @@ import {
   UserModel,
   UserPostModel,
   UserPutModel
-} from "../models";
+} from "../types";
 
 export class User {
   private tokenData: Token;
