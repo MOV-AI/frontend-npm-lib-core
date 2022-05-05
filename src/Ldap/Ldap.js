@@ -7,6 +7,11 @@ const LDAP_API_ROUTE = "v2/LdapConfig";
 class Ldap {
   constructor() {}
 
+  static validate = async domainName =>
+    Rest.get({
+      path: `${LDAP_API_ROUTE}/${domainName}/validate`
+    });
+
   static getAllDomains = async () => {
     const defaultDomains = [Authentication.DEFAULT_PROVIDER];
     return Authentication.getProviders()
