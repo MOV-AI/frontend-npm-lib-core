@@ -1,6 +1,7 @@
 import { Maybe } from "monet";
 import { ALPHANUMERIC_REGEX } from "./constants";
 import _isEmpty from "lodash/isEmpty";
+import Role from "../Role/Role";
 
 const Utils = {};
 
@@ -117,6 +118,77 @@ Utils.validateEntityName = (
   );
 };
 
+/**
+ * Return user roles
+ * @param {object} user
+ * @returns {[string]} List of roles
+ */
+Utils.getUserRoles = user => {
+  let userRoles = user.Role || user.roles || user.Roles;
+  if (!Array.isArray(userRoles)) userRoles = [userRoles];
+  return userRoles;
+};
+
+/**
+ * Build permissions
+ * @param {string} id
+ * @param {object} user
+ * @returns {[object]} List of permissions
+ */
+Utils.parseUserData = async user => {
+  const resourcesParsedData = [];
+  const userRoles = Utils.getUserRoles(user);
+  const permissionsByResourceType = await Utils.getPermissionsByScope(
+    userRoles
+  );
+  user.Resources = permissionsByResourceType;
+  for (let [resourceType, resourcePermissions] of Object.entries(
+    user.allResourcesPermissions
+  )) {
+    const hasUserResource = user?.Resources?.[resourceType] ?? false;
+
+    const resource = {
+      name: resourcePermissions.Label || resourceType,
+      permissions: resourcePermissions.map(perm => {
+        const rolePermValue =
+          permissionsByResourceType[resourceType]?.includes(perm);
+        let permValue = rolePermValue;
+        if (hasUserResource !== false) {
+          permValue = hasUserResource.includes(perm);
+        }
+        return {
+          id: `${user.id}-${resourceType}-${perm}`,
+          name: perm,
+          roleDefault: rolePermValue,
+          resourceType: resourceType,
+          value: permValue
+        };
+      })
+    };
+    resourcesParsedData.push(resource);
+  }
+  return resourcesParsedData;
+};
+
+/**
+ * Get permissions by scope
+ * @param {object} user
+ * @returns {object} Dictionary with list of permissions by scope
+ */
+Utils.getPermissionsByScope = async userRoles => {
+  const allRoles = await Role.getAll();
+  return userRoles.reduce((prev, role) => {
+    const selectedRoleResources = allRoles?.[role]?.Resources ?? {};
+    Object.entries(selectedRoleResources).forEach(
+      ([resourceType, permissions]) => {
+        if (!prev[resourceType]) prev[resourceType] = [];
+        prev[resourceType] = [...prev[resourceType], ...permissions];
+      }
+    );
+    return prev;
+  }, {});
+};
+
 const API_VERSION = "api/v1/apps";
 const NEW_TAB = "_blank";
 const SAME_TAB = "_self";
@@ -173,3 +245,25 @@ Utils.loadResources = (event, element) => {
 };
 
 export default Utils;
+
+/**
+ * Maps new user password change model to old one
+ * @param {object} body Object corresponding to either old or new password change model
+ * @returns {object} Object corresponding to old model for V1 user
+ */
+export const mapToUserV1PasswordChangeModel = body => {
+  const {
+    current_password,
+    CurrentPassword,
+    new_password,
+    NewPassword,
+    confirm_password,
+    ConfirmPassword
+  } = body;
+  const model = {
+    current_password: current_password ?? CurrentPassword ?? "",
+    new_password: new_password ?? NewPassword,
+    confirm_password: confirm_password ?? ConfirmPassword
+  };
+  return model;
+};
