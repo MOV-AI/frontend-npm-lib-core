@@ -59,7 +59,7 @@ class Ldap {
       search: { common_name: queryText }
     }).catch(err => {
       console.log("Error searching Ldap Data:", e.statusText);
-      throw e;
+      throw err;
     });
   };
 
