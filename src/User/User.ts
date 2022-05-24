@@ -17,6 +17,7 @@ import {
   UserPostModel,
   UserPutModel
 } from "../types";
+import Application from "../Application/Application";
 
 export class User {
   private tokenData: Token;
@@ -26,6 +27,14 @@ export class User {
     this.tokenData = Authentication.getTokenData();
     this.instance = new (this.getUserClass())();
   }
+
+  /**
+   * Get all apps
+   * @returns {Promise<array>} List with all apps
+   */
+  getAllApps = () => {
+    return Application.getAll();
+  };
 
   /**
    * Get user class
@@ -48,7 +57,15 @@ export class User {
    * @returns {Promise<User>}
    */
   getData = async () => {
-    return await this.instance.getData();
+    return this.instance.getData();
+  };
+
+  /**
+   * Get allowed apps
+   * @returns {Promise<array>} List of allowed apps
+   */
+  getAllowedApps = async () => {
+    return this.instance.getAllowedApps();
   };
 
   getCurrentUserWithPermissions = async () => {

@@ -13,7 +13,8 @@
     "eamodio.gitlens",
     "dbaeumer.vscode-eslint",
     "makogan.hermes-comments",
-    "burkeholland.simple-react-snippets"
+    "burkeholland.simple-react-snippets",
+    "SonarSource.sonarlint-vscode"
   ],
   "postCreateCommand": "npm ci",
   "remoteUser": "node",

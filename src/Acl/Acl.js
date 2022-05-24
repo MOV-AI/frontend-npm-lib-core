@@ -35,6 +35,7 @@ class Acl {
       body: postModel
     }).catch(err => {
       console.warn(`Error saving ${resourceType}: `, err);
+      throw err;
     });
   };
 
@@ -44,6 +45,7 @@ class Acl {
       body: putModel
     }).catch(err => {
       console.warn(`Error saving ${resourceType}: `, err);
+      throw err;
     });
   };
 
@@ -53,6 +55,7 @@ class Acl {
       body: deleteModel
     }).catch(err => {
       console.log(`Error deleting ${resourceType}: `, err);
+      throw err;
     });
   };
 }

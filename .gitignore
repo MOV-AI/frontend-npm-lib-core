@@ -28,3 +28,5 @@ yarn-error.log*
 
 #typescript generated files
 *.d.ts
+# SonarQube
+/.scannerwork 
