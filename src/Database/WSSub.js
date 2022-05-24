@@ -1,6 +1,8 @@
 import AuthWebSocket from "../AuthWebSocket/AuthWebSocket";
-import Authentication from "../Authentication/Authentication";
-const { getToken, AuthException, checkLogin } = Authentication;
+import Authentication, {
+  AuthException
+} from "../Authentication/Authentication";
+const { getToken, checkLogin } = Authentication;
 
 const WSSUB_STATES = {
   NOT_INIT: 0,
@@ -352,9 +354,9 @@ class WSSub {
       .addSubscriberCallback(callback, _pattern)
       .addEventCallback(SUBSCRIBE, evt_callback, _pattern);
 
-      if(this.getState() === WebSocket.OPEN){
-        this.send(message);
-      }
+    if (this.getState() === WebSocket.OPEN) {
+      this.send(message);
+    }
   };
 
   /**

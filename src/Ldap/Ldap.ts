@@ -1,21 +1,21 @@
 import Rest from "../Rest/Rest";
 import { ACL_API_ROUTE } from "../Acl/Acl";
 import Authentication from "../Authentication/Authentication";
+import { HttpErrorResponse } from "../models/http";
 import {
-  HttpResponse,
   LdapDomain,
   LdapDomainPostModel,
+  LdapUpdateResult,
   LdapDomainPutModel,
-  LdapResource,
-  LdapUpdateResult
-} from "../types";
+  LdapResource
+} from "../models/ldap";
 
 const LDAP_API_ROUTE = "v2/LdapConfig";
 
 class Ldap {
   constructor() {}
 
-  static validate = async domainName =>
+  static validate = async (domainName: string): Promise<{ success: boolean }> =>
     Rest.get({
       path: `${LDAP_API_ROUTE}/${domainName}/validate`
     });
@@ -24,40 +24,43 @@ class Ldap {
     const defaultDomains = [Authentication.DEFAULT_PROVIDER];
     return Authentication.getProviders()
       .then(response => response.domains)
-      .catch(err => defaultDomains);
+      .catch(e => {
+        console.warn("Error getting Ldap Domains:", e.statusText);
+        return defaultDomains;
+      });
   };
 
   static getExternalDomains = (): Promise<string[]> =>
     Rest.get({
       path: `${LDAP_API_ROUTE}/`
-    }).catch((e: HttpResponse) => {
-      console.log("Error getting Ldap Domains:", e.statusText);
+    }).catch((e: HttpErrorResponse) => {
+      console.warn("Error getting Ldap Domains:", e.statusText);
       throw e;
     });
 
   static getDomain = (domainName: string): Promise<LdapDomain> =>
     Rest.get({
       path: `${LDAP_API_ROUTE}/${domainName}/`
-    }).catch((e: HttpResponse) => {
-      console.log("Error getting Ldap Data:", e.statusText);
+    }).catch((e: HttpErrorResponse) => {
+      console.warn("Error getting Ldap Data:", e.statusText);
       throw e;
     });
 
   static createDomain = (
-    formData: LdapDomainPostModel
+    postModel: LdapDomainPostModel
   ): Promise<LdapUpdateResult> =>
     Rest.post({
       path: `${LDAP_API_ROUTE}/new`,
-      body: formData
+      body: postModel
     });
 
   static updateDomain = (
     domainName: string,
-    formData: LdapDomainPutModel
+    putModel: LdapDomainPutModel
   ): Promise<LdapUpdateResult> =>
     Rest.put({
       path: `${LDAP_API_ROUTE}/${domainName}/`,
-      body: formData
+      body: putModel
     });
 
   static deleteDomain = (domainName: string): Promise<LdapUpdateResult> =>
@@ -74,8 +77,8 @@ class Ldap {
     return Rest.get({
       path: `${ACL_API_ROUTE}/${domainName}/${resourceType}/search`,
       search: { common_name: queryText }
-    }).catch((e: HttpResponse) => {
-      console.log("Error searching Ldap Data:", e.statusText);
+    }).catch((e: HttpErrorResponse) => {
+      console.warn("Error searching Ldap Data:", e.statusText);
       throw e;
     });
   };

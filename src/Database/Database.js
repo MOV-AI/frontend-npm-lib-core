@@ -1,6 +1,8 @@
-import Authentication from "../Authentication/Authentication";
+import Authentication, {
+  AuthException
+} from "../Authentication/Authentication";
 import AuthWebSocket from "../AuthWebSocket/AuthWebSocket";
-const { getToken, AuthException, checkLogin } = Authentication;
+const { getToken, checkLogin } = Authentication;
 
 class Database {
   constructor() {
@@ -220,13 +222,15 @@ class Database {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
-        if (callback) {
-          callback(res);
-        }
-      }).catch(e => {
-        console.log(e);
-      });
+      })
+        .then(res => {
+          if (callback) {
+            callback(res);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
     });
   };
 
@@ -314,7 +318,7 @@ class Database {
       .then(res => res.json())
       .then(callback)
       .catch(e => {
-        console.log('upload error', e);
+        console.log("upload error", e);
         callback(undefined);
       });
   };
@@ -450,11 +454,12 @@ class Database {
         }
       }).then(res => {
         if (callback) {
-          res.json()
+          res
+            .json()
             .then(data => callback(data))
-            .catch(e => { 
-              console.log(e); 
-              callback(undefined); 
+            .catch(e => {
+              console.log(e);
+              callback(undefined);
             });
         }
       });

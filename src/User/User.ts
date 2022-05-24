@@ -8,20 +8,22 @@ import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
 import UserV1 from "./UserV1";
 import AclUser from "./AclUser";
+import Application from "../Application/Application";
+import { PermissionType } from "../models/permission";
+import { Token } from "../models/authentication";
 import {
   ChangePasswordModel,
-  PermissionType,
+  InternalUserModel,
   ResetPasswordModel,
-  Token,
   UserModel,
   UserPostModel,
   UserPutModel
-} from "../types";
-import Application from "../Application/Application";
+} from "../models/user";
 
+type UserType = UserV1 | InternalUser | AclUser;
 export class User {
   private tokenData: Token;
-  private instance: UserV1 | InternalUser | AclUser;
+  private instance: UserType;
 
   constructor() {
     this.tokenData = Authentication.getTokenData();
@@ -56,7 +58,7 @@ export class User {
    * Get user data
    * @returns {Promise<User>}
    */
-  getData = async () => {
+  getData = async (): Promise<InternalUserModel> => {
     return this.instance.getData();
   };
 

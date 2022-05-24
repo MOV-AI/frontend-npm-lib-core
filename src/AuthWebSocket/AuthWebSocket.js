@@ -1,6 +1,8 @@
-import Authentication from "../Authentication/Authentication";
+import Authentication, {
+  AuthException
+} from "../Authentication/Authentication";
 
-const { checkLogin, getToken, AuthException } = Authentication;
+const { checkLogin, getToken } = Authentication;
 
 export default class AuthWebSocket {
   constructor({

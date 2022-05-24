@@ -1,5 +1,7 @@
-import Authentication from "../Authentication/Authentication";
-const { checkLogin, AuthException, getToken } = Authentication;
+import Authentication, {
+  AuthException
+} from "../Authentication/Authentication";
+const { checkLogin, getToken } = Authentication;
 
 const withAuth = (obj, props = {}) => {
   const handler = {
