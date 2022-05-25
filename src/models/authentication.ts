@@ -26,7 +26,7 @@ export interface Token {
   [NEW_TOKEN_VERSION_ID]?: { domain_name: string };
 }
 
-export interface LoginPostModel {
+export interface LoginPost {
   username: string;
   password: string;
   remember: boolean;

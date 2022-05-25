@@ -1,17 +1,17 @@
 import { PermissionType, ResourcePermission } from "./permission";
 
-export interface ChangePasswordModel {
+export interface ChangePassword {
   CurrentPassword: string;
   NewPassword: string;
   ConfirmPassword: string;
 }
 
-export interface ResetPasswordModel {
+export interface ResetPassword {
   NewPassword: string;
   ConfirmPassword: string;
 }
 
-export interface UserModel {
+export interface User {
   Resources: { [scope: string]: string[] };
   Superuser: boolean;
   allRoles: string[];
@@ -19,7 +19,7 @@ export interface UserModel {
   resourcesPermissions: ResourcePermission[];
 }
 
-export interface UserPostModel {
+export interface UserPost {
   AccountName: string;
   CommonName: string;
   Email: string;
@@ -30,7 +30,7 @@ export interface UserPostModel {
   SuperUser: boolean;
 }
 
-export interface UserPutModel {
+export interface UserPut {
   Roles: string[];
   CommonName: string;
   Email: string;
@@ -41,7 +41,7 @@ export interface UserPutModel {
 
 export type UserType = "INTERNAL" | "EXTERNAL";
 
-export interface InternalUserModel {
+export interface InternalUser {
   AccountName: string;
   CommonName: string;
   DomainName: string;

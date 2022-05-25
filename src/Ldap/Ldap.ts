@@ -4,17 +4,16 @@ import Authentication from "../Authentication/Authentication";
 import { HttpErrorResponse } from "../models/http";
 import {
   LdapDomain,
-  LdapDomainPostModel,
+  LdapDomainPost,
   LdapUpdateResult,
-  LdapDomainPutModel,
-  LdapResource
+  LdapDomainPut,
+  LdapResourceType,
+  LdapSearch
 } from "../models/ldap";
 
 const LDAP_API_ROUTE = "v2/LdapConfig";
 
 class Ldap {
-  constructor() {}
-
   static validate = async (domainName: string): Promise<{ success: boolean }> =>
     Rest.get({
       path: `${LDAP_API_ROUTE}/${domainName}/validate`
@@ -47,7 +46,7 @@ class Ldap {
     });
 
   static createDomain = (
-    postModel: LdapDomainPostModel
+    postModel: LdapDomainPost
   ): Promise<LdapUpdateResult> =>
     Rest.post({
       path: `${LDAP_API_ROUTE}/new`,
@@ -56,7 +55,7 @@ class Ldap {
 
   static updateDomain = (
     domainName: string,
-    putModel: LdapDomainPutModel
+    putModel: LdapDomainPut
   ): Promise<LdapUpdateResult> =>
     Rest.put({
       path: `${LDAP_API_ROUTE}/${domainName}/`,
@@ -70,9 +69,9 @@ class Ldap {
 
   static search = (
     domainName: string,
-    resourceType: "group" | "user",
+    resourceType: LdapResourceType,
     queryText = ""
-  ): Promise<LdapResource[]> => {
+  ): Promise<LdapSearch[]> => {
     if (!queryText) return Promise.resolve([]);
     return Rest.get({
       path: `${ACL_API_ROUTE}/${domainName}/${resourceType}/search`,

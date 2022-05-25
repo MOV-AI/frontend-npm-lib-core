@@ -1,6 +1,6 @@
 import Authentication from "../Authentication/Authentication";
 import { UserPermissions } from "../models/permission";
-import { ChangePasswordModel, UserWithPermissions } from "../models/user";
+import { ChangePassword, UserWithPermissions } from "../models/user";
 import { APPLICATIONS_PERMISSION_SCOPE } from "../Permission/Permission";
 import Rest from "../Rest/Rest";
 
@@ -47,7 +47,7 @@ class BaseUser {
     /* Implemented in derived classes */
   };
 
-  changePassword = (_model: ChangePasswordModel) => {
+  changePassword = (_model: ChangePassword) => {
     /* Implemented in derived classes */
   };
 

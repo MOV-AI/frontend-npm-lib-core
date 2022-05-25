@@ -12,12 +12,12 @@ import Application from "../Application/Application";
 import { PermissionType } from "../models/permission";
 import { Token } from "../models/authentication";
 import {
-  ChangePasswordModel,
-  InternalUserModel,
-  ResetPasswordModel,
-  UserModel,
-  UserPostModel,
-  UserPutModel
+  ChangePassword,
+  InternalUser as InternalUserModel,
+  ResetPassword,
+  User as UserModel,
+  UserPost,
+  UserPut
 } from "../models/user";
 
 type UserType = UserV1 | InternalUser | AclUser;
@@ -58,7 +58,7 @@ export class User {
    * Get user data
    * @returns {Promise<User>}
    */
-  getData = async (): Promise<InternalUserModel> => {
+  getData = async (): Promise<InternalUser> => {
     return this.instance.getData();
   };
 
@@ -111,7 +111,7 @@ export class User {
    * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
    */
-  changePassword = (body: ChangePasswordModel) => {
+  changePassword = (body: ChangePassword) => {
     return this.instance.changePassword(body);
   };
 
@@ -127,7 +127,7 @@ export class User {
    * @param {{new_password: string, confirm_password: string}} body : Request body
    * @returns {Promise} Response promise
    */
-  static resetPassword = (userId: string, body: ResetPasswordModel) => {
+  static resetPassword = (userId: string, body: ResetPassword) => {
     return InternalUser.resetPassword(userId, body);
   };
 
@@ -162,12 +162,12 @@ export class User {
    * Create a new User entity
    * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Post model
    */
-  static create = (model: UserPostModel) => InternalUser.create(model);
+  static create = (model: UserPost) => InternalUser.create(model);
 
   /**
    * Update a new User
    * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Put model
    */
-  static update = (userId: string, model: UserPutModel) =>
+  static update = (userId: string, model: UserPut) =>
     InternalUser.update(userId, model);
 }

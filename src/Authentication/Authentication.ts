@@ -1,7 +1,7 @@
 import jwtDecode from "jwt-decode";
 import {
   DecodedToken,
-  LoginPostModel,
+  LoginPost,
   LoginResponse,
   Token
 } from "../models/authentication";
@@ -116,7 +116,7 @@ export default class Authentication {
       Authentication.deleteTokens();
 
       const url = `/token-auth/`;
-      const body: LoginPostModel = {
+      const body: LoginPost = {
         username: username,
         password: password,
         remember: remember,

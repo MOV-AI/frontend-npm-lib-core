@@ -24,15 +24,23 @@ export interface LdapDomain {
   _schema_version?: string;
 }
 
-export interface LdapDomainUpdateModel extends LdapDomain {
+export interface LdapSearch {
+  CommonName: string;
+  AccountName: string;
+  ID: string;
+}
+
+export interface LdapDomainUpdate extends LdapDomain {
   Password?: string;
 }
 
-export interface LdapDomainPostModel extends LdapDomainUpdateModel {}
+export interface LdapDomainPost extends LdapDomainUpdate {}
 
-export interface LdapDomainPutModel extends LdapDomainUpdateModel {}
+export interface LdapDomainPut extends LdapDomainUpdate {}
 
 export interface LdapUpdateResult {
   success: boolean;
   message?: string;
 }
+
+export type LdapResourceType = "user" | "group";

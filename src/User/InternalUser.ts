@@ -1,12 +1,12 @@
 import { NEW_TOKEN_VERSION_ID } from "../Authentication/Authentication";
 import { HttpErrorResponse } from "../models/http";
 import {
-  ChangePasswordModel,
-  UserPostModel,
-  InternalUserModel,
+  ChangePassword,
+  UserPost,
+  InternalUser as InternalUserModel,
   UserUpdateResult,
-  UserPutModel,
-  ResetPasswordModel
+  UserPut,
+  ResetPassword
 } from "../models/user";
 import Rest from "../Rest/Rest";
 import { REQUEST_STATUS } from "../Utils/constants";
@@ -26,7 +26,7 @@ class InternalUser extends BaseUser {
 
   isInternalUser = () => true;
 
-  changePassword = (model: ChangePasswordModel): Promise<UserUpdateResult> =>
+  changePassword = (model: ChangePassword): Promise<UserUpdateResult> =>
     Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/change-password`,
       body: model
@@ -55,16 +55,13 @@ class InternalUser extends BaseUser {
     return Rest.delete({ path: `${INTERNAL_USER_API_ROUTE}/${user.name}/` });
   };
 
-  static create = (model: UserPostModel): Promise<UserUpdateResult> =>
+  static create = (model: UserPost): Promise<UserUpdateResult> =>
     Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/new/`,
       body: model
     });
 
-  static update = (
-    userId: string,
-    model: UserPutModel
-  ): Promise<UserUpdateResult> =>
+  static update = (userId: string, model: UserPut): Promise<UserUpdateResult> =>
     Rest.put({
       path: `${INTERNAL_USER_API_ROUTE}/${userId}/`,
       body: model
@@ -72,7 +69,7 @@ class InternalUser extends BaseUser {
 
   static resetPassword = (
     userId: string,
-    model: ResetPasswordModel
+    model: ResetPassword
   ): Promise<UserUpdateResult> => {
     return Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/${userId}/reset-password`,
