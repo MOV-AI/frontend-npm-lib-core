@@ -193,11 +193,9 @@ class Robot {
     if (this.logger.status !== LOGGER_STATUS.running) return; // Or if logger status is not "running"
     if (!this.name) return; // Or if robot has no name
 
-    const protocol = window.location.protocol;
-    const host = window.location.hostname;
     // Get logs from server
-    const url = `${protocol}//${host}/api/v1/logs/${this.name}?limit=50&level=info,error,warning,critical&tags=ui`;
-    Rest.get({ url })
+    const path = `v1/logs/${this.name}?limit=50&level=info,error,warning,critical&tags=ui`;
+    Rest.get({ path })
       .then(response => {
         if (!response || !response.data) return;
         // Cache log data and send response to active subscriptions
@@ -212,6 +210,7 @@ class Robot {
         // Enqueue next request
         this.logger.time += 1000;
         this._enqueueNextRequest();
+        console.warn("Failed log request", err);
       });
   }
 
