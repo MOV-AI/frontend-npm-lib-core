@@ -17,13 +17,13 @@ RestBase.encodeURI = data => {
  * @param {String} path - Relative path
  */
 RestBase.getUrl = ({ path, search = {} }) => {
-  const host = `${window.location.hostname}:${window.location.port}`;
+  const protocol = `${window.location.protocol}`;
+  const host = `${window.location.host}`;
 
-  const params = new URLSearchParams(RestBase.encodeURI(search));
+  const params = new URLSearchParams(RestBase.encodeURI(search)).toString();
+  const queryParams = params ? `?${params}` : "";
 
-  return `${
-    window.location.protocol
-  }//${host}/api/${path}?${params.toString()}`;
+  return `${protocol}//${host}/api/${path}${queryParams}`;
 };
 
 /**
