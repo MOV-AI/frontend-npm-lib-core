@@ -322,7 +322,7 @@ class WSSub {
   checkConnection = () => {
     return fetch(`/token-verify/`, {
       method: "POST",
-      body: JSON.stringify({ token: "" })
+      body: JSON.stringify({ token: getToken() })
     })
       .then(res => {
         if (this.connectionState === CONNECTION.online) return;
@@ -352,9 +352,9 @@ class WSSub {
       .addSubscriberCallback(callback, _pattern)
       .addEventCallback(SUBSCRIBE, evt_callback, _pattern);
 
-      if(this.getState() === WebSocket.OPEN){
-        this.send(message);
-      }
+    if (this.getState() === WebSocket.OPEN) {
+      this.send(message);
+    }
   };
 
   /**
