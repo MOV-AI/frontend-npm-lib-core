@@ -1,6 +1,5 @@
 import { LdapResourceType } from "./ldap";
 
-/*comment */
 interface AclUpdate {
   AccountName: string;
   ID: string;
