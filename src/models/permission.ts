@@ -13,3 +13,5 @@ export interface UserPermissions {
   SuperUser: boolean;
   Roles: string[];
 }
+
+export const APPLICATIONS_PERMISSION_SCOPE = "Applications";

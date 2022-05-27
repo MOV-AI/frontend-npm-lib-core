@@ -1,7 +1,4 @@
-import Authentication, {
-  INTERNAL_AUTHENTICATIONS,
-  NEW_TOKEN_VERSION_ID
-} from "../Authentication/Authentication";
+import Authentication from "../../api/Authentication/Authentication";
 import Permissions from "../Permission/Permission";
 import Utils from "../Utils/Utils";
 import InternalUser from "./InternalUser";
@@ -9,8 +6,12 @@ import Role from "../Role/Role";
 import UserV1 from "./UserV1";
 import AclUser from "./AclUser";
 import Application from "../Application/Application";
-import { PermissionType } from "../models/permission";
-import { Token } from "../models/authentication";
+import { PermissionType } from "../../models/permission";
+import {
+  INTERNAL_AUTHENTICATIONS,
+  NEW_TOKEN_VERSION_ID,
+  Token
+} from "../../models/authentication";
 import {
   ChangePassword,
   InternalUser as InternalUserModel,
@@ -18,7 +19,7 @@ import {
   User as UserModel,
   UserPost,
   UserPut
-} from "../models/user";
+} from "../../models/user";
 
 type UserType = UserV1 | InternalUser | AclUser;
 export class User {

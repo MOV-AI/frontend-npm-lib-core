@@ -1,5 +1,4 @@
-import { NEW_TOKEN_VERSION_ID } from "../Authentication/Authentication";
-import { HttpErrorResponse } from "../models/http";
+import { HttpErrorResponse } from "../../models/http";
 import {
   ChangePassword,
   UserPost,
@@ -7,7 +6,7 @@ import {
   UserUpdateResult,
   UserPut,
   ResetPassword
-} from "../models/user";
+} from "../../models/user";
 import Rest from "../Rest/Rest";
 import { REQUEST_STATUS } from "../Utils/constants";
 import BaseUser from "./BaseUser";

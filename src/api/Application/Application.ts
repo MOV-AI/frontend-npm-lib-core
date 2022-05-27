@@ -1,5 +1,5 @@
 import Rest from "../Rest/Rest";
-import { Application as ApplicationModel } from "../models/application";
+import { Application as ApplicationModel } from "../../models/application";
 
 class Application {
   static getAll = (): Promise<ApplicationModel> =>

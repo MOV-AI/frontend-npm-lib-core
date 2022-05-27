@@ -1,22 +1,13 @@
 import jwtDecode from "jwt-decode";
 import {
   DecodedToken,
+  INTERNAL_AUTHENTICATION,
   LoginPost,
   LoginResponse,
+  NEW_TOKEN_VERSION_ID,
+  STORAGE_KEYS,
   Token
-} from "../models/authentication";
-
-export const NEW_TOKEN_VERSION_ID = "v2";
-
-const STORAGE_KEYS = {
-  TOKEN: "movai.token",
-  REFRESH_TOKEN: "movai.refreshToken",
-  TOKEN_REMEMBER: "movai.tokenRemember",
-  SESSION: "movai.session"
-};
-
-const INTERNAL_AUTHENTICATION = "internal";
-export const INTERNAL_AUTHENTICATIONS = [INTERNAL_AUTHENTICATION];
+} from "../../models/authentication";
 
 export class AuthException {
   public message: string;

@@ -2,6 +2,10 @@
  * Clipboard singleton
  */
 export default class Clipboard {
+  static instance: any;
+  _data: any;
+  copyKey!: number;
+
   constructor() {
     if (Clipboard.instance) return Clipboard.instance;
     Clipboard.instance = this;
@@ -20,7 +24,7 @@ export default class Clipboard {
    *
    * @param {string} key base key to clear
    */
-  static clear(key) {
+  static clear(key: string): void {
     const inst = new Clipboard();
     if (key) delete inst._data[key];
   }
@@ -29,7 +33,7 @@ export default class Clipboard {
    *
    * @param {string} key base key to read
    */
-  static read(key) {
+  static read(key: string | number): any {
     // consider return a maybe
     const inst = new Clipboard();
     return key ? inst.data[key] : inst.data;
@@ -40,7 +44,7 @@ export default class Clipboard {
    * @param {string} key base key to write
    * @param {any} value object, primitive, etc, to write
    */
-  static write(key, value) {
+  static write(key: string | number, value: any) {
     return (new Clipboard()._data[key] = value);
   }
 
@@ -48,7 +52,7 @@ export default class Clipboard {
    * Copies value
    * @param {*} value
    */
-  static copy(value) {
+  static copy(value: any) {
     Clipboard.write(new Clipboard().copyKey, value);
   }
 

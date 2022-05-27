@@ -6,9 +6,9 @@ import {
   AclBatchResult,
   AclPut,
   AclPutResult
-} from "../models/acl";
-import { HttpErrorResponse } from "../models/http";
-import { LdapResourceType } from "../models/ldap";
+} from "../../models/acl";
+import { HttpErrorResponse } from "../../models/http";
+import { LdapResourceType } from "../../models/ldap";
 import Rest from "../Rest/Rest";
 import { REQUEST_STATUS } from "../Utils/constants";
 

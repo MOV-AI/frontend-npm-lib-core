@@ -1,4 +1,4 @@
-import icons from "../../resources/fonts/icomoon.woff";
+import icons from "../../../resources/fonts/icomoon.woff";
 
 // font generated in https://icomoon.io/
 

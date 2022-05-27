@@ -1,10 +1,7 @@
 import Rest from "../Rest/Rest";
 
-export const APPLICATIONS_PERMISSION_SCOPE = "Applications";
 class Permission {
-  cachedPermissions;
-
-  constructor() {}
+  cachedPermissions: any;
 
   getAll = async () => {
     if (!this.cachedPermissions) {
@@ -14,6 +11,5 @@ class Permission {
   };
 }
 
-const permissionSingleton = new Permission();
-
-export default permissionSingleton;
+const permission = new Permission();
+export default permission;

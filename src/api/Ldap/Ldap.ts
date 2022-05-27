@@ -1,7 +1,7 @@
 import Rest from "../Rest/Rest";
 import { ACL_API_ROUTE } from "../Acl/Acl";
 import Authentication from "../Authentication/Authentication";
-import { HttpErrorResponse } from "../models/http";
+import { HttpErrorResponse } from "../../models/http";
 import {
   LdapDomain,
   LdapDomainPost,
@@ -9,7 +9,7 @@ import {
   LdapDomainPut,
   LdapResourceType,
   LdapSearch
-} from "../models/ldap";
+} from "../../models/ldap";
 
 const LDAP_API_ROUTE = "v2/LdapConfig";
 

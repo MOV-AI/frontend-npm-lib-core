@@ -52,7 +52,9 @@ class UserV1 extends BaseUser {
 
   isInternalUser = () => true;
 
-  isSuperUser = () => this.data.Superuser;
+  isSuperUser = () => {
+    return this.getData().then(({ response: user }) => user.Superuser);
+  };
 
   changePassword = body => {
     const model = mapToUserV1PasswordChangeModel(body);

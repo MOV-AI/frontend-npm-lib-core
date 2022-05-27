@@ -1,7 +1,9 @@
 import Authentication from "../Authentication/Authentication";
-import { UserPermissions } from "../models/permission";
-import { ChangePassword, UserWithPermissions } from "../models/user";
-import { APPLICATIONS_PERMISSION_SCOPE } from "../Permission/Permission";
+import {
+  APPLICATIONS_PERMISSION_SCOPE,
+  UserPermissions
+} from "../../models/permission";
+import { ChangePassword, UserWithPermissions } from "../../models/user";
 import Rest from "../Rest/Rest";
 
 class BaseUser {

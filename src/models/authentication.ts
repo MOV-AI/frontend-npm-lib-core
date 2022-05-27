@@ -1,4 +1,14 @@
-import { NEW_TOKEN_VERSION_ID } from "../Authentication/Authentication";
+export const NEW_TOKEN_VERSION_ID = "v2";
+
+export const STORAGE_KEYS = {
+  TOKEN: "movai.token",
+  REFRESH_TOKEN: "movai.refreshToken",
+  TOKEN_REMEMBER: "movai.tokenRemember",
+  SESSION: "movai.session"
+};
+
+export const INTERNAL_AUTHENTICATION = "internal";
+export const INTERNAL_AUTHENTICATIONS = [INTERNAL_AUTHENTICATION];
 
 export interface DecodedToken {
   message: {
