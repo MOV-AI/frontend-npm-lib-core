@@ -7,7 +7,7 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/src/api/index.d.ts",
       "default": "./dist/index.js"
     },
     "./models": {
