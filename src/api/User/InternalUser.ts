@@ -2,7 +2,7 @@ import { HttpErrorResponse } from "../../models/http";
 import {
   ChangePassword,
   UserPost,
-  InternalUser as InternalUserModel,
+  InternalUserModel as InternalUserModel,
   UserUpdateResult,
   UserPut,
   ResetPassword
