@@ -2,10 +2,13 @@ const path = require("path");
 var nodeExternals = require("webpack-node-externals");
 
 module.exports = {
-  entry: "./index.ts",
+  entry: {
+    index: "./src/api/index.ts",
+    models: "./src/models/index.ts"
+  },
   output: {
     path: path.resolve("./"),
-    filename: "dist/index.js",
+    filename: "dist/[name].js",
     library: "Movai",
     libraryTarget: "umd"
   },

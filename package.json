@@ -12,7 +12,7 @@
     },
     "./models": {
       "types": "./types/src/models/index.d.ts",
-      "default": "./dist/index.js"
+      "default": "./dist/models.js"
     }
   },
   "scripts": {
