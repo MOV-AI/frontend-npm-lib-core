@@ -14,9 +14,9 @@ import {
 } from "../../models/authentication";
 import {
   ChangePassword,
-  InternalUser as InternalUserModel,
+  InternalUserModel as InternalUserModel,
   ResetPassword,
-  User as UserModel,
+  UserModel as UserModel,
   UserPost,
   UserPut
 } from "../../models/user";

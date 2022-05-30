@@ -1,7 +1,7 @@
 import {
   AclDeleteModel,
   AclList,
-  Acl as AclModel,
+  AclModel as AclModel,
   AclPost,
   AclBatchResult,
   AclPut,

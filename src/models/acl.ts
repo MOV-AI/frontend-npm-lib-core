@@ -20,7 +20,7 @@ export interface AclDeleteModel {
   ID: string;
 }
 
-export interface Acl {
+export interface AclModel {
   AccountName: string;
   CommonName: string;
   DomainName: string;
@@ -34,7 +34,7 @@ export interface Acl {
 }
 
 export interface AclList {
-  [id: string]: Acl;
+  [id: string]: AclModel;
 }
 
 export interface AclPutResult {

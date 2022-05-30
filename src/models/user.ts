@@ -11,7 +11,7 @@ export interface ResetPassword {
   ConfirmPassword: string;
 }
 
-export interface User {
+export interface UserModel {
   Resources: { [scope: string]: string[] };
   Superuser: boolean;
   allRoles: string[];
@@ -41,7 +41,7 @@ export interface UserPut {
 
 export type UserType = "INTERNAL" | "EXTERNAL";
 
-export interface InternalUser {
+export interface InternalUserModel {
   AccountName: string;
   CommonName: string;
   DomainName: string;
