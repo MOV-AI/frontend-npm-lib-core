@@ -5,6 +5,7 @@ interface AclUpdate {
   ID: string;
   Roles: string[];
   SuperUser: boolean;
+
   ReadOnly: boolean;
   SendReport: boolean;
 }
