@@ -7,11 +7,10 @@
   },
   "exports": {
     ".": {
-      "types": "./types/src/api/index.d.ts",
       "default": "./dist/index.js"
     },
     "./models": {
-      "types": "./types/src/models/index.d.ts",
+      "types": "./dist/src/models/index.d.ts",
       "default": "./dist/models.js"
     }
   },
