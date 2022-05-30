@@ -8,8 +8,11 @@ export interface ResourcePermission {
 
 export type PermissionType = "create" | "read" | "write" | "delete";
 
+export interface ScopePermissions {
+  [scopeName: string]: PermissionType[];
+}
 export interface UserPermissions {
-  Permissions: { [scopeName: string]: PermissionType[] };
+  Permissions: ScopePermissions;
   SuperUser: boolean;
   Roles: string[];
 }

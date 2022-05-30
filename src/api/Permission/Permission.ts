@@ -1,9 +1,10 @@
+import { ScopePermissions } from "../../models/permission";
 import Rest from "../Rest/Rest";
 
 class Permission {
-  cachedPermissions: any;
+  cachedPermissions: ScopePermissions;
 
-  getAll = async () => {
+  getAll = async (): Promise<ScopePermissions> => {
     if (!this.cachedPermissions) {
       this.cachedPermissions = await Rest.get({ path: "v1/permissions/" });
     }
