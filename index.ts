@@ -1,2 +1,2 @@
-export * from "./src/api/index";
-export * from "./src/models/index";
+export * from "./src/api";
+export * from "./src/models";
