@@ -152,7 +152,7 @@ class WSSub {
 
   /**
    * add event callback
-   * @param {strin} command command to send; event to subscribe
+   * @param {string} command command to send; event to subscribe
    * @param {function} callback function to execute
    * @param {string} pattern pattern to subscribe to
    */

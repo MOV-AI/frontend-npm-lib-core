@@ -5,6 +5,7 @@ import Ldap from "./src/Ldap/Ldap";
 import { BROADCAST_EVENTS } from "./src/Utils/constants";
 import BroadcastChannel from "./src/BroadcastChannel/BroadcastChannel";
 import RobotManager from "./src/RobotManager/RobotManager";
+import VariableManager from "./src/VariableManager/VariableManager";
 import Utils from "./src/Utils/Utils";
 import Database from "./src/Database/Database";
 import MasterDB from "./src/Database/MasterDB";
@@ -41,6 +42,7 @@ export {
   BROADCAST_EVENTS,
   Document,
   RobotManager,
+  VariableManager,
   Workspace,
   Snapshot,
   Rest
