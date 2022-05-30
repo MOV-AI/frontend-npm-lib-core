@@ -61,10 +61,10 @@
   ],
   "typesVersions": {
     "*": {
-      "index": [
+      "api": [
         "dist/src/api/index.d.ts"
       ],
-      "tokens": [
+      "models": [
         "dist/src/models/index.d.ts"
       ]
     }

@@ -10,7 +10,7 @@ Its main use will be to build Mov.AI applications.
 
 ## Building Mov.ai Core
 
-1. Git clone mov.ai core
+1. Git clone mov.ai coree
 
 2. Create new branch
 
