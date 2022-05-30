@@ -5,16 +5,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mov-ai"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/src/api/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./models": {
-      "types": "./dist/src/models/index.d.ts",
-      "default": "./dist/models.js"
-    }
-  },
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "webpack --mode=production",
@@ -67,5 +58,15 @@
   "files": [
     "dist",
     "resources"
-  ]
+  ],
+  "typesVersions": {
+    "*": {
+      "index": [
+        "dist/src/api/index.d.ts"
+      ],
+      "tokens": [
+        "dist/src/models/index.d.ts"
+      ]
+    }
+  }
 }
