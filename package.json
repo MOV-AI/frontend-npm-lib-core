@@ -1,6 +1,6 @@
 {
   "name": "@mov-ai/mov-fe-lib-core",
-  "version": "0.0.1804-14",
+  "version": "0.0.1804-15",
   "description": "The Mov.AI's core frontend library.",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mov-ai"
