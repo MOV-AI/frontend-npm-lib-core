@@ -2,13 +2,10 @@ const path = require("path");
 var nodeExternals = require("webpack-node-externals");
 
 module.exports = {
-  entry: {
-    index: "./src/api/index.ts",
-    models: "./src/models/index.ts"
-  },
+  entry: "./index.ts",
   output: {
     path: path.resolve("./"),
-    filename: "dist/[name].js",
+    filename: "dist/index.js",
     library: "Movai",
     libraryTarget: "umd"
   },
@@ -16,7 +13,7 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js"]
   },
   target: "web",
-  watch: false,
+  watch: true,
   devtool: "source-map",
   externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   module: {
