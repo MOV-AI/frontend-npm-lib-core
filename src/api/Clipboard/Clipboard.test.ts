@@ -1,4 +1,4 @@
-import Clipboard from "./Clipboard.js";
+import Clipboard from "./Clipboard";
 
 test("Read & Write clipboard", () => {
   Clipboard.write("test", 1);
