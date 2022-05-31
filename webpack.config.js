@@ -13,7 +13,6 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js"]
   },
   target: "web",
-  watch: false,
   devtool: "source-map",
   externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   module: {
