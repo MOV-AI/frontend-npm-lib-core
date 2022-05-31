@@ -14,7 +14,6 @@ afterAll(() => {
   (global.fetch as jest.Mock).mockClear();
   global.fetch = unmockedFetch;
   global.console = unmockedConsole;
-  console.log("globalConsole: ", unmockedConsole);
 });
 
 test("Get Providers when fetch is successfull", () => {
