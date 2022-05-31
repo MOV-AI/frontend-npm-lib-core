@@ -26,5 +26,7 @@ yarn-error.log*
 #JetBrains
 .idea
 
+#typescript generated files
+*.d.ts
 # SonarQube
 /.scannerwork 
