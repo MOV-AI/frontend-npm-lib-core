@@ -1,7 +1,10 @@
 import _get from "lodash/get";
 import _merge from "lodash/merge";
+import Authentication from "../Authentication/Authentication";
 import MasterDB from "../Database/MasterDB";
+import Rest from "../Rest/Rest";
 import Util from "../Utils/Utils";
+const { getToken, AuthException, checkLogin } = Authentication;
 
 /**
  * VariableManager class : handles cached data and subscription
@@ -15,10 +18,12 @@ class VariableManager {
     this.variables = {};
     this.cachedVars = {};
     this.subscribeToRedis();
-    // this.destroy = function () {
-    //   // Unsubscribe on destroy
-    //   MasterDB.unsubscribe({ Scope: "Var" });
-    // };
+    this.destroy = function () {
+      // Unsubscribe on destroy
+      MasterDB.unsubscribe({ Scope: "Var" });
+      instance = null;
+      console.log("debugger destroy");
+    };
     instance = this;
   }
 
@@ -116,36 +121,51 @@ class VariableManager {
    *                                    Private Methods                                   *
    *                                                                                      */
   //========================================================================================
+  /**
+   * Execute DELETE request
+   * @param {String} path - Relative path
+   */
+  delete = ({ scope, key }) => {
+    const path = `v1/database/${scope}/${key}/`;
 
-  //   validScope = scope => ["global", "fleet"].includes(scope);
-  //   validKey = key => key.split("@") >= 2;
-  //   validateVar = (key,scope) => {
-  //     const validators = [
-  //       {
-  //         fn: scope => RestBase.validScope(scope),
-  //         error: "Invalid scope"
-  //       },
-  //       {
-  //         fn: key => RestBase.validKey(key),
-  //         error: "Key format should be <robot name>@<key name>"
-  //       }
-  //     ];
+    return Rest.delete({ path });
+  };
 
-  //     validators.forEach(obj => {
-  //       if (!obj.fn()) {
-  //         throw new Error(obj.error);
-  //       }
-  //     });
-  //   };
+  setVar = ({ key, value, scope = "global" }) => {
+    VariableManager.validateVar(key, scope);
+    const path = `v1/database/`;
+    const body = { key, scope, value };
+    return Rest.post({ path, body }).then(response => response.json());
+  };
 
-  //   setVar = ({ key, value, scope = "global", customHeaders = {} }) => {
-  //     // RestBase.validateVar(key, scope);
-  //     // const path = `v1/database/`;
-  //     // const body = { key, scope, value };
-  //     // return RestBase.post({ path, body, customHeaders }).then(response =>
-  //     //   response.json()
-  //     // );
-  //   };
+  //========================================================================================
+  /*                                                                                      *
+   *                                    STATIC METHODS                                    *
+   *                                                                                      */
+  //========================================================================================
+
+  static validScope = scope => ["global", "fleet"].includes(scope);
+
+  static validKey = key => key.split("@") >= 2;
+
+  static validateVar = (key, scope) => {
+    const validators = [
+      {
+        fn: () => VariableManager.validScope(scope),
+        error: "Invalid scope"
+      },
+      {
+        fn: () => VariableManager.validKey(key),
+        error: "Key format should be <robot name>@<key name>"
+      }
+    ];
+
+    validators.forEach(obj => {
+      if (!obj.fn()) {
+        throw new Error(obj.error);
+      }
+    });
+  };
 }
 var instance = null;
 export default VariableManager;
