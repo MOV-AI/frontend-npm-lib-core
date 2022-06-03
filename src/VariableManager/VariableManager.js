@@ -1,10 +1,8 @@
 import _get from "lodash/get";
 import _merge from "lodash/merge";
-import Authentication from "../Authentication/Authentication";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
 import Util from "../Utils/Utils";
-const { getToken, AuthException, checkLogin } = Authentication;
 
 /**
  * VariableManager class : handles cached data and subscription
@@ -117,6 +115,12 @@ class VariableManager {
   };
 
   setVar = ({ key, value, scope = "global" }) => {
+    VariableManager.validateVar(key, scope);
+    try {
+      value = JSON.parse(value);
+    } catch (error) {
+      // Keep value as it is
+    }
     const path = `v1/database/`;
     const body = { key, scope, value };
     return Rest.post({ path, body }).then(response => response);
@@ -131,7 +135,6 @@ class VariableManager {
       const obj = _get(variables, scope, {});
       // Set scope if not yet created
       if (!this.variables[scope]) {
-        // this.variables[scope] = { ID: { [scope]: {} } };
         this.variables = Object.assign(this.variables, { [scope]: { ID: {} } });
       }
       // Set robot object if not yet created
@@ -181,23 +184,16 @@ class VariableManager {
 
   static validScope = scope => ["global", "fleet"].includes(scope);
 
-  static validKey = key => scope === "fleet" && key.split("@").length >= 2;
-
   static validateVar = (key, scope) => {
     const validators = [
       {
-        fn: () => this.validScope(scope),
+        fn: () => VariableManager.validScope(scope),
         error: "Invalid scope"
-      },
-      {
-        fn: () => this.validKey(key, scope),
-        error: "Key format should be <robot name>@<key name> or @<key name>"
       }
     ];
     validators.forEach(obj => {
       if (!obj.fn()) {
         throw new Error(obj.error);
-      } else {
       }
     });
   };
