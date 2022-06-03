@@ -129,6 +129,25 @@ RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
   return RestBase.post({ path, body, customHeaders });
 };
 
+RestBase.validateVar = (key, scope) => {
+  const validators = [
+    {
+      fn: () => VariableManager.validScope(scope),
+      error: "Invalid scope"
+    },
+    {
+      fn: () => VariableManager.validKey(key),
+      error: "Key format should be <robot name>@<key name>"
+    }
+  ];
+
+  validators.forEach(obj => {
+    if (!obj.fn()) {
+      throw new Error(obj.error);
+    }
+  });
+};
+
 RestBase.getVar = ({ key, scope = "global", customHeaders = {} }) => {
   RestBase.validateVar(key, scope);
 

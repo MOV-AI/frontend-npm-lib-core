@@ -22,7 +22,6 @@ class VariableManager {
       // Unsubscribe on destroy
       MasterDB.unsubscribe({ Scope: "Var" });
       instance = null;
-      console.log("debugger destroy");
     };
     instance = this;
   }
@@ -36,49 +35,35 @@ class VariableManager {
    * Subscribe to Redis to get all vars and listen for any changes in them
    */
   subscribeToRedis() {
-    console.log("debugger subscribeToRedis");
     try {
-      console.log("debugger try");
-
       MasterDB.subscribe(
         { Scope: "Var" },
         data => {
-          console.log("debugger VAR data:", data);
-          // // Apply changes to update local  robots
-          // const robots = data.key["Robot"];
-          // const dataEventType = data.event;
-          // this._applyChanges(robots, dataEventType);
+          // Apply changes to update local  variables
+          const variables = data.key["Var"];
+          const dataEventType = data.event;
+          this._applyChanges(variables, dataEventType);
 
-          // // Set changed robots
-          // const changedRobots = {};
-          // Object.keys(robots).forEach(robotId => {
-          //   changedRobots[robotId] = this.cachedVars[robotId];
-          // });
-          // // Call subscribed onChange functions
-          // Object.keys(this.subscribedOnDataChange).forEach(key => {
-          //   this.subscribedOnDataChange[key].callback(
-          //     changedRobots,
-          //     dataEventType
-          //   );
-          // });
+          // Call subscribed onChange functions
+          Object.keys(this.subscribedOnDataChange).forEach(key => {
+            this.subscribedOnDataChange[key].callback(
+              this.cachedVars,
+              dataEventType
+            );
+          });
         },
         data => {
           this.isDataLoaded = true;
-          console.log("debugger VAR data2:", data);
           if (data.value) {
             this.cachedVars = data.value;
           }
           // Call subscribed onLoad functions
           Object.keys(this.subscribedOnDataLoad).forEach(key => {
-            console.log("debugger VAR key:", key);
-
             this.subscribedOnDataLoad[key].callback(this.cachedVars);
           });
         }
       );
-    } catch (error) {
-      console.log("debugger catch: ", error);
-    }
+    } catch (error) {}
   }
 
   /**
@@ -132,10 +117,60 @@ class VariableManager {
   };
 
   setVar = ({ key, value, scope = "global" }) => {
-    VariableManager.validateVar(key, scope);
     const path = `v1/database/`;
     const body = { key, scope, value };
-    return Rest.post({ path, body }).then(response => response.json());
+    return Rest.post({ path, body }).then(response => response);
+  };
+
+  /**
+   * Apply robot changes to cachedRobots and robots
+   * @param {Object} robots : Robots changes
+   */
+  _applyChanges = (variables, _event) => {
+    Object.keys(variables).forEach(scope => {
+      const obj = _get(variables, scope, {});
+      // Set scope if not yet created
+      if (!this.variables[scope]) {
+        // this.variables[scope] = { ID: { [scope]: {} } };
+        this.variables = Object.assign(this.variables, { [scope]: { ID: {} } });
+      }
+      // Set robot object if not yet created
+      if (!this.variables[scope].ID[obj]) {
+        this.cachedVars.Var[scope].ID = Object.assign(
+          this.cachedVars.Var[scope].ID,
+          obj.ID
+        );
+
+        this.variables[scope].ID = Object.assign(
+          this.variables[scope].ID,
+          obj.ID
+        );
+      }
+      // Update cached and robot data attribute
+      Object.keys(obj.ID).forEach(key => {
+        if (typeof obj.ID[key] === "object") {
+          this.cachedVars.Var[scope].ID[key] = _merge(
+            this.cachedVars.Var[scope].ID[key],
+            obj.ID[key]
+          );
+
+          this.variables[scope].ID[key] = _merge(
+            this.variables[scope].ID[key],
+            obj.ID[key]
+          );
+        } else {
+          this.cachedVars.Var[scope].ID[key] = obj.ID[key];
+
+          this.variables[scope].ID[key] = obj.ID[key];
+        }
+
+        // Remove variable
+        if (_event == "del") {
+          delete this.variables[scope].ID[key];
+          delete this.cachedVars.Var[scope].ID[key];
+        }
+      });
+    });
   };
 
   //========================================================================================
@@ -146,23 +181,23 @@ class VariableManager {
 
   static validScope = scope => ["global", "fleet"].includes(scope);
 
-  static validKey = key => key.split("@") >= 2;
+  static validKey = key => scope === "fleet" && key.split("@").length >= 2;
 
   static validateVar = (key, scope) => {
     const validators = [
       {
-        fn: () => VariableManager.validScope(scope),
+        fn: () => this.validScope(scope),
         error: "Invalid scope"
       },
       {
-        fn: () => VariableManager.validKey(key),
-        error: "Key format should be <robot name>@<key name>"
+        fn: () => this.validKey(key, scope),
+        error: "Key format should be <robot name>@<key name> or @<key name>"
       }
     ];
-
     validators.forEach(obj => {
       if (!obj.fn()) {
         throw new Error(obj.error);
+      } else {
       }
     });
   };
