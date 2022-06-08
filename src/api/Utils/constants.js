@@ -24,3 +24,8 @@ export const REQUEST_STATUS = {
 export const REQUEST_ERROR_CODES = {
   NOT_ALLOWED: "Method Not Allowed"
 };
+
+export const VAR_SCOPES = {
+  GLOBAL_SCOPE: "global",
+  FLEET_SCOPE: "fleet"
+};

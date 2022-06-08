@@ -143,8 +143,6 @@ class Robot {
    * @param {Function} callback: Function to be called on get logs
    */
   subscribeToLogs(callback) {
-    console.log("debugger subscribeToLogs cb: ", callback);
-
     const subscriptionId = Util.randomGuid();
     this.logSubscriptions[subscriptionId] = { send: callback };
     if (this.logger.status !== LOGGER_STATUS.running) this.startLogger();

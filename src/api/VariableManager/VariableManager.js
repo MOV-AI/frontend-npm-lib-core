@@ -2,6 +2,7 @@ import _get from "lodash/get";
 import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
+import { VAR_SCOPES } from "../Utils/constants";
 import Util from "../Utils/Utils";
 
 /**
@@ -104,9 +105,11 @@ class VariableManager {
    *                                    Private Methods                                   *
    *                                                                                      */
   //========================================================================================
+
   /**
    * Execute DELETE request
-   * @param {String} path - Relative path
+   * @param {String} scope
+   * @param {String} key
    */
   delete = ({ scope, key }) => {
     const path = `v1/database/${scope}/${key}/`;
@@ -114,7 +117,7 @@ class VariableManager {
     return Rest.delete({ path });
   };
 
-  setVar = ({ key, value, scope = "global" }) => {
+  setVar = async ({ key, value, scope = "global" }) => {
     VariableManager.validateVar(key, scope);
     try {
       value = JSON.parse(value);
@@ -123,16 +126,16 @@ class VariableManager {
     }
     const path = `v1/database/`;
     const body = { key, scope, value };
-    return Rest.post({ path, body }).then(response => response);
+    return Rest.post({ path, body });
   };
 
   /**
    * Apply robot changes to cachedRobots and robots
    * @param {Object} robots : Robots changes
    */
-  _applyChanges = (variables, _event) => {
+  _applyChanges = (variables, event) => {
     Object.keys(variables).forEach(scope => {
-      const obj = _get(variables, scope, {});
+      const obj = variables?.[scope] ?? {};
       // Set scope if not yet created
       if (!this.variables[scope]) {
         this.variables = Object.assign(this.variables, { [scope]: { ID: {} } });
@@ -150,25 +153,25 @@ class VariableManager {
         );
       }
       // Update cached and robot data attribute
-      Object.keys(obj.ID).forEach(key => {
-        if (typeof obj.ID[key] === "object") {
+      Object.entries(obj.ID).forEach(([key, value]) => {
+        if (typeof value === "object") {
           this.cachedVars.Var[scope].ID[key] = _merge(
             this.cachedVars.Var[scope].ID[key],
-            obj.ID[key]
+            value
           );
 
           this.variables[scope].ID[key] = _merge(
             this.variables[scope].ID[key],
-            obj.ID[key]
+            value
           );
         } else {
-          this.cachedVars.Var[scope].ID[key] = obj.ID[key];
+          this.cachedVars.Var[scope].ID[key] = value;
 
-          this.variables[scope].ID[key] = obj.ID[key];
+          this.variables[scope].ID[key] = value;
         }
 
         // Remove variable
-        if (_event == "del") {
+        if (event === "del") {
           delete this.variables[scope].ID[key];
           delete this.cachedVars.Var[scope].ID[key];
         }
@@ -182,12 +185,12 @@ class VariableManager {
    *                                                                                      */
   //========================================================================================
 
-  static validScope = scope => ["global", "fleet"].includes(scope);
+  static isValidScope = scope => [...Object.values(VAR_SCOPES)].includes(scope);
 
   static validateVar = (key, scope) => {
     const validators = [
       {
-        fn: () => VariableManager.validScope(scope),
+        fn: () => VariableManager.isValidScope(scope),
         error: "Invalid scope"
       }
     ];
