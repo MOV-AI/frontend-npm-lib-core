@@ -1,5 +1,4 @@
 import _get from "lodash/get";
-import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
 import { VAR_SCOPES } from "../Utils/constants";
@@ -155,15 +154,15 @@ class VariableManager {
       // Update cached and robot data attribute
       Object.entries(obj.ID).forEach(([key, value]) => {
         if (typeof value === "object") {
-          this.cachedVars.Var[scope].ID[key] = _merge(
-            this.cachedVars.Var[scope].ID[key],
-            value
-          );
+          this.cachedVars.Var[scope].ID[key] = {
+            ...this.cachedVars.Var[scope].ID[key],
+            ...value
+          };
 
-          this.variables[scope].ID[key] = _merge(
-            this.variables[scope].ID[key],
-            value
-          );
+          this.variables[scope].ID[key] = {
+            ...this.variables[scope].ID[key],
+            ...value
+          };
         } else {
           this.cachedVars.Var[scope].ID[key] = value;
 
