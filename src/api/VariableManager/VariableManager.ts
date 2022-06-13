@@ -1,13 +1,26 @@
-import _get from "lodash/get";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
 import { VAR_SCOPES } from "../Utils/constants";
 import Util from "../Utils/Utils";
 
+type CallbackHandler = (t: string) => void;
+// type VariableField<T={}> = keyof T;
+type VariableField = { [x: string]: {} };
+// type VariableField<T = {}> = keyof T & { ID: object };
+
 /**
  * VariableManager class : handles cached data and subscription
  */
 class VariableManager {
+  private isDataLoaded: boolean;
+  private subscribedOnDataLoad: any; // Subscriber;
+  private subscribedOnDataChange: any; // Subscriber;
+  private variables: object;
+  private cachedVars: object;
+  private destroy: Function;
+  private instance: any;
+  // define a handler so you can use it for callbacks
+
   constructor() {
     if (instance) return instance;
     this.isDataLoaded = false;
@@ -18,7 +31,9 @@ class VariableManager {
     this.subscribeToRedis();
     this.destroy = function () {
       // Unsubscribe on destroy
-      MasterDB.unsubscribe({ Scope: "Var" });
+      // Empty function pass with a purpouse
+      // @ts-ignore
+      MasterDB.unsubscribe({ Scope: "Var" }, () => {});
       instance = null;
     };
     instance = this;
@@ -32,11 +47,11 @@ class VariableManager {
   /**
    * Subscribe to Redis to get all vars and listen for any changes in them
    */
-  subscribeToRedis() {
+  subscribeToRedis(): void {
     try {
       MasterDB.subscribe(
         { Scope: "Var" },
-        data => {
+        (data: { key: { [x: string]: any }; event: any }) => {
           // Apply changes to update local  variables
           const variables = data.key["Var"];
           const dataEventType = data.event;
@@ -50,7 +65,7 @@ class VariableManager {
             );
           });
         },
-        data => {
+        (data: { value: Object }) => {
           this.isDataLoaded = true;
           if (data.value) {
             this.cachedVars = data.value;
@@ -68,7 +83,7 @@ class VariableManager {
    * Subscribe to changes in variables
    * @param {function} callback : Callback to be called for all property changes at any robot in DB
    */
-  subscribeToChanges(callback) {
+  subscribeToChanges(callback: CallbackHandler) {
     const subscriptionId = Util.randomGuid();
     this.subscribedOnDataChange[subscriptionId] = { callback };
     return subscriptionId;
@@ -79,7 +94,7 @@ class VariableManager {
    *
    * @param {String} subscriptionId: Subscription id that needs to be canceled
    */
-  unsubscribeToChanges(subscriptionId) {
+  unsubscribeToChanges(subscriptionId: string | number) {
     if (!subscriptionId || !this.subscribedOnDataChange[subscriptionId]) return;
     delete this.subscribedOnDataChange[subscriptionId];
   }
@@ -89,7 +104,7 @@ class VariableManager {
    * @param {Function} onDataLoaded : Function to be called on data first load
    * @returns {Object} All cached variables
    */
-  getAll(onDataLoaded = () => {}) {
+  getAll(onDataLoaded = (_: object) => {}) {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedVars);
     } else {
@@ -110,13 +125,13 @@ class VariableManager {
    * @param {String} scope
    * @param {String} key
    */
-  delete = ({ scope, key }) => {
+  delete = ({ scope, key }: any) => {
     const path = `v1/database/${scope}/${key}/`;
 
     return Rest.delete({ path });
   };
 
-  setVar = async ({ key, value, scope = "global" }) => {
+  setVar = async ({ key, value, scope = "global" }: any) => {
     VariableManager.validateVar(key, scope);
     try {
       value = JSON.parse(value);
@@ -132,15 +147,18 @@ class VariableManager {
    * Apply robot changes to cachedRobots and robots
    * @param {Object} robots : Robots changes
    */
-  _applyChanges = (variables, event) => {
-    Object.keys(variables).forEach(scope => {
-      const obj = variables?.[scope] ?? {};
-      // Set scope if not yet created
-      if (!this.variables[scope]) {
+  _applyChanges = (vars: { [x: string]: {} }, event: string) => {
+    Object.keys(vars).forEach((scope: VariableField<typeof vars>) => {
+      const obj = vars?.[scope] ?? {};
+
+      // Set scope if not yet created.
+      const variablesScope = scope as VariableField<typeof this.variables>;
+
+      if (!this.variables[variablesScope]) {
         this.variables = Object.assign(this.variables, { [scope]: { ID: {} } });
       }
       // Set robot object if not yet created
-      if (!this.variables[scope].ID[obj]) {
+      if (!this.variables[variablesScope].ID[obj]) {
         this.cachedVars.Var[scope].ID = Object.assign(
           this.cachedVars.Var[scope].ID,
           obj.ID
@@ -184,9 +202,10 @@ class VariableManager {
    *                                                                                      */
   //========================================================================================
 
-  static isValidScope = scope => [...Object.values(VAR_SCOPES)].includes(scope);
+  static isValidScope = (scope: string) =>
+    [...Object.values(VAR_SCOPES)].includes(scope);
 
-  static validateVar = (key, scope) => {
+  static validateVar = (_key: any, scope: string) => {
     const validators = [
       {
         fn: () => VariableManager.isValidScope(scope),
@@ -200,5 +219,5 @@ class VariableManager {
     });
   };
 }
-var instance = null;
+var instance: VariableManager | null = null;
 export default VariableManager;
