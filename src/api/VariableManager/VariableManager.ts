@@ -9,20 +9,22 @@ import Rest from "../Rest/Rest";
 import { VAR_SCOPES } from "../Utils/constants";
 import Util from "../Utils/Utils";
 
+// Used as global variable to avoid creation multiple subscribers
+var instance: VariableManager | null = null;
+
 /**
  * VariableManager class : handles cached data and subscription
  */
 class VariableManager {
   private isDataLoaded: boolean;
-  private subscribedOnDataLoad: SubscriptionManager; // Subscriber;
-  private subscribedOnDataChange: SubscriptionManager; // Subscriber;
+  private subscribedOnDataLoad: SubscriptionManager;
+  private subscribedOnDataChange: SubscriptionManager;
   private variables: VarMap;
   private cachedVars: { Var: VarMap };
-  private instance: VariableManager | null;
   public destroy: Function;
-  // define a handler so you can use it for callbacks
+
   constructor() {
-    if (this.instance) return this.instance;
+    if (instance) return instance;
     this.isDataLoaded = false;
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
@@ -34,9 +36,9 @@ class VariableManager {
       MasterDB.unsubscribe({ Scope: "Var" }, () => {
         // Empty function pass with a purpouse
       });
-      this.instance = null;
+      instance = null;
     };
-    this.instance = this;
+    instance = this;
   }
   //========================================================================================
   /*                                                                                      *
@@ -52,7 +54,7 @@ class VariableManager {
         { Scope: "Var" },
         (data: { key: CachedVar; event: any }) => {
           // Apply changes to update local  variables
-          const variables = data.key["Var"];
+          const variables = data.key.Var;
 
           const dataEventType = data.event;
           this._applyChanges(variables, dataEventType);
@@ -117,17 +119,20 @@ class VariableManager {
     return Rest.delete({ path });
   };
 
+  /**
+   * Execute ADD/EDIT request
+   */
   setVar = async ({
     key,
     value,
-    scope = "global"
+    scope = VAR_SCOPES.GLOBAL
   }: {
     scope: string;
     value: string;
     key: string;
   }) => {
-    VariableManager.validateVar(key, scope);
     try {
+      VariableManager.validateVar(key, scope);
       value = JSON.parse(value);
     } catch (error) {
       // Keep value as it is
@@ -173,6 +178,7 @@ class VariableManager {
   //========================================================================================
   static isValidScope = (scope: string) =>
     [...Object.values(VAR_SCOPES)].includes(scope);
+
   static validateVar = (_: any, scope: string) => {
     const validators = [
       {
@@ -187,4 +193,5 @@ class VariableManager {
     });
   };
 }
+
 export default VariableManager;

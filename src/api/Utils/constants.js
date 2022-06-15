@@ -26,6 +26,6 @@ export const REQUEST_ERROR_CODES = {
 };
 
 export const VAR_SCOPES = {
-  GLOBAL_SCOPE: "global",
-  FLEET_SCOPE: "fleet"
+  GLOBAL: "global",
+  FLEET: "fleet"
 };
