@@ -152,10 +152,18 @@ class VariableManager {
       if (!this.variables[scope]) {
         this.variables = Object.assign(this.variables, { [scope]: { ID: {} } });
       }
+
+      if (!this.cachedVars.Var[scope]) {
+        this.cachedVars.Var = Object.assign(this.cachedVars.Var, {
+          [scope]: { ID: {} }
+        });
+      }
+
       this.cachedVars.Var[scope].ID = Object.assign(
         this.cachedVars.Var[scope].ID,
         obj.ID
       );
+
       this.variables[scope].ID = Object.assign(
         this.variables[scope].ID,
         obj.ID
