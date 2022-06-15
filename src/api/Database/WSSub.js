@@ -154,7 +154,7 @@ class WSSub {
 
   /**
    * add event callback
-   * @param {strin} command command to send; event to subscribe
+   * @param {string} command command to send; event to subscribe
    * @param {function} callback function to execute
    * @param {string} pattern pattern to subscribe to
    */
@@ -340,7 +340,7 @@ class WSSub {
 
   /**
    * subscribe to a redis pattern
-   * @param {string} pattern pattern to subscribe to
+   * @param {string | object} pattern pattern to subscribe to
    * @param {function} callback function to execute on changes
    * @param {function} evt_callback function to execute on the subscription event
    *
@@ -372,8 +372,8 @@ class WSSub {
   };
 
   /**
-   * unsubscribe from changes related to the pattern
-   * @param {string} pattern pattern to unsubscribe
+   * Unsubscribe from changes related to the pattern
+   * @param {string | object} pattern pattern to unsubscribe
    * @param {function} callback function to execute on event unsubscribe
    *
    */
