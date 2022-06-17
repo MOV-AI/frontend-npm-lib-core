@@ -15,7 +15,7 @@ Utils.maybeGet = prop => Utils.dot(Utils.ofNull)(Utils.getter(prop));
 
 Utils.range = (init, end) => {
   const { i, e } = Maybe.fromNull(end)
-    .map(x => ({ i: init, e: end }))
+    .map(_x => ({ i: init, e: end }))
     .orSome({ i: 0, e: init });
   const ans = [];
   for (let j = i; j < e; j++) ans.push(j);
@@ -26,7 +26,7 @@ Utils.randomInt = (a, b) => Math.floor(Utils.random(a, b));
 
 Utils.random = (a, b) => {
   const { init, end } = Maybe.fromNull(b)
-    .map(x => ({ init: a, end: b }))
+    .map(_x => ({ init: a, end: b }))
     .orSome({ init: 0, end: a });
   return init + (end - init) * Math.random();
 };
@@ -260,10 +260,9 @@ export const mapToUserV1PasswordChangeModel = body => {
     confirm_password,
     ConfirmPassword
   } = body;
-  const model = {
+  return {
     current_password: current_password ?? CurrentPassword ?? "",
     new_password: new_password ?? NewPassword,
     confirm_password: confirm_password ?? ConfirmPassword
   };
-  return model;
 };

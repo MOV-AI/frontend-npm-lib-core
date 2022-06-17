@@ -2,7 +2,7 @@ import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
 import Rest from "../Rest/Rest";
 import Document from "../Document/Document";
-import { LOGGER_STATUS } from "../Utils/constants";
+import { LOGGER_STATUS, EMPTY_FUNCTION } from "../Utils/constants";
 
 class Robot {
   constructor(id, data = { IP: "", RobotName: "" }) {
@@ -18,7 +18,7 @@ class Robot {
     };
     this.logSubscriptions = {};
     this.dataSubscriptions = {};
-    this.onGetIPCallback = () => {};
+    this.onGetIPCallback = EMPTY_FUNCTION;
     this.api = new Document(
       {
         workspace: "global",
@@ -47,8 +47,8 @@ class Robot {
   subscribe({
     property,
     propValue = "*",
-    onLoad = () => {},
-    onUpdate = () => {}
+    onLoad = EMPTY_FUNCTION,
+    onUpdate = EMPTY_FUNCTION
   }) {
     MasterDB.subscribe(
       {
@@ -94,7 +94,7 @@ class Robot {
    *
    * @param {Function} callback: Function to be called on robot IP data load
    */
-  getIP(callback = () => {}) {
+  getIP(callback = EMPTY_FUNCTION) {
     if (this.ip !== "") return this.ip;
     // Request IP
     this.onGetIPCallback = callback;

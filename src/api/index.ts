@@ -2,7 +2,7 @@ import Acl from "./Acl/Acl";
 import Authentication from "./Authentication/Authentication";
 import InternalUser from "./User/InternalUser";
 import Ldap from "./Ldap/Ldap";
-import { BROADCAST_EVENTS } from "./Utils/constants";
+import { BROADCAST_EVENTS, SERVICE_LIST } from "./Utils/constants";
 import BroadcastChannel from "./BroadcastChannel/BroadcastChannel";
 import RobotManager from "./RobotManager/RobotManager";
 import Utils from "./Utils/Utils";
@@ -39,6 +39,7 @@ export {
   DataManagerBase,
   BroadcastChannel,
   BROADCAST_EVENTS,
+  SERVICE_LIST,
   Document,
   RobotManager,
   Workspace,

@@ -2,7 +2,17 @@ import _get from "lodash/get";
 import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
+import { EMPTY_FUNCTION } from "../Utils/constants";
 import Robot from "./Robot";
+import {
+  getRequestDate,
+  getRequestLevels,
+  getRequestMessage,
+  getRequestRobots,
+  getRequestService,
+  getRequestTags
+} from "./Utils/Utils";
+import Rest from "../Rest/Rest";
 
 /**
  * RobotManager class : handles cached data and subscription
@@ -96,7 +106,7 @@ class RobotManager {
    * @param {Function} onDataLoaded : Function to be called on data first load
    * @returns {Object} All cached robots
    */
-  getAll(onDataLoaded = () => {}) {
+  getAll(onDataLoaded = EMPTY_FUNCTION) {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedRobots);
     } else {
@@ -167,6 +177,33 @@ class RobotManager {
       this.robots[robotId].sendUpdates(_event);
     });
   };
+
+  //========================================================================================
+  /*                                                                                      *
+   *                                    Static Methods                                    *
+   *                                                                                      */
+  //========================================================================================
+
+  /**
+   * Get Logs for multiple robots
+   * @param {*} queryParam : Object to construct query string
+   * @returns {Promise} Request promise
+   */
+  static getLogs(queryParam) {
+    // Get request parameters
+    const _levels = getRequestLevels(
+      queryParam.level.selected,
+      queryParam.level.list
+    );
+    const _services = getRequestService(queryParam.service.selected);
+    const _tags = getRequestTags(queryParam.tag.selected);
+    const _message = getRequestMessage(queryParam.searchMessage);
+    const _dates = getRequestDate(queryParam.date.from, queryParam.date.to);
+    const _robots = getRequestRobots(queryParam.robot.selected);
+    const path = `v1/logs/?limit=${queryParam.limit}${_levels}${_services}${_dates}${_tags}${_message}${_robots}`;
+
+    return Rest.get({ path });
+  }
 }
 
 var instance = null;
