@@ -194,7 +194,7 @@ class Robot {
     if (!this.name) return; // Or if robot has no name
 
     // Get logs from server
-    const path = `v1/logs/${this.name}?limit=50&level=info,error,warning,critical&tags=ui`;
+    const path = `v1/logs/?limit=20&level=info,error,warning,critical&tags=ui&robots=${this.name}`;
     Rest.get({ path })
       .then(response => {
         if (!response || !response.data) return;
