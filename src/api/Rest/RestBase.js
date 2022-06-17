@@ -129,46 +129,4 @@ RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
   return RestBase.post({ path, body, customHeaders });
 };
 
-RestBase.validScope = scope => ["global", "fleet"].includes(scope);
-RestBase.validKey = key => key.split("@") >= 2;
-RestBase.validateVar = (key, scope) => {
-  const validators = [
-    {
-      fn: scope => RestBase.validScope(scope),
-      error: "Invalid scope"
-    },
-    {
-      fn: key => RestBase.validKey(key),
-      error: "Key format should be <robot name>@<key name>"
-    }
-  ];
-
-  validators.forEach(obj => {
-    if (!obj.fn()) {
-      throw new Error(obj.error);
-    }
-  });
-};
-
-RestBase.getVar = ({ key, scope = "global", customHeaders = {} }) => {
-  RestBase.validateVar(key, scope);
-
-  const path = `v1/database/${scope}/${key}/`;
-
-  return RestBase.get({ path, customHeaders }).then(response =>
-    response.json()
-  );
-};
-
-RestBase.setVar = ({ key, value, scope = "global", customHeaders = {} }) => {
-  RestBase.validateVar(key, scope);
-
-  const path = `v1/database/`;
-  const body = { key, scope, value };
-
-  return RestBase.post({ path, body, customHeaders }).then(response =>
-    response.json()
-  );
-};
-
 export default RestBase;

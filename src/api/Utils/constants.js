@@ -36,3 +36,8 @@ export const SERVICE_LIST = [
   { value: "ROS", label: "Ros" },
   { value: "HAPROXY", label: "ha-proxy" }
 ];
+
+export const VAR_SCOPES = {
+  GLOBAL: "global",
+  FLEET: "fleet"
+};
