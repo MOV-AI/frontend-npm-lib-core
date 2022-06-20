@@ -97,7 +97,8 @@ class DocumentV2 extends DocumentV1 {
    */
   static getDocs = ({ workspace, scope, id }) => {
     const _scope = scope ? `/${scope}` : "";
-    const _id = scope ? (id ? `/${id}` : "") : "";
+    const _idPath = id ? `/${id}` : "";
+    const _id = scope ? _idPath : "";
     const path = `v2/db/${workspace}${_scope}${_id}`;
 
     return Rest.get({ path });

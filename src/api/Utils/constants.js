@@ -25,6 +25,18 @@ export const REQUEST_ERROR_CODES = {
   NOT_ALLOWED: "Method Not Allowed"
 };
 
+export const EMPTY_FUNCTION = () => {
+  /** Empty on purpose */
+};
+
+export const SERVICE_LIST = [
+  { value: "BACKEND", label: "Backend" },
+  { value: "SPAWNER", label: "Spawner" },
+  { value: "REDIS", label: "Redis" },
+  { value: "ROS", label: "Ros" },
+  { value: "HAPROXY", label: "ha-proxy" }
+];
+
 export const VAR_SCOPES = {
   GLOBAL: "global",
   FLEET: "fleet"

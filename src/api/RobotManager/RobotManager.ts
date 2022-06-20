@@ -1,13 +1,47 @@
-import _get from "lodash/get";
 import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
+import { EMPTY_FUNCTION } from "../Utils/constants";
 import Robot from "./Robot";
+import Rest from "../Rest/Rest";
+import {
+  getRequestDate,
+  getRequestLevels,
+  getRequestMessage,
+  getRequestRobots,
+  getRequestService,
+  getRequestTags
+} from "./Utils/Utils";
+import {
+  CachedRobots,
+  LoadRobotParam,
+  LogQueryParam,
+  RobotModel,
+  SubscriptionManager,
+  UpdateRobotParam
+} from "../../models";
+
+var instance: RobotManager | null = null;
+type LoadedRobots = { [robotId: string]: Robot };
+
+// Constants
+const SUBSCRIPTION_PATTERN = { Scope: "Robot", RobotName: "*", IP: "*" };
+const ON_DATA_LOADED = (_robots: CachedRobots) => {
+  /** Empty on purpose */
+};
 
 /**
  * RobotManager class : handles cached data and subscription
  */
 class RobotManager {
+  private isDataLoaded: boolean;
+  private subscribedOnDataLoad: SubscriptionManager;
+  private subscribedOnDataChange: SubscriptionManager;
+  private randomId: string;
+  private robots: LoadedRobots;
+  private cachedRobots: CachedRobots;
+  public destroy: Function;
+
   constructor() {
     if (instance) return instance;
     this.isDataLoaded = false;
@@ -19,7 +53,7 @@ class RobotManager {
     this.subscribeToRedis();
     this.destroy = function () {
       // Unsubscribe on destroy
-      MasterDB.unsubscribe({ Scope: "Robot", RobotName: "*", IP: "*" });
+      MasterDB.unsubscribe(SUBSCRIPTION_PATTERN, EMPTY_FUNCTION);
     };
     instance = this;
   }
@@ -29,27 +63,24 @@ class RobotManager {
    */
   subscribeToRedis() {
     MasterDB.subscribe(
-      { Scope: "Robot", RobotName: "*", IP: "*" },
-      data => {
+      SUBSCRIPTION_PATTERN,
+      (data: UpdateRobotParam) => {
         // Apply changes to update local robots
         const robots = data.key["Robot"];
         const dataEventType = data.event;
         this._applyChanges(robots, dataEventType);
 
         // Set changed robots
-        const changedRobots = {};
+        const changedRobots: CachedRobots = {};
         Object.keys(robots).forEach(robotId => {
           changedRobots[robotId] = this.cachedRobots[robotId];
         });
         // Call subscribed onChange functions
         Object.keys(this.subscribedOnDataChange).forEach(key => {
-          this.subscribedOnDataChange[key].callback(
-            changedRobots,
-            dataEventType
-          );
+          this.subscribedOnDataChange[key].send(changedRobots, dataEventType);
         });
       },
-      data => {
+      (data: LoadRobotParam) => {
         this.isDataLoaded = true;
         if (data.value) {
           this.cachedRobots = data.value.Robot;
@@ -59,7 +90,7 @@ class RobotManager {
         }
         // Call subscribed onLoad functions
         Object.keys(this.subscribedOnDataLoad).forEach(key => {
-          this.subscribedOnDataLoad[key].callback(this.cachedRobots);
+          this.subscribedOnDataLoad[key].send(this.cachedRobots);
         });
       }
     );
@@ -73,11 +104,11 @@ class RobotManager {
 
   /**
    * Subscribe to changes in robots
-   * @param {function} callback : Callback to be called for all property changes at any robot in DB
+   * @param {Function} callback : Callback to be called for all property changes at any robot in DB
    */
-  subscribeToChanges(callback) {
+  subscribeToChanges(callback: Function) {
     const subscriptionId = Util.randomGuid();
-    this.subscribedOnDataChange[subscriptionId] = { callback };
+    this.subscribedOnDataChange[subscriptionId] = { send: callback };
     return subscriptionId;
   }
 
@@ -86,7 +117,7 @@ class RobotManager {
    *
    * @param {String} subscriptionId: Subscription id that needs to be canceled
    */
-  unsubscribeToChanges(subscriptionId) {
+  unsubscribeToChanges(subscriptionId: string) {
     if (!subscriptionId || !this.subscribedOnDataChange[subscriptionId]) return;
     delete this.subscribedOnDataChange[subscriptionId];
   }
@@ -96,22 +127,22 @@ class RobotManager {
    * @param {Function} onDataLoaded : Function to be called on data first load
    * @returns {Object} All cached robots
    */
-  getAll(onDataLoaded = () => {}) {
+  getAll(onDataLoaded = ON_DATA_LOADED) {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedRobots);
     } else {
       const subscriptionId = Util.randomGuid();
-      this.subscribedOnDataLoad[subscriptionId] = { callback: onDataLoaded };
+      this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
     }
     return this.cachedRobots;
   }
 
   /**
    * Get robot by ID
-   * @param {String} id : Robot id
+   * @param {string} id : Robot id
    * @returns {Robot} Instance of Robot class for requested id
    */
-  getRobot(id) {
+  getRobot(id: string): Robot {
     if (this.robots[id]) return this.robots[id];
     let newRobot;
     const cached = this.cachedRobots[id];
@@ -139,9 +170,9 @@ class RobotManager {
    * Apply robot changes to cachedRobots and robots
    * @param {Object} robots : Robots changes
    */
-  _applyChanges = (robots, _event) => {
+  _applyChanges = (robots: CachedRobots, _event: string) => {
     Object.keys(robots).forEach(robotId => {
-      const obj = _get(robots, robotId, {});
+      const obj: RobotModel = robots[robotId];
       // Set robot object if not yet created
       if (!this.robots[robotId]) {
         this.cachedRobots[robotId] = obj;
@@ -149,25 +180,49 @@ class RobotManager {
       }
       // Update cached and robot data attribute
       Object.keys(obj).forEach(key => {
-        if (typeof obj[key] === "object") {
-          this.cachedRobots[robotId][key] = _merge(
-            this.cachedRobots[robotId][key],
-            obj[key]
-          );
-          this.robots[robotId].data[key] = _merge(
-            this.robots[robotId].data[key],
-            obj[key]
-          );
+        const objKey = key as keyof RobotModel;
+        const value: any = obj[objKey];
+        const prevCachedValue = this.cachedRobots[robotId][objKey];
+        const prevRobotValue = this.robots[robotId].getDataKeyValue(objKey);
+        if (typeof value === "object") {
+          this.cachedRobots[robotId][objKey] = _merge(prevCachedValue, value);
+          this.robots[robotId].setData(objKey, _merge(prevRobotValue, value));
         } else {
-          this.cachedRobots[robotId][key] = obj[key];
-          this.robots[robotId].data[key] = obj[key];
+          this.cachedRobots[robotId][objKey] = value;
+          this.robots[robotId].setData(objKey, value);
         }
       });
       // Send updated data to subscribed components
       this.robots[robotId].sendUpdates(_event);
     });
   };
+
+  //========================================================================================
+  /*                                                                                      *
+   *                                    Static Methods                                    *
+   *                                                                                      */
+  //========================================================================================
+
+  /**
+   * Get Logs for multiple robots
+   * @param {LogQueryParam} queryParam : Object to construct query string
+   * @returns {Promise} Request promise
+   */
+  static getLogs(queryParam: LogQueryParam): Promise<any> {
+    // Get request parameters
+    const _levels = getRequestLevels(
+      queryParam.level.selected,
+      queryParam.level.list
+    );
+    const _services = getRequestService(queryParam.service.selected);
+    const _tags = getRequestTags(queryParam.tag.selected);
+    const _message = getRequestMessage(queryParam.searchMessage);
+    const _dates = getRequestDate(queryParam.date.from, queryParam.date.to);
+    const _robots = getRequestRobots(queryParam.robot.selected);
+    const path = `v1/logs/?limit=${queryParam.limit}${_levels}${_services}${_dates}${_tags}${_message}${_robots}`;
+
+    return Rest.get({ path });
+  }
 }
 
-var instance = null;
 export default RobotManager;
