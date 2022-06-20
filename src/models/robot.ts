@@ -1,6 +1,6 @@
 import { SubscriberLoadParam, SubscriberUpdateParam } from "./common";
 
-export type RobotStatus = {
+export interface RobotStatus {
   active_flow?: string;
   nodes_lchd?: Array<string>;
   persistent_nodes_lchd?: Array<string>;
@@ -9,26 +9,26 @@ export type RobotStatus = {
   locks?: Array<string>;
   timestamp?: number;
   active_scene?: string;
-};
+}
 
-export type RobotParameter = {
+export interface RobotParameter {
   [name: string]: { Value: string | number | boolean | object };
-};
+}
 
-export type RobotModel = {
+export interface RobotModel {
   IP?: string | null;
   Status?: RobotStatus;
   RobotName?: string;
   Parameter?: RobotParameter;
-};
+}
 
-export type CachedRobots = {
+export interface CachedRobots {
   [robotID: string]: RobotModel;
-};
+}
 
-export type RobotMap = {
+export interface RobotMap {
   Robot: CachedRobots;
-};
+}
 
 export interface UpdateRobotParam extends SubscriberUpdateParam {
   key: RobotMap;
@@ -44,13 +44,13 @@ export interface LoadRobotParam extends SubscriberLoadParam {
  *                                                                                      */
 //========================================================================================
 
-export type Logger = {
+export interface Logger {
   status: number;
   timeout?: ReturnType<typeof setTimeout>;
   time: number;
-};
+}
 
-export type LogData = {
+export interface LogData {
   time: number;
   fleet: string;
   funcName?: string;
@@ -60,19 +60,22 @@ export type LogData = {
   robot: string;
   service: string;
   stdout: string;
-};
+}
 
-export type Log = {
+export interface Log {
   robot: string;
   count: number;
   limit: number;
   offset: number;
   data: Array<LogData>;
-};
+}
 
-export type LogTag = { label: string; key: string };
+export interface LogTag {
+  label: string;
+  key: string;
+}
 
-export type LogQueryParam = {
+export interface LogQueryParam {
   level: { selected: Array<string>; list: Array<string> };
   service: { selected: Array<string> };
   tag: { selected: Array<LogTag> };
@@ -80,4 +83,4 @@ export type LogQueryParam = {
   date: { from: number; to: number };
   robot: { selected: Array<string> };
   limit: number;
-};
+}

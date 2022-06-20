@@ -1,28 +1,28 @@
 export type SubscriberCallbackHandler = (data: object, event?: string) => void;
 
-export type SubscriptionManager = {
+export interface SubscriptionManager {
   [susbscriptionId: string]: {
     send: Function;
   };
-};
+}
 
-export type SubscriberUpdateParam = {
+export interface SubscriberUpdateParam {
   key: object;
   event: string;
-};
+}
 
-export type SubscriberLoadParam = {
+export interface SubscriberLoadParam {
   value: object;
-};
+}
 
-export type SubscriberModel = {
+export interface SubscriberModel {
   property: string;
   propValue?: string;
   onLoad?: Function;
   onUpdate?: Function;
-};
+}
 
-export type UnsubscriberModel = {
+export interface UnsubscriberModel {
   property: string;
   propValue: string;
-};
+}

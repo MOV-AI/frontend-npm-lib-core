@@ -102,9 +102,9 @@ class Robot {
 
   /**
    * Get robot data from redis
-   * @returns {Promise} Get data request
+   * @returns {Promise<RobotModel>} Get data request
    */
-  async getData(): Promise<any> {
+  async getData(): Promise<RobotModel> {
     return this.api.read().then((data: RobotMap) => {
       const robotData = data?.Robot?.[this.id];
       if (robotData) {
