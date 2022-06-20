@@ -79,6 +79,7 @@ class VariableManager {
       );
     } catch (error) {}
   }
+
   /**
    * Subscribe to changes in variables
    */
@@ -87,6 +88,7 @@ class VariableManager {
     this.subscribedOnDataChange[subscriptionId] = { callback };
     return subscriptionId;
   }
+
   /**
    * Unsubscribe to changes in variables
    */
@@ -94,6 +96,7 @@ class VariableManager {
     if (!subscriptionId || !this.subscribedOnDataChange[subscriptionId]) return;
     delete this.subscribedOnDataChange[subscriptionId];
   }
+
   /**
    * Get all variables
    */
@@ -106,6 +109,14 @@ class VariableManager {
     }
     return this.cachedVars;
   }
+
+  /**
+   * Checks if the variable exists and return boolean
+   */
+  hasVar(varName: string, scope: string = "global"): boolean {
+    return varName in this.cachedVars.Var[scope].ID;
+  }
+
   //========================================================================================
   /*                                                                                      *
    *                                    Private Methods                                   *
@@ -152,10 +163,18 @@ class VariableManager {
       if (!this.variables[scope]) {
         this.variables = Object.assign(this.variables, { [scope]: { ID: {} } });
       }
+
+      if (!this.cachedVars.Var[scope]) {
+        this.cachedVars.Var = Object.assign(this.cachedVars.Var, {
+          [scope]: { ID: {} }
+        });
+      }
+
       this.cachedVars.Var[scope].ID = Object.assign(
         this.cachedVars.Var[scope].ID,
         obj.ID
       );
+
       this.variables[scope].ID = Object.assign(
         this.variables[scope].ID,
         obj.ID
@@ -171,6 +190,7 @@ class VariableManager {
       });
     });
   };
+
   //========================================================================================
   /*                                                                                      *
    *                                    STATIC METHODS                                    *
