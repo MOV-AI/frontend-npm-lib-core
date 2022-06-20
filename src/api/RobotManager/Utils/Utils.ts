@@ -1,4 +1,4 @@
-import { LogTag } from "../../../models";
+import { LogLevel, LogTag, TimestampQuery } from "../../../models";
 import { SERVICE_LIST } from "../../Utils/constants";
 
 //========================================================================================
@@ -32,7 +32,7 @@ function getDateWithoutSeconds(date: number): number {
  */
 export function getRequestLevels(
   selectedLevels: Array<string>,
-  levelsList: Array<string> = []
+  levelsList: Array<LogLevel> = []
 ): string {
   if (
     Array.isArray(selectedLevels) &&
@@ -80,8 +80,8 @@ export function getRequestService(selectedService: Array<string>): string {
  * @returns {string} Request query param string for dates
  */
 export function getRequestDate(
-  selectedFromDate: number,
-  selectedToDate: number
+  selectedFromDate: TimestampQuery,
+  selectedToDate: TimestampQuery
 ): string {
   let res = "";
   try {
