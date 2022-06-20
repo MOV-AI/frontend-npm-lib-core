@@ -15,7 +15,7 @@ jobs:
     uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@v1
     with:
       deploy: "false"
-      run_tests: "false"
+      run_tests: "true"
     secrets:
       auto_commit_user: ${{ secrets.RAISE_BOT_COMMIT_USER }}
       auto_commit_mail: ${{ secrets.RAISE_BOT_COMMIT_MAIL }}
