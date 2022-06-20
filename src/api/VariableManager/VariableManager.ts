@@ -1,16 +1,22 @@
 import {
   CachedVar,
-  CallbackHandler,
+  SubscriberCallbackHandler,
   SubscriptionManager,
   VarMap
-} from "../../models/variableManager";
+} from "../../models";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
-import { VAR_SCOPES } from "../Utils/constants";
+import { EMPTY_FUNCTION, VAR_SCOPES } from "../Utils/constants";
 import Util from "../Utils/Utils";
 
 // Used as global variable to avoid creation multiple subscribers
 var instance: VariableManager | null = null;
+
+// Constants
+const SUBSCRIPTION_PATTERN = { Scope: "Var" };
+const ON_DATA_LOADED = (_robots: CachedVar) => {
+  /** Empty on purpose */
+};
 
 /**
  * VariableManager class : handles cached data and subscription
@@ -20,7 +26,7 @@ class VariableManager {
   private subscribedOnDataLoad: SubscriptionManager;
   private subscribedOnDataChange: SubscriptionManager;
   private variables: VarMap;
-  private cachedVars: { Var: VarMap };
+  private cachedVars: CachedVar;
   public destroy: Function;
 
   constructor() {
@@ -33,9 +39,7 @@ class VariableManager {
     this.subscribeToRedis();
     this.destroy = function () {
       // Unsubscribe on destroy
-      MasterDB.unsubscribe({ Scope: "Var" }, () => {
-        // Empty function pass with a purpouse
-      });
+      MasterDB.unsubscribe(SUBSCRIPTION_PATTERN, EMPTY_FUNCTION);
       instance = null;
     };
     instance = this;
@@ -51,7 +55,7 @@ class VariableManager {
   subscribeToRedis(): void {
     try {
       MasterDB.subscribe(
-        { Scope: "Var" },
+        SUBSCRIPTION_PATTERN,
         (data: { key: CachedVar; event: any }) => {
           // Apply changes to update local  variables
           const variables = data.key.Var;
@@ -60,7 +64,7 @@ class VariableManager {
           this._applyChanges(variables, dataEventType);
           // Call subscribed onChange functions
           Object.keys(this.subscribedOnDataChange).forEach(key => {
-            this.subscribedOnDataChange[key].callback(
+            this.subscribedOnDataChange[key].send(
               this.cachedVars,
               dataEventType
             );
@@ -73,7 +77,7 @@ class VariableManager {
           }
           // Call subscribed onLoad functions
           Object.keys(this.subscribedOnDataLoad).forEach(key => {
-            this.subscribedOnDataLoad[key].callback(this.cachedVars);
+            this.subscribedOnDataLoad[key].send(this.cachedVars);
           });
         }
       );
@@ -83,9 +87,9 @@ class VariableManager {
   /**
    * Subscribe to changes in variables
    */
-  subscribeToChanges(callback: CallbackHandler) {
+  subscribeToChanges(callback: SubscriberCallbackHandler) {
     const subscriptionId = Util.randomGuid();
-    this.subscribedOnDataChange[subscriptionId] = { callback };
+    this.subscribedOnDataChange[subscriptionId] = { send: callback };
     return subscriptionId;
   }
 
@@ -100,12 +104,12 @@ class VariableManager {
   /**
    * Get all variables
    */
-  getAll(onDataLoaded = (_: object) => {}) {
+  getAll(onDataLoaded = ON_DATA_LOADED) {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedVars);
     } else {
       const subscriptionId = Util.randomGuid();
-      this.subscribedOnDataLoad[subscriptionId] = { callback: onDataLoaded };
+      this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
     }
     return this.cachedVars;
   }

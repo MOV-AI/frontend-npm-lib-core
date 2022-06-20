@@ -1,3 +1,4 @@
+import { LogTag } from "../../../models";
 import { SERVICE_LIST } from "../../Utils/constants";
 
 //========================================================================================
@@ -104,9 +105,7 @@ export function getRequestDate(
  * @param selectedTags : Array with selected tags
  * @returns {string} Request query param string for tags
  */
-export function getRequestTags(
-  selectedTags: Array<{ label: string; key: string }> = []
-): string {
+export function getRequestTags(selectedTags: Array<LogTag> = []): string {
   // Return empty string if no tag is added
   if (!selectedTags.length) {
     return "";

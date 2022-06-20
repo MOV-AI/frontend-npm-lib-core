@@ -3,9 +3,36 @@ import Util from "../Utils/Utils";
 import Rest from "../Rest/Rest";
 import Document from "../Document/Document";
 import { LOGGER_STATUS, EMPTY_FUNCTION } from "../Utils/constants";
+import {
+  LoadRobotParam,
+  Log,
+  LogData,
+  Logger,
+  RobotMap,
+  RobotModel,
+  UpdateRobotParam,
+  SubscriberModel,
+  SubscriptionManager,
+  UnsubscriberModel
+} from "../../models";
+import DocumentV2 from "../Document/DocumentV2";
 
 class Robot {
-  constructor(id, data = { IP: "", RobotName: "" }) {
+  private id: string;
+  private ip: RobotModel["IP"];
+  private name?: RobotModel["RobotName"];
+  private data: RobotModel;
+  private logs: Array<LogData>;
+  private logger: Logger;
+  private logSubscriptions: SubscriptionManager;
+  private dataSubscriptions: SubscriptionManager;
+  private onGetIPCallback: Function;
+  private api: DocumentV2;
+
+  constructor(
+    id: string,
+    data: RobotModel = { IP: "", RobotName: "", Status: {} }
+  ) {
     this.id = id;
     this.ip = data.IP;
     this.name = data.RobotName;
@@ -13,16 +40,15 @@ class Robot {
     this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
-      timeout: null,
       time: 3000
     };
     this.logSubscriptions = {};
     this.dataSubscriptions = {};
     this.onGetIPCallback = EMPTY_FUNCTION;
-    this.api = new Document(
+    this.api = Document.factory(
       {
         workspace: "global",
-        type: "Robot",
+        type: Robot.SCOPE,
         name: this.id,
         version: "-"
       },
@@ -38,26 +64,23 @@ class Robot {
 
   /**
    * Subscribe to a robot property from redis
-   *
-   * @param {String} property: Property name
-   * @param {String} propValue: Property value
-   * @param {Function} loadCallback: Function to be called on data load
-   * @param {Function} updateCallback: Function to be called on data updated
+   * @param {SubscriberModel} params
    */
-  subscribe({
-    property,
-    propValue = "*",
-    onLoad = EMPTY_FUNCTION,
-    onUpdate = EMPTY_FUNCTION
-  }) {
+  subscribe(params: SubscriberModel) {
+    const {
+      property,
+      propValue = "*",
+      onLoad = EMPTY_FUNCTION,
+      onUpdate = EMPTY_FUNCTION
+    } = params;
     MasterDB.subscribe(
       {
         Scope: Robot.SCOPE,
         Name: this.id,
         [property]: propValue
       },
-      update => onUpdate(update),
-      data => onLoad(data)
+      (update: UpdateRobotParam) => onUpdate(update),
+      (data: LoadRobotParam) => onLoad(data)
     );
   }
 
@@ -67,38 +90,59 @@ class Robot {
    * @param {String} property: Property name
    * @param {String} propValue: Property value
    */
-  unsubscribe({ property, propValue = "*" }) {
-    MasterDB.unsubscribe({
+  unsubscribe(params: UnsubscriberModel) {
+    const { property, propValue = "*" } = params;
+    const pattern = {
       Scope: Robot.SCOPE,
       Name: this.id,
       [property]: propValue
-    });
+    };
+    MasterDB.unsubscribe(pattern, EMPTY_FUNCTION);
   }
 
   /**
    * Get robot data from redis
+   * @returns {Promise} Get data request
    */
-  getData() {
-    this.api.read().then(data => {
+  async getData(): Promise<any> {
+    return this.api.read().then((data: RobotMap) => {
       const robotData = data?.Robot?.[this.id];
       if (robotData) {
         this.data = robotData;
         this.ip = robotData.IP;
         this.name = robotData.RobotName;
       }
+      return robotData;
     });
   }
 
   /**
-   * Unsubscribe to a robot property from redis
-   *
+   * Set robot data
+   * @param key : Robot data key name
+   * @param value : Robot data key value
+   */
+  setData(key: keyof RobotModel, value: any) {
+    this.data[key] = value;
+  }
+
+  /**
+   * Get data value for given key
+   * @param key : Robot data key name
+   * @returns Robot data key value
+   */
+  getDataKeyValue(key: keyof RobotModel) {
+    return this.data[key];
+  }
+
+  /**
+   * Get robot IP
    * @param {Function} callback: Function to be called on robot IP data load
    */
-  getIP(callback = EMPTY_FUNCTION) {
+  getIP(callback: Function = EMPTY_FUNCTION) {
     if (this.ip !== "") return this.ip;
     // Request IP
     this.onGetIPCallback = callback;
-    this.subscribe("IP", this._loadIP(this));
+    this.subscribe({ property: "IP", onLoad: this._loadIP(this) });
   }
 
   /**
@@ -118,11 +162,10 @@ class Robot {
   }
 
   /**
-   * Subscribe to the robot logs
-   *
+   * Subscribe to changes in robot's data
    * @param {Function} callback: Function to be called on get logs
    */
-  subscribeToData(callback) {
+  subscribeToData(callback: Function) {
     const subscriptionId = Util.randomGuid();
     this.dataSubscriptions[subscriptionId] = { send: callback };
     return subscriptionId;
@@ -131,7 +174,7 @@ class Robot {
   /**
    * Send updated data to subscribed components
    */
-  sendUpdates(_event) {
+  sendUpdates(_event: string) {
     Object.keys(this.dataSubscriptions).forEach(key => {
       this.dataSubscriptions[key].send(this.data, _event);
     });
@@ -139,10 +182,9 @@ class Robot {
 
   /**
    * Subscribe to the robot logs
-   *
    * @param {Function} callback: Function to be called on get logs
    */
-  subscribeToLogs(callback) {
+  subscribeToLogs(callback: Function) {
     const subscriptionId = Util.randomGuid();
     this.logSubscriptions[subscriptionId] = { send: callback };
     if (this.logger.status !== LOGGER_STATUS.running) this.startLogger();
@@ -152,10 +194,9 @@ class Robot {
 
   /**
    * Unsubscribe to the robot logs
-   *
-   * @param {String} subscriptionId: Subscription id that needs to be canceled
+   * @param {string} subscriptionId: Subscription id that needs to be canceled
    */
-  unsubscribeToLogs(subscriptionId) {
+  unsubscribeToLogs(subscriptionId: string) {
     if (!subscriptionId || !this.logSubscriptions[subscriptionId]) return;
     delete this.logSubscriptions[subscriptionId];
     if (Object.keys(this.logSubscriptions).length === 0) this.stopLogger();
@@ -166,7 +207,7 @@ class Robot {
    *
    * @param {String} subscriptionId: Subscription id that needs to be canceled
    */
-  unsubscribeToData(subscriptionId) {
+  unsubscribeToData(subscriptionId: string) {
     if (!subscriptionId || !this.dataSubscriptions[subscriptionId]) return;
     delete this.dataSubscriptions[subscriptionId];
   }
@@ -188,7 +229,7 @@ class Robot {
   /**
    * Get robot logs
    */
-  _getLogs() {
+  private _getLogs() {
     if (Object.keys(this.logSubscriptions).length === 0) return; // Stop if there's no active subscriptions
     if (this.logger.status !== LOGGER_STATUS.running) return; // Or if logger status is not "running"
     if (!this.name) return; // Or if robot has no name
@@ -196,7 +237,7 @@ class Robot {
     // Get logs from server
     const path = `v1/logs/?limit=20&level=info,error,warning,critical&tags=ui&robots=${this.name}`;
     Rest.get({ path })
-      .then(response => {
+      .then((response: Log) => {
         if (!response || !response.data) return;
         // Cache log data and send response to active subscriptions
         this.logs = response.data;
@@ -206,7 +247,7 @@ class Robot {
         // Enqueue next request
         this._enqueueNextRequest();
       })
-      .catch(err => {
+      .catch((err: Error) => {
         // Enqueue next request
         this.logger.time += 1000;
         this._enqueueNextRequest();
@@ -217,7 +258,7 @@ class Robot {
   /**
    * Enqueue next request to get logs
    */
-  _enqueueNextRequest() {
+  private _enqueueNextRequest() {
     clearTimeout(this.logger.timeout);
     this.logger.timeout = setTimeout(() => this._getLogs(), this.logger.time);
   }
@@ -227,8 +268,8 @@ class Robot {
    *
    * @param {Object} data: Data returned on IP subscribe event
    */
-  _loadIP(robot) {
-    return data => {
+  private _loadIP(robot: Robot) {
+    return (data: LoadRobotParam) => {
       if (data.value) {
         robot.ip = data.value.Robot[robot.id].IP;
         robot.onGetIPCallback(robot.ip);
@@ -247,7 +288,7 @@ class Robot {
   /**
    * Robot scope name
    */
-  static SCOPE = "Robot";
+  static SCOPE: string = "Robot";
 }
 
 export default Robot;

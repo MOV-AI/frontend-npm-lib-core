@@ -12,10 +12,25 @@ const withDocVersion = function (docVersion) {
 class Document {
   constructor(args, docVersion = "v1") {
     // create instance of DocumentV1 or DocumentV2
-    return new (withDocVersion(docVersion))(args);
+    return Document.factory(args, docVersion);
   }
 
-  /** Static handlers */
+  //========================================================================================
+  /*                                                                                      *
+   *                                    Static Methods                                    *
+   *                                                                                      */
+  //========================================================================================
+
+  /**
+   * Create instance of DocumentV1 or DocumentV2
+   * @param {*} args : Constructor arguments
+   * @param {string} docVersion : Specify document version
+   * @returns
+   */
+  static factory(args, docVersion = "v1") {
+    // create instance of DocumentV1 or DocumentV2
+    return new (withDocVersion(docVersion))(args);
+  }
 
   /**
    * Forward create call to the correct Document version
