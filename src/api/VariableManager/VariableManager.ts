@@ -1,7 +1,9 @@
 import {
   CachedVar,
+  RedisVarType,
   SubscriberCallbackHandler,
   SubscriptionManager,
+  VarGetResult,
   VarMap
 } from "../../models";
 import MasterDB from "../Database/MasterDB";
@@ -13,6 +15,7 @@ import Util from "../Utils/Utils";
 var instance: VariableManager | null = null;
 
 // Constants
+const CURRENT_DATE_KEY: string = "current_date";
 const SUBSCRIPTION_PATTERN = { Scope: "Var" };
 const ON_DATA_LOADED = (_robots: CachedVar) => {
   /** Empty on purpose */
@@ -59,7 +62,7 @@ class VariableManager {
     try {
       MasterDB.subscribe(
         SUBSCRIPTION_PATTERN,
-        (data: { key: CachedVar; event: any }) => {
+        (data: { key: CachedVar; event: string }) => {
           // Apply changes to update local  variables
           const variables = data.key.Var;
 
@@ -120,7 +123,7 @@ class VariableManager {
   /**
    * Checks if the variable exists and return boolean
    */
-  hasVar(varName: string, scope: string = "global"): boolean {
+  hasVar(varName: string, scope: string = VAR_SCOPES.GLOBAL): boolean {
     return varName in this.cachedVars.Var[scope].ID;
   }
 
@@ -141,19 +144,33 @@ class VariableManager {
     scope = VAR_SCOPES.GLOBAL
   }: {
     scope: string;
-    value: string;
+    value: RedisVarType;
     key: string;
   }) => {
-    try {
-      VariableManager.validateVar(key, scope);
-      value = JSON.parse(value);
-    } catch (error) {
-      // Keep value as it is
+    if (typeof value === "string") {
+      try {
+        VariableManager.validateVar(scope);
+        value = JSON.parse(value);
+      } catch (error) {
+        // Keep value as it is
+      }
     }
     const path = `v1/database/`;
     const body = { key, scope, value };
     return Rest.post({ path, body });
   };
+
+  getVar(scope: string, key: string) {
+    try {
+      VariableManager.validateVar(scope);
+      const path = `v1/database/${scope}/${key}/`;
+
+      return Rest.get({ path });
+    } catch (error) {
+      // Keep value as it is
+      return Promise.reject("Invalid scope");
+    }
+  }
 
   //========================================================================================
   /*                                                                                      *
@@ -166,10 +183,21 @@ class VariableManager {
    * @returns {Promise<boolean>} Promise resolved after new format
    */
   private validateData(): Promise<boolean> {
-    // get global current_date
-    // check value type
-    // set global current_date in new format (string)
-    return Promise.resolve(true);
+    return this.getVar(VAR_SCOPES.GLOBAL, CURRENT_DATE_KEY)
+      .then((res: VarGetResult) => {
+        if (res.is_date) {
+          this.setVar({
+            value: res.value,
+            key: CURRENT_DATE_KEY,
+            scope: VAR_SCOPES.GLOBAL
+          }).then(() => {
+            return true;
+          });
+        }
+      })
+      .catch(() => {
+        return true;
+      });
   }
 
   /**
@@ -221,7 +249,7 @@ class VariableManager {
   static isValidScope = (scope: string) =>
     [...Object.values(VAR_SCOPES)].includes(scope);
 
-  static validateVar = (_: any, scope: string) => {
+  static validateVar = (scope: string) => {
     const validators = [
       {
         fn: () => VariableManager.isValidScope(scope),
