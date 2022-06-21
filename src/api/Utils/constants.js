@@ -41,3 +41,8 @@ export const VAR_SCOPES = {
   GLOBAL: "global",
   FLEET: "fleet"
 };
+
+export const DEFAULT_ROBOT_TASKS = {
+  currentTask: "N/A",
+  previousTask: "N/A"
+};
