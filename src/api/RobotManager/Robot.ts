@@ -238,8 +238,8 @@ class Robot {
         }
         // Return tasks
         return {
-          currentTask: res.data[0].message,
-          previousTask: res.data[1]?.message || "N/A"
+          currentTask: res.data[0]?.message || DEFAULT_ROBOT_TASKS.currentTask,
+          previousTask: res.data[1]?.message || DEFAULT_ROBOT_TASKS.previousTask
         };
       })
       .catch((error: Error) => {
