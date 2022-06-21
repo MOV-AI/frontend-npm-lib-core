@@ -168,9 +168,10 @@ class RobotManager {
 
   /**
    * Apply robot changes to cachedRobots and robots
-   * @param {Object} robots : Robots changes
+   * @param {CachedRobots} robots : Robots changes
+   * @param {string} _event : Event type ("set", "hset", "del", "hdel")
    */
-  _applyChanges = (robots: CachedRobots, _event: string) => {
+  private _applyChanges = (robots: CachedRobots, _event: string) => {
     Object.keys(robots).forEach(robotId => {
       const obj: RobotModel = robots[robotId];
       // Set robot object if not yet created
