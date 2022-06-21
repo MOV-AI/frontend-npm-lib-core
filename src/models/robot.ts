@@ -40,6 +40,17 @@ export interface LoadRobotParam extends SubscriberLoadParam {
 
 //========================================================================================
 /*                                                                                      *
+ *                                         Tasks                                        *
+ *                                                                                      */
+//========================================================================================
+
+export interface Tasks {
+  currentTask: string;
+  previousTask: string;
+}
+
+//========================================================================================
+/*                                                                                      *
  *                                         Logs                                         *
  *                                                                                      */
 //========================================================================================
@@ -75,12 +86,19 @@ export interface LogTag {
   key: string;
 }
 
+export interface LogLevel {
+  value: string;
+  label: string;
+}
+
+export type TimestampQuery = number | "";
+
 export interface LogQueryParam {
-  level: { selected: Array<string>; list: Array<string> };
+  level: { selected: Array<string>; list: Array<LogLevel> };
   service: { selected: Array<string> };
   tag: { selected: Array<LogTag> };
   searchMessage: string;
-  date: { from: number; to: number };
+  date: { from: TimestampQuery; to: TimestampQuery };
   robot: { selected: Array<string> };
   limit: number;
 }
