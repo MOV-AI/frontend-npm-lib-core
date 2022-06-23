@@ -38,7 +38,7 @@ class VariableManager {
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
     this.variables = {};
-    this.cachedVars = { Var: {} };
+    this.cachedVars = { Var: { global: { ID: {} } } };
     this.validateData().then(() => {
       this.subscribeToRedis();
     });
