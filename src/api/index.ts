@@ -10,6 +10,7 @@ import {
 import BroadcastChannel from "./BroadcastChannel/BroadcastChannel";
 import RobotManager from "./RobotManager/RobotManager";
 import VariableManager from "./VariableManager/VariableManager";
+import LockManager from "./LockManager/LockManager";
 import Utils from "./Utils/Utils";
 import Database from "./Database/Database";
 import MasterDB from "./Database/MasterDB";
@@ -49,6 +50,7 @@ export {
   Document,
   RobotManager,
   VariableManager,
+  LockManager,
   Workspace,
   Snapshot,
   Rest
