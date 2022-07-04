@@ -55,10 +55,10 @@ class LockManager {
         (data: { key: any; event: string }) => {
           // Apply changes to update local locks
           const locks = data.key["Lock"];
-
           const dataEventType = data.event;
-          console.log("debugger masterDB locks onEdit: ", locks);
+
           this.applyChanges(locks, dataEventType);
+
           // Call subscribed onChange functions
           Object.keys(this.subscribedOnDataChange).forEach(key => {
             this.subscribedOnDataChange[key].send(
@@ -69,7 +69,6 @@ class LockManager {
         },
         (data: { value: any }) => {
           this.isDataLoaded = true;
-          console.log("debugger masterDB locks onInit: ", data);
           if (data.value) {
             this.cachedLocks = data.value;
           }
@@ -115,8 +114,8 @@ class LockManager {
   /**
    * Execute DELETE request
    */
-  delete = ({ scope, key }: { scope: string; key: string }) => {
-    const path = `v1/database/${scope}/${key}/`;
+  delete = ({ lockName, robotId }: { lockName: string; robotId: string }) => {
+    const path = `v1/${lockName}/${robotId}/`;
     return Rest.delete({ path });
   };
 
