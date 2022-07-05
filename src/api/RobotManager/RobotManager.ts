@@ -1,4 +1,5 @@
 import _merge from "lodash/merge";
+import _debounce from "lodash/debounce";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
 import { EMPTY_FUNCTION } from "../Utils/constants";
@@ -25,6 +26,7 @@ var instance: RobotManager | null = null;
 type LoadedRobots = { [robotId: string]: Robot };
 
 // Constants
+const TIME_TO_OFFLINE = 10;
 const SUBSCRIPTION_PATTERN = { Scope: "Robot", RobotName: "*", IP: "*" };
 const ON_DATA_LOADED = (_robots: CachedRobots) => {
   /** Empty on purpose */
@@ -64,37 +66,52 @@ class RobotManager {
   subscribeToRedis() {
     MasterDB.subscribe(
       SUBSCRIPTION_PATTERN,
-      (data: UpdateRobotParam) => {
-        // Apply changes to update local robots
-        const robots = data.key["Robot"];
-        const dataEventType = data.event;
-        this._applyChanges(robots, dataEventType);
-
-        // Set changed robots
-        const changedRobots: CachedRobots = {};
-        Object.keys(robots).forEach(robotId => {
-          changedRobots[robotId] = this.cachedRobots[robotId];
-        });
-        // Call subscribed onChange functions
-        Object.keys(this.subscribedOnDataChange).forEach(key => {
-          this.subscribedOnDataChange[key].send(changedRobots, dataEventType);
-        });
-      },
-      (data: LoadRobotParam) => {
-        this.isDataLoaded = true;
-        if (data.value) {
-          this.cachedRobots = data.value.Robot;
-          Object.keys(this.cachedRobots).forEach(id => {
-            this.robots[id] = new Robot(id, this.cachedRobots[id]);
-          });
-        }
-        // Call subscribed onLoad functions
-        Object.keys(this.subscribedOnDataLoad).forEach(key => {
-          this.subscribedOnDataLoad[key].send(this.cachedRobots);
-        });
-      }
+      this.onDataChange,
+      this.onDataLoad
     );
   }
+
+  /**
+   * On SubscriberToRedis initialize
+   * @param {LoadRobotParam} data : Loaded data
+   */
+  onDataLoad = (data: LoadRobotParam) => {
+    this.isDataLoaded = true;
+    if (data.value) {
+      this.cachedRobots = data.value.Robot;
+      Object.keys(this.cachedRobots).forEach(id => {
+        this.robots[id] = new Robot(id, this.cachedRobots[id]);
+      });
+    }
+    // Call subscribed onLoad functions
+    Object.keys(this.subscribedOnDataLoad).forEach(key => {
+      this.subscribedOnDataLoad[key].send(this.cachedRobots);
+    });
+  };
+
+  /**
+   * On SubscribeToRedis data change handler
+   * @param {UpdateRobotParam} data : Changed event data
+   */
+  onDataChange = (data: UpdateRobotParam) => {
+    // Apply changes to update local robots
+    const robots = data.key["Robot"];
+    const dataEventType = data.event;
+    this.applyChanges(robots, dataEventType);
+
+    // Set changed robots
+    const changedRobots: CachedRobots = {};
+    Object.keys(robots).forEach(robotId => {
+      const changedKeys = this.robots[robotId].getChangedKeys();
+      if (changedKeys.length)
+        changedRobots[robotId] = this.cachedRobots[robotId];
+    });
+    // Call subscribed onChange functions
+    Object.keys(this.subscribedOnDataChange).forEach(key => {
+      if (Object.keys(changedRobots).length)
+        this.subscribedOnDataChange[key].send(changedRobots, dataEventType);
+    });
+  };
 
   //========================================================================================
   /*                                                                                      *
@@ -125,9 +142,9 @@ class RobotManager {
   /**
    * Get all robots
    * @param {Function} onDataLoaded : Function to be called on data first load
-   * @returns {Object} All cached robots
+   * @returns {CachedRobots} All cached robots
    */
-  getAll(onDataLoaded = ON_DATA_LOADED) {
+  getAll(onDataLoaded: Function = ON_DATA_LOADED): CachedRobots {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedRobots);
     } else {
@@ -160,6 +177,14 @@ class RobotManager {
     return newRobot;
   }
 
+  /**
+   * Return Manager Random ID
+   * @returns {string} Generated Random ID
+   */
+  getManagerId(): string {
+    return this.randomId;
+  }
+
   //========================================================================================
   /*                                                                                      *
    *                                    Private Methods                                   *
@@ -167,11 +192,23 @@ class RobotManager {
   //========================================================================================
 
   /**
+   * Update robot online status based on timestamp update
+   *  If the last timestamp is older than 10s ago, the robot is considered OFFLINE
+   * @param {string} robotId : Robot ID
+   */
+  private updateStatus = (robotId: string) => {
+    const timestamp = this.cachedRobots[robotId].Status?.timestamp || 1;
+    const isOnline = Date.now() * 0.001 - timestamp <= TIME_TO_OFFLINE;
+    this.cachedRobots[robotId].Online = isOnline;
+    this.robots[robotId].setData("Online", isOnline);
+  };
+
+  /**
    * Apply robot changes to cachedRobots and robots
    * @param {CachedRobots} robots : Robots changes
-   * @param {string} _event : Event type ("set", "hset", "del", "hdel")
+   * @param {string} event : Event type ("set", "hset", "del", "hdel")
    */
-  private _applyChanges = (robots: CachedRobots, _event: string) => {
+  private applyChanges = (robots: CachedRobots, event: string) => {
     Object.keys(robots).forEach(robotId => {
       const obj: RobotModel = robots[robotId];
       // Set robot object if not yet created
@@ -179,22 +216,26 @@ class RobotManager {
         this.cachedRobots[robotId] = obj;
         this.robots[robotId] = new Robot(robotId, obj);
       }
+      const robot = this.robots[robotId];
+      const cachedRobot = this.cachedRobots[robotId];
       // Update cached and robot data attribute
       Object.keys(obj).forEach(key => {
         const objKey = key as keyof RobotModel;
         const value: any = obj[objKey];
-        const prevCachedValue = this.cachedRobots[robotId][objKey];
-        const prevRobotValue = this.robots[robotId].getDataKeyValue(objKey);
-        if (typeof value === "object") {
-          this.cachedRobots[robotId][objKey] = _merge(prevCachedValue, value);
-          this.robots[robotId].setData(objKey, _merge(prevRobotValue, value));
+        const prevCachedValue = cachedRobot[objKey];
+        const prevRobotValue = robot.getDataKeyValue(objKey);
+        if (objKey === "Status" || typeof value !== "object") {
+          cachedRobot[objKey] = value;
+          robot.setData(objKey, value);
         } else {
-          this.cachedRobots[robotId][objKey] = value;
-          this.robots[robotId].setData(objKey, value);
+          cachedRobot[objKey] = _merge(prevCachedValue, value);
+          robot.setData(objKey, _merge(prevRobotValue, value));
         }
       });
+      // Update Online Status on set new Status data
+      this.updateStatus(robotId);
       // Send updated data to subscribed components
-      this.robots[robotId].sendUpdates(_event);
+      robot.sendUpdates(event);
     });
   };
 
@@ -211,6 +252,7 @@ class RobotManager {
    */
   static getLogs(queryParam: LogQueryParam): Promise<any> {
     // Get request parameters
+    const _limit = queryParam.limit || 20;
     const _levels = getRequestLevels(
       queryParam.level.selected,
       queryParam.level.list
@@ -220,7 +262,7 @@ class RobotManager {
     const _message = getRequestMessage(queryParam.searchMessage);
     const _dates = getRequestDate(queryParam.date.from, queryParam.date.to);
     const _robots = getRequestRobots(queryParam.robot.selected);
-    const path = `v1/logs/?limit=${queryParam.limit}${_levels}${_services}${_dates}${_tags}${_message}${_robots}`;
+    const path = `v1/logs/?limit=${_limit}${_levels}${_services}${_dates}${_tags}${_message}${_robots}`;
 
     return Rest.get({ path });
   }

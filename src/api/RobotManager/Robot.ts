@@ -1,3 +1,4 @@
+import _cloneDeep from "lodash/cloneDeep";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
 import Rest from "../Rest/Rest";
@@ -22,11 +23,14 @@ import {
 } from "../../models";
 import DocumentV2 from "../Document/DocumentV2";
 
+const KEYS_TO_DISCONSIDER = ["Status.timestamp"];
+
 class Robot {
   private id: string;
   private ip: RobotModel["IP"];
   private name?: RobotModel["RobotName"];
   private data: RobotModel;
+  private previousData: RobotModel;
   private logs: Array<LogData>;
   private logger: Logger;
   private logSubscriptions: SubscriptionManager;
@@ -42,6 +46,7 @@ class Robot {
     this.ip = data.IP;
     this.name = data.RobotName;
     this.data = data;
+    this.previousData = data;
     this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
@@ -92,8 +97,7 @@ class Robot {
   /**
    * Unsubscribe to a robot property from redis
    *
-   * @param {String} property: Property name
-   * @param {String} propValue: Property value
+   * @param {UnsubscriberModel} params: Property name and value to unsubscribe
    */
   unsubscribe(params: UnsubscriberModel) {
     const { property, propValue = "*" } = params;
@@ -179,10 +183,24 @@ class Robot {
   /**
    * Send updated data to subscribed components
    */
-  sendUpdates(_event: string) {
+  sendUpdates(event: string) {
     Object.keys(this.dataSubscriptions).forEach(key => {
-      this.dataSubscriptions[key].send(this.data, _event);
+      this.dataSubscriptions[key].send(this.data, event);
     });
+  }
+
+  /**
+   * Get changed keys from last updates
+   * @returns {array<string>} Keys with updates
+   */
+  getChangedKeys(): Array<string> {
+    const diff = Util.difference(this.previousData, this.data);
+    const keys = Object.keys(Util.flattenObject(diff)).filter(
+      key => !KEYS_TO_DISCONSIDER.includes(key)
+    );
+    // Update previous data
+    this.previousData = _cloneDeep(this.data);
+    return keys;
   }
 
   /**
