@@ -46,3 +46,13 @@ export const DEFAULT_ROBOT_TASKS = {
   currentTask: "N/A",
   previousTask: "N/A"
 };
+
+export const WS_EVENT_TYPES = {
+  SET: "set",
+  HSET: "hset",
+  DEL: "del",
+  HDEL: "hdel"
+};
+
+export const DEL_WS_EVENTS = [WS_EVENT_TYPES.DEL, WS_EVENT_TYPES.HDEL];
+export const SET_WS_EVENTS = [WS_EVENT_TYPES.SET, WS_EVENT_TYPES.HSET];

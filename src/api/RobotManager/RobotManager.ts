@@ -1,8 +1,7 @@
 import _merge from "lodash/merge";
-import _debounce from "lodash/debounce";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
-import { EMPTY_FUNCTION } from "../Utils/constants";
+import { EMPTY_FUNCTION, SET_WS_EVENTS } from "../Utils/constants";
 import Robot from "./Robot";
 import Rest from "../Rest/Rest";
 import {
@@ -26,8 +25,6 @@ var instance: RobotManager | null = null;
 type LoadedRobots = { [robotId: string]: Robot };
 
 // Constants
-const TIME_TO_OFFLINE = 10;
-const SET_EVENTS = ["set", "hset"];
 const SUBSCRIPTION_PATTERN = { Scope: "Robot", RobotName: "*", IP: "*" };
 const ON_DATA_LOADED = (_robots: CachedRobots) => {
   /** Empty on purpose */
@@ -223,7 +220,7 @@ class RobotManager {
         }
       });
       // Update Online Status on set new Status data
-      if (SET_EVENTS.includes(event))
+      if (SET_WS_EVENTS.includes(event))
         this.cachedRobots[robotId].Online = robot.updateStatus();
       // Send updated data to subscribed components
       robot.sendUpdates(event);
