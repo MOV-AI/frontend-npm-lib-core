@@ -27,6 +27,7 @@ type LoadedRobots = { [robotId: string]: Robot };
 
 // Constants
 const TIME_TO_OFFLINE = 10;
+const SET_EVENTS = ["set", "hset"];
 const SUBSCRIPTION_PATTERN = { Scope: "Robot", RobotName: "*", IP: "*" };
 const ON_DATA_LOADED = (_robots: CachedRobots) => {
   /** Empty on purpose */
@@ -81,6 +82,7 @@ class RobotManager {
       this.cachedRobots = data.value.Robot;
       Object.keys(this.cachedRobots).forEach(id => {
         this.robots[id] = new Robot(id, this.cachedRobots[id]);
+        this.cachedRobots[id].Online = true;
       });
     }
     // Call subscribed onLoad functions
@@ -192,18 +194,6 @@ class RobotManager {
   //========================================================================================
 
   /**
-   * Update robot online status based on timestamp update
-   *  If the last timestamp is older than 10s ago, the robot is considered OFFLINE
-   * @param {string} robotId : Robot ID
-   */
-  private updateStatus = (robotId: string) => {
-    const timestamp = this.cachedRobots[robotId].Status?.timestamp || 1;
-    const isOnline = Date.now() * 0.001 - timestamp <= TIME_TO_OFFLINE;
-    this.cachedRobots[robotId].Online = isOnline;
-    this.robots[robotId].setData("Online", isOnline);
-  };
-
-  /**
    * Apply robot changes to cachedRobots and robots
    * @param {CachedRobots} robots : Robots changes
    * @param {string} event : Event type ("set", "hset", "del", "hdel")
@@ -233,7 +223,8 @@ class RobotManager {
         }
       });
       // Update Online Status on set new Status data
-      this.updateStatus(robotId);
+      if (SET_EVENTS.includes(event))
+        this.cachedRobots[robotId].Online = robot.updateStatus();
       // Send updated data to subscribed components
       robot.sendUpdates(event);
     });

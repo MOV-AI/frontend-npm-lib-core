@@ -23,7 +23,9 @@ import {
 } from "../../models";
 import DocumentV2 from "../Document/DocumentV2";
 
+// Constants
 const KEYS_TO_DISCONSIDER = ["Status.timestamp"];
+const TIME_TO_OFFLINE = 10;
 
 class Robot {
   private id: string;
@@ -45,7 +47,7 @@ class Robot {
     this.id = id;
     this.ip = data.IP;
     this.name = data.RobotName;
-    this.data = data;
+    this.data = { ...data, Online: true };
     this.previousData = data;
     this.logs = [];
     this.logger = {
@@ -135,6 +137,18 @@ class Robot {
   }
 
   /**
+   * Update Robot Online/Offline Status
+   * @returns {boolean} True if Robot is Online and False otherwise
+   */
+  updateStatus(): boolean {
+    const time = this.data.Status?.timestamp || 1;
+    const previousTime = this.previousData.Status?.timestamp || time - 1;
+    const timeDiff = time - previousTime;
+    this.data.Online = timeDiff > 0 && timeDiff < TIME_TO_OFFLINE;
+    return this.data.Online;
+  }
+
+  /**
    * Get data value for given key
    * @param key : Robot data key name
    * @returns Robot data key value
@@ -199,7 +213,11 @@ class Robot {
       key => !KEYS_TO_DISCONSIDER.includes(key)
     );
     // Update previous data
+    const previousStatus = _cloneDeep(this.previousData.Status);
     this.previousData = _cloneDeep(this.data);
+    // But keep previous status if new one is empty
+    if (!this.previousData.Status) this.previousData.Status = previousStatus;
+    // Return changed keys
     return keys;
   }
 
