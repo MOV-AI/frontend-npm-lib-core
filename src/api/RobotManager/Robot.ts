@@ -207,17 +207,32 @@ class Robot {
    * Get changed keys from last updates
    * @returns {array<string>} Keys with updates
    */
-  getChangedKeys(): Array<string> {
+  protected getChangedKeys(): Array<string> {
     const diff = Util.difference(this.previousData, this.data);
-    const keys = Object.keys(Util.flattenObject(diff)).filter(
+    // Return changed keys
+    return Object.keys(Util.flattenObject(diff)).filter(
       key => !KEYS_TO_DISCONSIDER.includes(key)
     );
+  }
+
+  /**
+   * Update previous data value with current data values
+   */
+  protected updatePreviousData() {
     // Update previous data
     const previousStatus = _cloneDeep(this.previousData.Status);
     this.previousData = _cloneDeep(this.data);
     // But keep previous status if new one is empty
     if (!this.previousData.Status) this.previousData.Status = previousStatus;
-    // Return changed keys
+  }
+
+  /**
+   * Get changed keys and reset previous data
+   * @returns {Array<string>} Keys with differences between previousData and Data
+   */
+  protected getChangedKeysAndResetData(): Array<string> {
+    const keys = this.getChangedKeys();
+    this.updatePreviousData();
     return keys;
   }
 

@@ -21,8 +21,20 @@ import {
   UpdateRobotParam
 } from "../../models";
 
+/**
+ * Class to extend from Robot class
+ *  Implements more methods that should only be allowed from the RobotManager using protected methods from Robot class
+ */
+class ProtectedRobot extends Robot {
+  getChangedKeysAndResetData() {
+    const keys = this.getChangedKeys();
+    this.updatePreviousData();
+    return keys;
+  }
+}
+
 var instance: RobotManager | null = null;
-type LoadedRobots = { [robotId: string]: Robot };
+type LoadedRobots = { [robotId: string]: ProtectedRobot };
 
 // Constants
 const SUBSCRIPTION_PATTERN = { Scope: "Robot", RobotName: "*", IP: "*" };
@@ -78,7 +90,7 @@ class RobotManager {
     if (data.value) {
       this.cachedRobots = data.value.Robot;
       Object.keys(this.cachedRobots).forEach(id => {
-        this.robots[id] = new Robot(id, this.cachedRobots[id]);
+        this.robots[id] = new ProtectedRobot(id, this.cachedRobots[id]);
         this.cachedRobots[id].Online = true;
       });
     }
@@ -101,7 +113,8 @@ class RobotManager {
     // Set changed robots
     const changedRobots: CachedRobots = {};
     Object.keys(robots).forEach(robotId => {
-      const changedKeys = this.robots[robotId].getChangedKeys();
+      const robot = this.robots[robotId];
+      const changedKeys = robot.getChangedKeysAndResetData();
       if (changedKeys.length)
         changedRobots[robotId] = this.cachedRobots[robotId];
     });
@@ -172,7 +185,7 @@ class RobotManager {
     }
     // Add robot to cache and return
     newRobot.getData();
-    this.robots[id] = newRobot;
+    this.robots[id] = newRobot as ProtectedRobot;
     return newRobot;
   }
 
@@ -201,7 +214,7 @@ class RobotManager {
       // Set robot object if not yet created
       if (!this.robots[robotId]) {
         this.cachedRobots[robotId] = obj;
-        this.robots[robotId] = new Robot(robotId, obj);
+        this.robots[robotId] = new ProtectedRobot(robotId, obj);
       }
       const robot = this.robots[robotId];
       const cachedRobot = this.cachedRobots[robotId];
