@@ -8,7 +8,7 @@ import {
 } from "../../models";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
-import { EMPTY_FUNCTION, VAR_SCOPES } from "../Utils/constants";
+import { EMPTY_FUNCTION, VAR_SCOPES, WS_EVENT_TYPES } from "../Utils/constants";
 import Util from "../Utils/Utils";
 
 // Used as global variable to avoid creation multiple subscribers
@@ -38,7 +38,7 @@ class VariableManager {
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
     this.variables = {};
-    this.cachedVars = { Var: {} };
+    this.cachedVars = { Var: { global: { ID: {} } } };
     this.validateData().then(() => {
       this.subscribeToRedis();
     });
@@ -232,7 +232,7 @@ class VariableManager {
       // Update cached and variable data attribute
       Object.keys(obj.ID).forEach(varName => {
         // Remove variable
-        if (event === "del") {
+        if (event === WS_EVENT_TYPES.DEL) {
           delete this.variables[scope].ID[varName];
           delete this.cachedVars.Var[scope].ID[varName];
         }
