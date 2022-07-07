@@ -20,6 +20,7 @@ export interface RobotModel {
   Status?: RobotStatus;
   RobotName?: string;
   Parameter?: RobotParameter;
+  Online?: boolean;
 }
 
 export interface CachedRobots {
