@@ -134,10 +134,22 @@ export default class Authentication {
     }
   };
 
+  /**
+   * Logout from app : Remove tokens locally and do request to remove from server
+   * @param redirect : Redirect location after successfull logout
+   */
   static logout = (redirect = "") => {
-    Authentication.deleteTokens();
-
-    window.location.replace(redirect || window.location.origin);
+    // Call logout method to invalid token from server side
+    const token = this.getToken();
+    Authentication.request({
+      url: "/logout/",
+      headers: { Authorization: `bearer ${token}` }
+    }).finally(() => {
+      // Clear Tokens from client side
+      Authentication.deleteTokens();
+      // Redirect the user to login page
+      window.location.replace(redirect || window.location.origin);
+    });
   };
 
   static checkLogin = async () => {
@@ -193,13 +205,20 @@ export default class Authentication {
     );
   };
 
-  static request = (payload: { url: string; body: object }) => {
+  static request = (payload: {
+    url: string;
+    body?: object;
+    headers?: object;
+  }) => {
+    const headers = payload.headers || {};
+    const body = payload.body || {};
     return fetch(payload.url, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        ...headers
       },
-      body: JSON.stringify(payload.body)
+      body: JSON.stringify(body)
     });
   };
 
