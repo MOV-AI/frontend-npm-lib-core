@@ -1,7 +1,12 @@
 import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
-import { EMPTY_FUNCTION, SET_WS_EVENTS } from "../Utils/constants";
+import {
+  EMPTY_FUNCTION,
+  SET_WS_EVENTS,
+  TIME_TO_OFFLINE,
+  WS_EVENT_TYPES
+} from "../Utils/constants";
 import Robot from "./Robot";
 import Rest from "../Rest/Rest";
 import {
@@ -17,6 +22,7 @@ import {
   LoadRobotParam,
   LogQueryParam,
   RobotModel,
+  RobotTimeout,
   SubscriptionManager,
   UpdateRobotParam
 } from "../../models";
@@ -26,6 +32,7 @@ import {
  *  Implements more methods that should only be allowed from the RobotManager using protected methods from Robot class
  */
 class ProtectedRobot extends Robot {
+  readonly data: RobotModel;
   getChangedKeysAndResetData() {
     const keys = this.getChangedKeys();
     this.updatePreviousData();
@@ -49,9 +56,10 @@ class RobotManager {
   private isDataLoaded: boolean;
   private subscribedOnDataLoad: SubscriptionManager;
   private subscribedOnDataChange: SubscriptionManager;
-  private randomId: string;
+  private managerId: string;
   private robots: LoadedRobots;
   private cachedRobots: CachedRobots;
+  private robotsTimeout: RobotTimeout;
   public destroy: Function;
 
   constructor() {
@@ -59,9 +67,10 @@ class RobotManager {
     this.isDataLoaded = false;
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
-    this.randomId = Util.randomGuid();
+    this.managerId = Util.randomGuid();
     this.robots = {};
     this.cachedRobots = {};
+    this.robotsTimeout = {};
     this.subscribeToRedis();
     this.destroy = function () {
       // Unsubscribe on destroy
@@ -195,7 +204,7 @@ class RobotManager {
    * @returns {string} Generated Random ID
    */
   getManagerId(): string {
-    return this.randomId;
+    return this.managerId;
   }
 
   //========================================================================================
@@ -203,6 +212,26 @@ class RobotManager {
    *                                    Private Methods                                   *
    *                                                                                      */
   //========================================================================================
+
+  /**
+   * Check robot status if it doesn't receive any updates in more than 10s
+   *  Set timeout to check online/offline state in 10s
+   * @param {ProtectedRobot} robot
+   */
+  private checkStatus = (robot: ProtectedRobot) => {
+    const id = robot.id;
+    clearTimeout(this.robotsTimeout[id]);
+    this.robotsTimeout[id] = setTimeout(() => {
+      this.cachedRobots[id].Online = robot.updateStatus();
+      robot.sendUpdates(WS_EVENT_TYPES.SET);
+      // Call subscribed onChange functions
+      Object.keys(this.subscribedOnDataChange).forEach(key => {
+        const changedKeys = robot.getChangedKeysAndResetData();
+        if (changedKeys.length)
+          this.subscribedOnDataChange[key].send(robot.data, WS_EVENT_TYPES.SET);
+      });
+    }, TIME_TO_OFFLINE);
+  };
 
   /**
    * Apply robot changes to cachedRobots and robots
@@ -238,6 +267,8 @@ class RobotManager {
         this.cachedRobots[robotId].Online = robot.updateStatus();
       // Send updated data to subscribed components
       robot.sendUpdates(event);
+      // Check robot status after 10s
+      this.checkStatus(robot);
     });
   };
 

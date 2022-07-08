@@ -6,7 +6,8 @@ import Document from "../Document/Document";
 import {
   LOGGER_STATUS,
   EMPTY_FUNCTION,
-  DEFAULT_ROBOT_TASKS
+  DEFAULT_ROBOT_TASKS,
+  TIME_TO_OFFLINE
 } from "../Utils/constants";
 import {
   LoadRobotParam,
@@ -25,13 +26,12 @@ import DocumentV2 from "../Document/DocumentV2";
 
 // Constants
 const KEYS_TO_DISCONSIDER = ["Status.timestamp"];
-const TIME_TO_OFFLINE = 10000;
 
 class Robot {
-  private id: string;
+  readonly id: string;
+  protected data: RobotModel;
   private ip: RobotModel["IP"];
   private name?: RobotModel["RobotName"];
-  private data: RobotModel;
   private previousData: RobotModel;
   private lastUpdate: Date;
   private logs: Array<LogData>;

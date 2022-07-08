@@ -27,6 +27,10 @@ export interface CachedRobots {
   [robotID: string]: RobotModel;
 }
 
+export interface RobotTimeout {
+  [robotID: string]: NodeJS.Timeout;
+}
+
 export interface RobotMap {
   Robot: CachedRobots;
 }
