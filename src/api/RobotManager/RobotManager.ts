@@ -108,7 +108,8 @@ class RobotManager {
     // Apply changes to update local robots
     const robots = data.key["Robot"];
     const dataEventType = data.event;
-    this.applyChanges(robots, dataEventType);
+    if (SET_WS_EVENTS.includes(dataEventType))
+      this.applyChanges(robots, dataEventType);
 
     // Set changed robots
     const changedRobots: CachedRobots = {};

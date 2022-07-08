@@ -5,7 +5,9 @@ import Ldap from "./Ldap/Ldap";
 import {
   BROADCAST_EVENTS,
   SERVICE_LIST,
-  DEFAULT_ROBOT_TASKS
+  DEFAULT_ROBOT_TASKS,
+  WS_EVENT_TYPES,
+  SET_WS_EVENTS
 } from "./Utils/constants";
 import BroadcastChannel from "./BroadcastChannel/BroadcastChannel";
 import RobotManager from "./RobotManager/RobotManager";
@@ -46,6 +48,8 @@ export {
   BROADCAST_EVENTS,
   SERVICE_LIST,
   DEFAULT_ROBOT_TASKS,
+  WS_EVENT_TYPES,
+  SET_WS_EVENTS,
   Document,
   RobotManager,
   VariableManager,

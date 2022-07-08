@@ -25,7 +25,7 @@ import DocumentV2 from "../Document/DocumentV2";
 
 // Constants
 const KEYS_TO_DISCONSIDER = ["Status.timestamp"];
-const TIME_TO_OFFLINE = 10;
+const TIME_TO_OFFLINE = 10000;
 
 class Robot {
   private id: string;
@@ -33,6 +33,7 @@ class Robot {
   private name?: RobotModel["RobotName"];
   private data: RobotModel;
   private previousData: RobotModel;
+  private lastUpdate: Date;
   private logs: Array<LogData>;
   private logger: Logger;
   private logSubscriptions: SubscriptionManager;
@@ -48,7 +49,8 @@ class Robot {
     this.ip = data.IP;
     this.name = data.RobotName;
     this.data = { ...data, Online: true };
-    this.previousData = data;
+    this.previousData = this.data;
+    this.lastUpdate = new Date();
     this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
@@ -141,10 +143,10 @@ class Robot {
    * @returns {boolean} True if Robot is Online and False otherwise
    */
   updateStatus(): boolean {
-    const time = this.data.Status?.timestamp || 1;
-    const previousTime = this.previousData.Status?.timestamp || time - 1;
+    const time = new Date().getTime();
+    const previousTime = this.lastUpdate.getTime();
     const timeDiff = time - previousTime;
-    this.data.Online = timeDiff > 0 && timeDiff < TIME_TO_OFFLINE;
+    this.data.Online = timeDiff < TIME_TO_OFFLINE;
     return this.data.Online;
   }
 
@@ -208,6 +210,7 @@ class Robot {
    * @returns {array<string>} Keys with updates
    */
   protected getChangedKeys(): Array<string> {
+    // Get Diff between previous and current data
     const diff = Util.difference(this.previousData, this.data);
     // Return changed keys
     return Object.keys(Util.flattenObject(diff)).filter(
@@ -224,6 +227,8 @@ class Robot {
     this.previousData = _cloneDeep(this.data);
     // But keep previous status if new one is empty
     if (!this.previousData.Status) this.previousData.Status = previousStatus;
+    // Update lastUpdate variable
+    this.lastUpdate = new Date();
   }
 
   /**
