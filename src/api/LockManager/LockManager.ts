@@ -1,7 +1,12 @@
-import { SubscriberCallbackHandler, SubscriptionManager } from "../../models";
+import {
+  CachedLocks,
+  LockVar,
+  SubscriberCallbackHandler,
+  SubscriptionManager
+} from "../../models";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
-import { EMPTY_FUNCTION } from "../Utils/constants";
+import { EMPTY_FUNCTION, WS_EVENT_TYPES } from "../Utils/constants";
 import Util from "../Utils/Utils";
 
 // Used as global variable to avoid creation multiple subscribers
@@ -20,8 +25,8 @@ class LockManager {
   private isDataLoaded: boolean;
   private subscribedOnDataLoad: SubscriptionManager;
   private subscribedOnDataChange: SubscriptionManager;
-  private locks: any;
-  private cachedLocks: any;
+  private locks: LockVar;
+  private cachedLocks: CachedLocks;
   public destroy: Function;
 
   constructor() {
@@ -30,7 +35,7 @@ class LockManager {
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
     this.locks = {};
-    this.cachedLocks = {};
+    this.cachedLocks = { Lock: {} };
     this.subscribeToRedis();
     this.destroy = function () {
       // Unsubscribe on destroy
@@ -52,7 +57,7 @@ class LockManager {
     try {
       MasterDB.subscribe(
         SUBSCRIPTION_PATTERN,
-        (data: { key: any; event: string }) => {
+        (data: { key: CachedLocks; event: string }) => {
           // Apply changes to update local locks
           const locks = data.key["Lock"];
           const dataEventType = data.event;
@@ -127,21 +132,17 @@ class LockManager {
 
   /**
    * Apply changes to cachedLocks and locks
-   * @param {any} locks
+   * @param {LockVar} locks
    * @param {string} event
    */
-  private applyChanges = (locks: any, event: string) => {
-    Object.keys(locks).forEach((scope: string) => {
-      const obj = locks?.[scope] ?? {};
-
+  private applyChanges = (locks: LockVar, event: string) => {
+    Object.keys(locks).forEach((lock: string) => {
       // Update cached and lock data attribute
-      Object.keys(obj).forEach(lockName => {
-        // Remove/delete lock
-        if (event === "del") {
-          delete this.locks[scope].ID[lockName];
-          delete this.cachedLocks.Lock[scope].ID[lockName];
-        }
-      });
+      // Remove/delete lock
+      if (event === WS_EVENT_TYPES.DEL) {
+        delete this.locks[lock];
+        delete this.cachedLocks.Lock[lock];
+      }
     });
   };
 }
