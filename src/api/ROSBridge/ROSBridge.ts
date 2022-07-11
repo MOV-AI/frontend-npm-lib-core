@@ -1,4 +1,10 @@
 import { Ros, Service, ServiceRequest } from "roslib";
+/**
+ * Experimental ROSBridge wrapper
+ * - Add promises to services
+ * - Add builder api
+ */
+
 //========================================================================================
 /*                                                                                      *
  *                                       CONSTANTS                                      *
@@ -20,43 +26,37 @@ const NOT_CONNECTED_ERROR = "ROSBridge not connected";
 export class ROSBridge {
   private url: string;
   private ros: Ros;
-  private _onConnect: () => void;
-  private _onClose: () => void;
-  private _onError: (error: string) => void;
-  private isDirty: boolean;
+  private onConnectSubs: Array<() => void> = [];
+  private onCloseSubs: Array<() => void> = [];
+  private onErrorSubs: Array<(error: string) => void> = [];
 
   constructor(url: string = BRIDE_CONNECTION_DEFAULT) {
     this.url = url;
-    this.isDirty = false;
   }
 
   setURL(url: string): ROSBridge {
     this.url = url;
-    this.isDirty = true;
+    this.reconnect();
     return this;
   }
 
   onConnect(lambda: () => void): ROSBridge {
-    this._onConnect = lambda;
-    this.isDirty = true;
+    this.onConnectSubs.push(lambda);
     return this;
   }
 
   onClose(lambda: () => void): ROSBridge {
-    this._onClose = lambda;
-    this.isDirty = true;
+    this.onCloseSubs.push(lambda);
     return this;
   }
 
   onError(lambda: (error: string) => void): ROSBridge {
-    this._onError = lambda;
-    this.isDirty = true;
+    this.onErrorSubs.push(lambda);
     return this;
   }
 
   connect(): ROSBridge {
-    if (this.isDirty || !this.ros) {
-      this.isDirty = false;
+    if (!this.ros || !this.ros.isConnected) {
       this.reconnect();
     }
     return this;
@@ -88,6 +88,10 @@ export class ROSBridge {
     message: { [prop: string]: any },
     serviceID: { name: string; serviceType: string }
   ): Promise<any> {
+    this.connect();
+    if (!this.ros.isConnected) {
+      return new Promise((_, reject) => reject(NOT_CONNECTED_ERROR));
+    }
     const service = new Service({ ros: this.ros, ...serviceID });
     const request = new ServiceRequest(message);
     return new Promise((resolve, reject) => {
@@ -104,11 +108,23 @@ export class ROSBridge {
   }
 
   private reconnect() {
+    if (this?.ros?.isConnected) {
+      this.ros.close();
+    }
     this.ros = new Ros({ url: this.url });
-    this.ros.on("connection", this._onConnect);
-    this.ros.on("error", this._onError);
-    this.ros.on("close", this._onClose);
+    this.ros.on("connection", () => {
+      console.debug("ROS Bridge connected!");
+      this.onConnectSubs.forEach(f => f());
+    });
+    this.ros.on("error", error => {
+      console.debug("ROS Bridge error!");
+      this.onErrorSubs.forEach(f => f(error));
+    });
+    this.ros.on("close", () => {
+      console.debug("ROS Bridge closed!");
+      this.onCloseSubs.forEach(f => f());
+    });
   }
 }
 
-export const MainROSBridge = new ROSBridge();
+export const MainROSBridge = new ROSBridge().connect();
