@@ -30,7 +30,7 @@ export class ROSBridge {
   private onCloseSubs: Array<() => void> = [];
   private onErrorSubs: Array<(error: string) => void> = [];
 
-  constructor(url: string = BRIDE_CONNECTION_DEFAULT) {
+  constructor(url: string = BRIDGE_CONNECTION_DEFAULT) {
     this.url = url;
   }
 
