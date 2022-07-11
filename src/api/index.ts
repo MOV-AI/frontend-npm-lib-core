@@ -28,6 +28,7 @@ import Document from "./Document/Document";
 import Workspace from "./Workspace/Workspace";
 import Snapshot from "./Snapshot/Snapshot";
 import Rest from "./Rest/Rest";
+import { ROSBridge, MainROSBridge } from "./ROSBridge/ROSBridge";
 
 export {
   Acl,
@@ -57,5 +58,7 @@ export {
   LockManager,
   Workspace,
   Snapshot,
-  Rest
+  Rest,
+  ROSBridge,
+  MainROSBridge
 };

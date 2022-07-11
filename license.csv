@@ -1,6 +1,0 @@
-"module name","license","repository"
-"@babel/runtime@7.10.5","MIT","https://github.com/babel/babel"
-"jwt-decode@2.2.0","MIT","https://github.com/auth0/jwt-decode"
-"monet@0.9.1","MIT","https://github.com/monet/monet.js"
-"mov-fe-lib-core@1.0.1","ISC","git://bitbucket.org/robosavvy/mov-fe-lib-core"
-"regenerator-runtime@0.13.5","MIT","https://github.com/facebook/regenerator/tree/master/packages/regenerator-runtime"
