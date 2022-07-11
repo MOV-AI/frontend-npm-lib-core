@@ -12,7 +12,7 @@ import { Ros, Service, ServiceRequest } from "roslib";
 //========================================================================================
 
 const isHttps = window.location.protocol === "https:";
-const BRIDE_CONNECTION_DEFAULT = `${isHttps ? "wss" : "ws"}://${
+const BRIDGE_CONNECTION_DEFAULT = `${isHttps ? "wss" : "ws"}://${
   window.location.hostname
 }:9090`;
 const NOT_CONNECTED_ERROR = "ROSBridge not connected";
