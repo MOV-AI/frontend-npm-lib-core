@@ -20,10 +20,15 @@ export interface RobotModel {
   Status?: RobotStatus;
   RobotName?: string;
   Parameter?: RobotParameter;
+  Online?: boolean;
 }
 
 export interface CachedRobots {
   [robotID: string]: RobotModel;
+}
+
+export interface RobotTimeout {
+  [robotID: string]: NodeJS.Timeout;
 }
 
 export interface RobotMap {

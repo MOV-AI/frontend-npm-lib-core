@@ -5,11 +5,14 @@ import Ldap from "./Ldap/Ldap";
 import {
   BROADCAST_EVENTS,
   SERVICE_LIST,
-  DEFAULT_ROBOT_TASKS
+  DEFAULT_ROBOT_TASKS,
+  WS_EVENT_TYPES,
+  SET_WS_EVENTS
 } from "./Utils/constants";
 import BroadcastChannel from "./BroadcastChannel/BroadcastChannel";
 import RobotManager from "./RobotManager/RobotManager";
 import VariableManager from "./VariableManager/VariableManager";
+import LockManager from "./LockManager/LockManager";
 import Utils from "./Utils/Utils";
 import Database from "./Database/Database";
 import MasterDB from "./Database/MasterDB";
@@ -47,9 +50,12 @@ export {
   BROADCAST_EVENTS,
   SERVICE_LIST,
   DEFAULT_ROBOT_TASKS,
+  WS_EVENT_TYPES,
+  SET_WS_EVENTS,
   Document,
   RobotManager,
   VariableManager,
+  LockManager,
   Workspace,
   Snapshot,
   Rest,

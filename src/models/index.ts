@@ -6,5 +6,6 @@ export * from "./ldap";
 export * from "./permission";
 export * from "./user";
 export * from "./variableManager";
+export * from "./lockManager";
 export * from "./robot";
 export * from "./common";

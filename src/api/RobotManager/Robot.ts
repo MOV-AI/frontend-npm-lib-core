@@ -1,3 +1,4 @@
+import _cloneDeep from "lodash/cloneDeep";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
 import Rest from "../Rest/Rest";
@@ -5,7 +6,8 @@ import Document from "../Document/Document";
 import {
   LOGGER_STATUS,
   EMPTY_FUNCTION,
-  DEFAULT_ROBOT_TASKS
+  DEFAULT_ROBOT_TASKS,
+  TIME_TO_OFFLINE
 } from "../Utils/constants";
 import {
   LoadRobotParam,
@@ -22,11 +24,16 @@ import {
 } from "../../models";
 import DocumentV2 from "../Document/DocumentV2";
 
+// Constants
+const KEYS_TO_DISCONSIDER = ["Status.timestamp"];
+
 class Robot {
-  private id: string;
+  readonly id: string;
+  protected data: RobotModel;
   private ip: RobotModel["IP"];
   private name?: RobotModel["RobotName"];
-  private data: RobotModel;
+  private previousData: RobotModel;
+  private lastUpdate: Date;
   private logs: Array<LogData>;
   private logger: Logger;
   private logSubscriptions: SubscriptionManager;
@@ -41,7 +48,9 @@ class Robot {
     this.id = id;
     this.ip = data.IP;
     this.name = data.RobotName;
-    this.data = data;
+    this.data = { ...data, Online: true };
+    this.previousData = this.data;
+    this.lastUpdate = new Date();
     this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
@@ -92,8 +101,7 @@ class Robot {
   /**
    * Unsubscribe to a robot property from redis
    *
-   * @param {String} property: Property name
-   * @param {String} propValue: Property value
+   * @param {UnsubscriberModel} params: Property name and value to unsubscribe
    */
   unsubscribe(params: UnsubscriberModel) {
     const { property, propValue = "*" } = params;
@@ -128,6 +136,18 @@ class Robot {
    */
   setData(key: keyof RobotModel, value: any) {
     this.data[key] = value;
+  }
+
+  /**
+   * Update Robot Online/Offline Status
+   * @returns {boolean} True if Robot is Online and False otherwise
+   */
+  updateStatus(): boolean {
+    const time = new Date().getTime();
+    const previousTime = this.lastUpdate.getTime();
+    const timeDiff = time - previousTime;
+    this.data.Online = timeDiff < TIME_TO_OFFLINE;
+    return this.data.Online;
   }
 
   /**
@@ -179,10 +199,46 @@ class Robot {
   /**
    * Send updated data to subscribed components
    */
-  sendUpdates(_event: string) {
+  sendUpdates(event: string) {
     Object.keys(this.dataSubscriptions).forEach(key => {
-      this.dataSubscriptions[key].send(this.data, _event);
+      this.dataSubscriptions[key].send(this.data, event);
     });
+  }
+
+  /**
+   * Get changed keys from last updates
+   * @returns {array<string>} Keys with updates
+   */
+  protected getChangedKeys(): Array<string> {
+    // Get Diff between previous and current data
+    const diff = Util.difference(this.previousData, this.data);
+    // Return changed keys
+    return Object.keys(Util.flattenObject(diff)).filter(
+      key => !KEYS_TO_DISCONSIDER.includes(key)
+    );
+  }
+
+  /**
+   * Update previous data value with current data values
+   */
+  protected updatePreviousData() {
+    // Update previous data
+    const previousStatus = _cloneDeep(this.previousData.Status);
+    this.previousData = _cloneDeep(this.data);
+    // But keep previous status if new one is empty
+    if (!this.previousData.Status) this.previousData.Status = previousStatus;
+    // Update lastUpdate variable
+    this.lastUpdate = new Date();
+  }
+
+  /**
+   * Get changed keys and reset previous data
+   * @returns {Array<string>} Keys with differences between previousData and Data
+   */
+  protected getChangedKeysAndResetData(): Array<string> {
+    const keys = this.getChangedKeys();
+    this.updatePreviousData();
+    return keys;
   }
 
   /**
