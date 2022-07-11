@@ -1,6 +1,10 @@
 import { Maybe } from "monet";
 import { ALPHANUMERIC_REGEX } from "./constants";
 import _isEmpty from "lodash/isEmpty";
+import _isEqual from "lodash/isEqual";
+import _isArray from "lodash/isArray";
+import _isObject from "lodash/isObject";
+import _transform from "lodash/transform";
 import Role from "../Role/Role";
 
 const Utils = {};
@@ -244,8 +248,6 @@ Utils.loadResources = (event, element) => {
   loader(element, openInNew);
 };
 
-export default Utils;
-
 /**
  * Maps new user password change model to old one
  * @param {object} body Object corresponding to either old or new password change model
@@ -266,3 +268,27 @@ export const mapToUserV1PasswordChangeModel = body => {
     confirm_password: confirm_password ?? ConfirmPassword
   };
 };
+
+/**
+ * Find difference between two objects
+ * @param  {object} origObj - Source object to compare newObj against
+ * @param  {object} newObj  - New object with potential changes
+ * @return {object} differences
+ */
+Utils.difference = (origObj, newObj) => {
+  function changes(_newObj, _origObj) {
+    let arrayIndexCounter = 0;
+    return _transform(_newObj, function (result, value, key) {
+      if (!_isEqual(value, _origObj[key])) {
+        let resultKey = _isArray(_origObj) ? arrayIndexCounter++ : key;
+        result[resultKey] =
+          _isObject(value) && _isObject(_origObj[key])
+            ? changes(value, _origObj[key])
+            : value;
+      }
+    });
+  }
+  return changes(newObj, origObj);
+};
+
+export default Utils;

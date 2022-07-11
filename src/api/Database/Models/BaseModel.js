@@ -5,7 +5,7 @@ import _omit from "lodash/omit";
 import _merge from "lodash/merge";
 
 import Utils from "../../Utils/Utils";
-//import RestApi from "../../RestApi";
+import { WS_EVENT_TYPES, EMPTY_FUNCTION } from "../../Utils/constants";
 
 export default class BaseModel {
   constructor(manager, model, database, patterns) {
@@ -21,8 +21,6 @@ export default class BaseModel {
 
     this.patterns = this._validatePatterns(patterns);
     this.nr_patterns = this.patterns.length;
-
-    //this.api = new RestApi(this.model);
 
     this._initialize();
   }
@@ -123,7 +121,7 @@ export default class BaseModel {
     Object.keys(obj).forEach(key => {
       const entry = this._get_or_create(key);
 
-      if (data.event === "del") {
+      if (data.event === WS_EVENT_TYPES.DEL) {
         // deleting an entry
         const path = Object.keys(Utils.flattenObject(obj[key]))[0];
 
@@ -146,10 +144,6 @@ export default class BaseModel {
     const obj = _get(data, `value.${this.model}`, {});
 
     Object.keys(obj).forEach(key => {
-      /*this.add(key, {
-        obj: obj[key],
-        id: key
-      });*/
       const entry = this._get_or_create(key);
       _merge(entry.obj, obj[key]);
     });
@@ -161,10 +155,8 @@ export default class BaseModel {
 
   onReady = callback => {
     if (this.db_state !== this.db_states.ready) {
-      this._subject_state.subscribe(
-        () => {},
-        () => {},
-        () => callback()
+      this._subject_state.subscribe(EMPTY_FUNCTION, EMPTY_FUNCTION, () =>
+        callback()
       );
     } else {
       callback();
