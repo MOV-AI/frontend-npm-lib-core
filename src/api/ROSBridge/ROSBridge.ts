@@ -127,4 +127,4 @@ export class ROSBridge {
   }
 }
 
-export const MainROSBridge = new ROSBridge().connect();
+export const MainROSBridge = new ROSBridge();
