@@ -30,7 +30,7 @@ Its main use will be to build Mov.AI applications.
 
 2. Add access key:
 
-   - `Settings > Access keys `
+   - `Settings > Access keys`
    - Click on `Add key` button
    - Follow Bitbucket instructions
 
