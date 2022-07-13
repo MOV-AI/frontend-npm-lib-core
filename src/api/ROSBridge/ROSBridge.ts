@@ -70,7 +70,7 @@ export class ROSBridge {
   getServices(): Promise<Array<string>> {
     this.connect();
     if (!this.ros.isConnected) {
-      return new Promise((_, reject) => reject(NOT_CONNECTED_ERROR));
+      return Promise.reject(NOT_CONNECTED_ERROR);
     }
     return new Promise((resolve, reject) => {
       this.ros.getServices(
@@ -90,7 +90,7 @@ export class ROSBridge {
   ): Promise<any> {
     this.connect();
     if (!this.ros.isConnected) {
-      return new Promise((_, reject) => reject(NOT_CONNECTED_ERROR));
+      return Promise.reject(NOT_CONNECTED_ERROR);
     }
     const service = new Service({ ros: this.ros, ...serviceID });
     const request = new ServiceRequest(message);

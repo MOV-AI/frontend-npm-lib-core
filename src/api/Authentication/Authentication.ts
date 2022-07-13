@@ -224,10 +224,12 @@ export default class Authentication {
 
   static refreshTokens = async (remember = false): Promise<boolean> => {
     const refreshToken = Authentication.getRefreshToken();
+    const accessToken = Authentication.getToken();
 
     const url = `/token-refresh/`;
     const body = {
-      token: refreshToken
+      access_token: accessToken,
+      refresh_token: refreshToken
     };
 
     return Authentication.request({ url, body })
