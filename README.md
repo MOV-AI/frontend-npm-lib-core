@@ -12,33 +12,24 @@ Its main use will be to build Mov.AI applications.
 
 1. Git clone mov.ai core
 
-2. Create new branch
+2. Create new branch from dev
 
 3. Update mov.ai core
 
 4. Test updates
 
-5. Build mov.ai core:
-   - `npm run build`
-6. Push changes
+5. Commit/Push changes
 
-7. Create pull request
+6. Create pull request
+   - Make sure to include the code owners
 
 ## Import Mov.ai Core
 
-1. Goto [mov.ai-core Bitbucket](https://bitbucket.org/robosavvy/mov.ai-core)
-
-2. Add access key:
-
-   - `Settings > Access keys`
-   - Click on `Add key` button
-   - Follow Bitbucket instructions
-
-3. Import Mov.ai Core:
+1. Import Mov.ai Core:
 
    - Goto your project
    - Install package:
-     - `npm install git+ssh://git@bitbucket.org/robosavvy/mov.ai-core.git#develop`
+     - `npm install @mov-ai/mov-fe-lib-core`
 
-4. Update package
+2. Update package
    - `npm update`
