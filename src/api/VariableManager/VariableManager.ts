@@ -124,7 +124,7 @@ class VariableManager {
    * Checks if the variable exists and return boolean
    */
   hasVar(varName: string, scope: string = VAR_SCOPES.GLOBAL): boolean {
-    return varName in this.cachedVars.Var[scope]?.ID;
+    return Boolean(this.cachedVars.Var[scope]?.ID.hasOwnProperty(varName));
   }
 
   /**
