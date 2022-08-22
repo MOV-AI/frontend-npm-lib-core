@@ -55,7 +55,7 @@ class UndoAbleActionBuilder {
 
   build() {
     if ([this._undoAction, this._undoAction].some(x => x == null))
-      throw "Forgot to set doAction or undoAction";
+      throw new Error("Forgot to set doAction or undoAction");
     return { doAction: this._doAction, undoAction: this._undoAction };
   }
 }
