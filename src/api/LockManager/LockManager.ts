@@ -136,16 +136,16 @@ class LockManager {
    * @param {string} event
    */
   private applyChanges = (locks: LockVar, event: string) => {
-    Object.keys(locks).forEach((lock: string) => {
+    Object.entries(locks).forEach(([lockName, lock]) => {
       // Update cached and lock data attribute
       // Remove/delete lock
       if (event === WS_EVENT_TYPES.DEL) {
-        delete this.locks[lock];
-        delete this.cachedLocks.Lock[lock];
+        delete this.locks[lockName];
+        delete this.cachedLocks.Lock[lockName];
       }
       if (event === WS_EVENT_TYPES.SET) {
-        this.locks[lock] = locks[lock];
-        this.cachedLocks.Lock[lock] = locks[lock];
+        this.locks[lockName] = lock;
+        this.cachedLocks.Lock[lockName] = lock;
       }
     });
   };
