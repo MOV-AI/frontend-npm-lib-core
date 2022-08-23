@@ -143,6 +143,10 @@ class LockManager {
         delete this.locks[lock];
         delete this.cachedLocks.Lock[lock];
       }
+      if (event === WS_EVENT_TYPES.SET) {
+        this.locks[lock] = locks[lock];
+        this.cachedLocks.Lock[lock] = locks[lock];
+      }
     });
   };
 }
