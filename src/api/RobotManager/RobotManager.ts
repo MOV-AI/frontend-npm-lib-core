@@ -40,7 +40,7 @@ class ProtectedRobot extends Robot {
   }
 }
 
-var instance: RobotManager | null = null;
+let instance: RobotManager | null = null;
 type LoadedRobots = { [robotId: string]: ProtectedRobot };
 
 // Constants
