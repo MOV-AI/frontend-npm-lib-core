@@ -25,6 +25,9 @@ class Role {
     model: RoleUpdateModel
   ): Promise<RoleUpdateResult> =>
     Rest.post({ path: `${ROLE_API_ROUTE}/${roleName}/`, body: model });
+
+  static delete = (id: string): Promise<RoleUpdateResult> =>
+    Rest.delete({ path: `${ROLE_API_ROUTE}/${id}/` });
 }
 
 export default Role;
