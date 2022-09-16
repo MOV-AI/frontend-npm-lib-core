@@ -12,6 +12,7 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
+  watch: false,
   target: "web",
   devtool: "source-map",
   externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
