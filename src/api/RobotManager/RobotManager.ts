@@ -40,7 +40,7 @@ class ProtectedRobot extends Robot {
   }
 }
 
-var instance: RobotManager | null = null;
+let instance: RobotManager | null = null;
 type LoadedRobots = { [robotId: string]: ProtectedRobot };
 
 // Constants
@@ -205,6 +205,16 @@ class RobotManager {
    */
   getManagerId(): string {
     return this.managerId;
+  }
+
+  /**
+   * To trigger callback (passed in arguments) when robots are loaded
+   * @param onDataLoaded : Function to be called on data first load
+   */
+  onLoad(onDataLoaded: Function = ON_DATA_LOADED) {
+    if (this.isDataLoaded) return onDataLoaded(this.cachedRobots);
+    const subscriptionId = Util.randomGuid();
+    this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
   }
 
   //========================================================================================

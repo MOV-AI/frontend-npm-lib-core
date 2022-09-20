@@ -68,7 +68,6 @@ export default class AuthWebSocket {
         }
 
         url = url !== false ? url : this.wsUrl;
-        //const wsUrl = `${url}?token=${getToken()}`;
 
         let wsUrl = new URL(url);
         let params = new URLSearchParams(wsUrl.search.slice(1));
@@ -107,7 +106,7 @@ export default class AuthWebSocket {
 
           case "InvalidStateError":
             // In case of the socket is not-ready, re-try sending the message until success
-            var self = this;
+            let self = this;
             let sub_interval = undefined;
             sub_interval = setInterval(
               () => {
