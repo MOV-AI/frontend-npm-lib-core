@@ -1,7 +1,8 @@
 import {SubscriptionManager} from "./common"
 
-export type RedisVarType = string | boolean | object | number;
+type VarValue =  { Value: string | number | object | boolean };
 
+export type RedisVarType = VarValue;
 export interface VarMap {
   [scope: string]: { ID: { [varname: string]: RedisVarType } };
 }

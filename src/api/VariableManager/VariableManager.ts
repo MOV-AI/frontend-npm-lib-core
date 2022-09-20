@@ -71,17 +71,20 @@ class VariableManager {
           const variables = data.key.Var;
           const dataEventType = data.event;
 
-          const keyVar = Object.keys(variables.fleet.ID)[0];
-
-          // check if key changed exists in subscribedOnVarChange
-          if (this.subscribedOnVarChange[keyVar]) {
-            //  Call subscribed Var onChange functions
-            Object.keys(this.subscribedOnVarChange[keyVar]).forEach(id => {
-              this.subscribedOnVarChange[keyVar][id].send(
-                {message: `Variable updated`, success: true}
-              );
+          Object.keys(variables).forEach(scope => {
+            Object.keys(variables[scope].ID).forEach(keyVar => {
+              // check if key changed exists in subscribedOnVarChange
+              if (this.subscribedOnVarChange[keyVar]) {
+                //  Call subscribed Var onChange functions
+                Object.keys(this.subscribedOnVarChange[keyVar]).forEach(id => {
+                  this.subscribedOnVarChange[keyVar][id].send(
+                    variables[scope].ID[keyVar].Value
+                  );
+                });
+              }
             });
-          }
+          }) 
+
 
           this.applyChanges(variables, dataEventType);
           // Call subscribed onChange functions
