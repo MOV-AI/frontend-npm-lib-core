@@ -12,7 +12,7 @@ import { EMPTY_FUNCTION, VAR_SCOPES, WS_EVENT_TYPES } from "../Utils/constants";
 import Util from "../Utils/Utils";
 
 // Used as global variable to avoid creation multiple subscribers
-var instance: VariableManager | null = null;
+let instance: VariableManager | null = null;
 
 // Constants
 const CURRENT_DATE_KEY: string = "current_date";
@@ -182,7 +182,7 @@ class VariableManager {
    * @private Validate data format for (@current_date)
    * @returns {Promise<boolean>} Promise resolved after new format
    */
-  private validateData(): Promise<boolean> {
+  private async validateData(): Promise<boolean> {
     return this.getVar(VAR_SCOPES.GLOBAL, CURRENT_DATE_KEY)
       .then((res: VarGetResult) => {
         if (res.is_date) {

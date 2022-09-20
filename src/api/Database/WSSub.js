@@ -17,6 +17,10 @@ const CONNECTION = {
   offline: 1
 };
 
+const DEFAULT_METHOD = () => {
+  /** Empty on purpose */
+};
+
 /**
  * WSSub - class to handle redis subscribers using authenticated websockets
  */
@@ -40,8 +44,8 @@ class WSSub {
       EXECUTE: "execute"
     };
 
-    this.onOnline = () => {};
-    this.onOffline = () => {};
+    this.onOnline = DEFAULT_METHOD;
+    this.onOffline = DEFAULT_METHOD;
     this.connectionState = CONNECTION.online;
 
     this.websocket = null;
@@ -191,7 +195,7 @@ class WSSub {
    * @param {bool} is_command when true callback only executes once
    * @param {any} message data to pass to the callback
    */
-  dispatch = (pattern, is_command = true, message) => {
+  dispatch = (pattern, message, is_command = true) => {
     const _map = is_command ? this.evt_callbacks : this.sub_callbacks;
     const _callbacks = _map.get(pattern) || [];
 
@@ -212,7 +216,7 @@ class WSSub {
   /**
    * triggered when the socket opens
    */
-  onOpen = evt => {
+  onOpen = _evt => {
     this.status = WSSUB_STATES.OPEN;
 
     // send current subscriptions to the server
@@ -236,7 +240,7 @@ class WSSub {
   /**
    * triggered when the socket raises an error
    */
-  onError = evt => {
+  onError = _evt => {
     this.dispatch("onerror");
   };
 
@@ -268,7 +272,7 @@ class WSSub {
         const _prefix = is_command ? `${event}/` : "";
         const _pattern = `${_prefix}${JSON.stringify(pattern)}`;
 
-        this.dispatch(_pattern, is_command, data);
+        this.dispatch(_pattern, data, is_command);
       });
     } catch (error) {
       console.error(error);
@@ -326,12 +330,12 @@ class WSSub {
       method: "POST",
       body: JSON.stringify({ token: getToken() })
     })
-      .then(res => {
+      .then(_res => {
         if (this.connectionState === CONNECTION.online) return;
         this.connectionState = CONNECTION.online;
         this.onOnline();
       })
-      .catch(err => {
+      .catch(_err => {
         if (this.connectionState === CONNECTION.offline) return;
         this.connectionState = CONNECTION.offline;
         this.onOffline();
@@ -435,28 +439,26 @@ class WSSub {
    */
 
   checkTest = (pattern, data, is_pattern, one_shot) => {
-    return new Promise((resolve, reject) => {
-      this.dispatch(pattern, data, is_pattern, one_shot);
-      if (true) {
-        resolve("DONE");
-      }
+    return new Promise((resolve, _reject) => {
+      this.dispatch(pattern, data, one_shot, is_pattern);
+      resolve("DONE");
     });
   };
 
   /* Get value from key in Var, scope fleet or global */
   getVar = (key, callback = undefined, scope = "global") => {
     if (!["global", "fleet"].includes(scope)) {
-      throw "Only fleet and global scopes available.";
+      throw new Error("Only fleet and global scopes available.");
     }
     if (scope === "fleet") {
       // key format: robot_name@key_name
       if (key.split("@").length < 2) {
-        throw "Wrong key format (robot_name@key_name)";
+        throw new Error("Wrong key format (robot_name@key_name)");
       }
     }
     const url = this.REST_API + "database/" + scope + "/" + key + "/";
 
-    checkLogin().then(res => {
+    checkLogin().then(_res => {
       fetch(url)
         .then(response => response.json())
 
@@ -476,13 +478,13 @@ class WSSub {
   /* Set value from key in Var, scope fleet or global */
   setVar = (key, value, callback = undefined, scope = "global") => {
     if (!["global", "fleet"].includes(scope)) {
-      throw "Only fleet and global scopes available.";
+      throw new Error("Only fleet and global scopes available.");
     }
     if (scope === "fleet") {
       // key format: robot_name@key_name
       const values = key.split("@");
-      if (key.split("@").length < 2) {
-        throw "Wrong key format (robot_name@key_name)";
+      if (values.length < 2) {
+        throw new Error("Wrong key format (robot_name@key_name)");
       }
     }
     const data = { key: key, scope: scope, value: value };
@@ -500,12 +502,41 @@ class WSSub {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
+      }).then(_res => {
         if (callback) {
           callback(res);
         }
       });
     });
+  };
+
+  /**
+   * Send response to requests
+   * @param {*} response : Fetch response
+   * @param {*} callback : Callback to be called with response
+   */
+  _sendResponse = (response, callback, sendAlert) => {
+    if (callback) {
+      response
+        .json()
+        .then(data => {
+          callback(data, response);
+        })
+        .catch(e => {
+          callback(undefined, e);
+
+          if (sendAlert && process.env.NODE_ENV === "development") {
+            alert(
+              "Development Mode \n" +
+                "Status: " +
+                response.status +
+                "\n" +
+                "Error: " +
+                response.statusText
+            );
+          }
+        });
+    }
   };
 
   /**
@@ -526,17 +557,8 @@ class WSSub {
           Authorization: `Bearer ${getToken()}`
         }
       })
-        .then(res => {
-          if (callback) {
-            res
-              .json()
-              .then(data => {
-                callback(data, res);
-              })
-              .catch(e => {
-                callback(undefined, e);
-              });
-          }
+        .then(response => {
+          this._sendResponse(response, callback);
         })
         .catch(e => callback(undefined, e));
     });
@@ -569,17 +591,8 @@ class WSSub {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
-        if (callback) {
-          res
-            .json()
-            .then(data => {
-              callback(data, res);
-            })
-            .catch(e => {
-              callback(undefined, e);
-            });
-        }
+      }).then(response => {
+        this._sendResponse(response, callback);
       });
     });
   };
@@ -627,28 +640,8 @@ class WSSub {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
-        if (callback) {
-          res
-            .json()
-            .then(data => {
-              callback(data, res);
-            })
-            .catch(e => {
-              callback(undefined, res);
-
-              if (process.env.NODE_ENV === "development") {
-                alert(
-                  "Development Mode \n" +
-                    "Status: " +
-                    res.status +
-                    "\n" +
-                    "Error: " +
-                    res.statusText
-                );
-              }
-            });
-        }
+      }).then(response => {
+        this._sendResponse(response, callback, true);
       });
     });
   };
@@ -681,28 +674,8 @@ class WSSub {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
-        if (callback) {
-          res
-            .json()
-            .then(data => {
-              callback(data, res);
-            })
-            .catch(e => {
-              callback(undefined, res);
-
-              if (process.env.NODE_ENV === "development") {
-                alert(
-                  "Development Mode \n" +
-                    "Status: " +
-                    res.status +
-                    "\n" +
-                    "Error: " +
-                    res.statusText
-                );
-              }
-            });
-        }
+      }).then(response => {
+        this._sendResponse(response, callback, true);
       });
     });
   };
@@ -715,7 +688,12 @@ class WSSub {
    * @param callback func - Callback to parse the response
    * @memberof Database
    */
-  cloudFunction = (cloudFunction, func = "", args, callback = undefined) => {
+  cloudFunction = (
+    cloudFunction,
+    func = "",
+    args = undefined,
+    callback = undefined
+  ) => {
     return checkLogin().then(res => {
       if (!res) {
         throw new AuthException("login error");
@@ -729,9 +707,9 @@ class WSSub {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
+      }).then(response => {
         if (callback) {
-          res
+          response
             .json()
             .then(data => callback(data))
             .catch(e => {
@@ -766,7 +744,7 @@ class WSSub {
       Workspace: "*"
     };
 
-    checkLogin().then(res => {
+    checkLogin().then(_res => {
       fetch(url, {
         method: "POST",
         body: JSON.stringify({ key: key_workspace, data: newValue }),
@@ -774,28 +752,8 @@ class WSSub {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`
         }
-      }).then(res => {
-        if (callback) {
-          res
-            .json()
-            .then(data => {
-              callback(data, res);
-            })
-            .catch(e => {
-              callback(undefined, res);
-
-              if (process.env.NODE_ENV === "development") {
-                alert(
-                  "Development Mode \n" +
-                    "Status: " +
-                    res.status +
-                    "\n" +
-                    "Error: " +
-                    res.statusText
-                );
-              }
-            });
-        }
+      }).then(response => {
+        this._sendResponse(response, callback, true);
       });
     });
   };
