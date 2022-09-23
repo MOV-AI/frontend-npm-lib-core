@@ -1,3 +1,4 @@
+
 import _cloneDeep from "lodash/cloneDeep";
 import MasterDB from "../Database/MasterDB";
 import Util from "../Utils/Utils";
@@ -203,6 +204,12 @@ class Robot {
     Object.keys(this.dataSubscriptions).forEach(key => {
       this.dataSubscriptions[key].send(this.data, event);
     });
+  }
+
+  triggerRecovery() {
+    const path = `v1/trigger-recovery/`;
+    const body = { id: this.id }
+    return Rest.post({ path, body });
   }
 
   /**
