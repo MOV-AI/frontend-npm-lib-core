@@ -208,7 +208,8 @@ class Robot {
 
   triggerRecovery() {
     const path = `v1/trigger-recovery/`;
-    return Rest.post({ path }).catch(() => true);
+    const body = { id: this.id }
+    return Rest.post({ path, body });
   }
 
   /**
