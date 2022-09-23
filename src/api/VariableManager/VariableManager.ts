@@ -3,6 +3,7 @@ import {
   RedisVarType,
   SubscriberCallbackHandler,
   SubscriptionManager,
+  SubscriberMap,
   VarGetResult,
   VarMap
 } from "../../models";
@@ -28,6 +29,7 @@ class VariableManager {
   private isDataLoaded: boolean;
   private subscribedOnDataLoad: SubscriptionManager;
   private subscribedOnDataChange: SubscriptionManager;
+  private subscribedOnVarChange: SubscriberMap;
   private variables: VarMap;
   private cachedVars: CachedVar;
   public destroy: Function;
@@ -37,6 +39,8 @@ class VariableManager {
     this.isDataLoaded = false;
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
+    this.subscribedOnVarChange = {};
+    //array
     this.variables = {};
     this.cachedVars = { Var: { global: { ID: {} } } };
     this.validateData().then(() => {
@@ -65,8 +69,23 @@ class VariableManager {
         (data: { key: CachedVar; event: string }) => {
           // Apply changes to update local  variables
           const variables = data.key.Var;
-
           const dataEventType = data.event;
+
+          Object.keys(variables).forEach(scope => {
+            Object.keys(variables[scope].ID).forEach(keyVar => {
+              // check if key changed exists in subscribedOnVarChange
+              if (this.subscribedOnVarChange[keyVar]) {
+                //  Call subscribed Var onChange functions
+                Object.keys(this.subscribedOnVarChange[keyVar]).forEach(id => {
+                  this.subscribedOnVarChange[keyVar][id].send(
+                    variables[scope].ID[keyVar].Value
+                  );
+                });
+              }
+            });
+          }) 
+
+
           this.applyChanges(variables, dataEventType);
           // Call subscribed onChange functions
           Object.keys(this.subscribedOnDataChange).forEach(key => {
@@ -118,6 +137,27 @@ class VariableManager {
       this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
     }
     return this.cachedVars;
+  }
+
+  // Get var by robot and subscribe to changes
+  // varName = @recovery_state
+  // varName = <robot_name>@recovery_state
+  subscribeToVar(varName: string, callback: Function) {
+    const subscriptionId = Util.randomGuid();
+    const subscription = {[subscriptionId]: { send: callback }}
+    if (!this.subscribedOnVarChange[varName]) this.subscribedOnVarChange[varName] = subscription;
+    else this.subscribedOnVarChange[varName][subscriptionId] = { send: callback }
+    
+    return subscriptionId;
+  }
+
+  /**
+   * Unsubscribe to changes in variables
+   */
+  unsubscribeToVar(varName: string, subscriptionId: string) {
+    // delete subscriber
+      if (!subscriptionId || !this.subscribedOnVarChange[subscriptionId]) return;
+      delete this.subscribedOnVarChange[subscriptionId];
   }
 
   /**
