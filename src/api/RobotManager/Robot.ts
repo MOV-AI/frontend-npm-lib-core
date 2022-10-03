@@ -1,15 +1,4 @@
-
 import _cloneDeep from "lodash/cloneDeep";
-import MasterDB from "../Database/MasterDB";
-import Util from "../Utils/Utils";
-import Rest from "../Rest/Rest";
-import Document from "../Document/Document";
-import {
-  LOGGER_STATUS,
-  EMPTY_FUNCTION,
-  DEFAULT_ROBOT_TASKS,
-  TIME_TO_OFFLINE
-} from "../Utils/constants";
 import {
   LoadRobotParam,
   Log,
@@ -23,7 +12,17 @@ import {
   SubscriptionManager,
   UnsubscriberModel
 } from "../../models";
+import {
+  LOGGER_STATUS,
+  EMPTY_FUNCTION,
+  DEFAULT_ROBOT_TASKS,
+  TIME_TO_OFFLINE
+} from "../Utils/constants";
 import DocumentV2 from "../Document/DocumentV2";
+import MasterDB from "../Database/MasterDB";
+import Util from "../Utils/Utils";
+import Rest from "../Rest/Rest";
+import Document from "../Document/Document";
 
 // Constants
 const KEYS_TO_DISCONSIDER = ["Status.timestamp"];
@@ -208,7 +207,7 @@ class Robot {
 
   triggerRecovery() {
     const path = `v1/trigger-recovery/`;
-    const body = { id: this.id }
+    const body = { id: this.id };
     return Rest.post({ path, body });
   }
 
