@@ -4,8 +4,7 @@ import Util from "../Utils/Utils";
 import {
   EMPTY_FUNCTION,
   SET_WS_EVENTS,
-  TIME_TO_OFFLINE,
-  WS_EVENT_TYPES
+  HEARTBEAT_TIMEOUT
 } from "../Utils/constants";
 import Robot from "./Robot";
 import Rest from "../Rest/Rest";
@@ -22,7 +21,6 @@ import {
   LoadRobotParam,
   LogQueryParam,
   RobotModel,
-  RobotTimeout,
   SubscriptionManager,
   UpdateRobotParam
 } from "../../models";
@@ -59,7 +57,7 @@ class RobotManager {
   private managerId: string;
   private robots: LoadedRobots;
   private cachedRobots: CachedRobots;
-  private robotsTimeout: RobotTimeout;
+  private heartbeatTimeout: NodeJS.Timeout;
   public destroy: Function;
 
   constructor() {
@@ -70,7 +68,6 @@ class RobotManager {
     this.managerId = Util.randomGuid();
     this.robots = {};
     this.cachedRobots = {};
-    this.robotsTimeout = {};
     this.subscribeToRedis();
     this.destroy = function () {
       // Unsubscribe on destroy
@@ -107,6 +104,9 @@ class RobotManager {
     Object.keys(this.subscribedOnDataLoad).forEach(key => {
       this.subscribedOnDataLoad[key].send(this.cachedRobots);
     });
+
+    // Initiate heartbeat monitor
+    this.heartbeatMonitor();
   };
 
   /**
@@ -115,7 +115,7 @@ class RobotManager {
    */
   onDataChange = (data: UpdateRobotParam) => {
     // Apply changes to update local robots
-    const robots = data.key["Robot"];
+    const robots = data.key.Robot;
     const dataEventType = data.event;
     if (SET_WS_EVENTS.includes(dataEventType))
       this.applyChanges(robots, dataEventType);
@@ -223,6 +223,19 @@ class RobotManager {
    *                                                                                      */
   //========================================================================================
 
+  private heartbeatMonitor = () => {
+    clearTimeout(this.heartbeatTimeout);
+
+    Object.values(this.robots).forEach(robot => {
+      this.checkStatus(robot);
+    });
+
+    this.heartbeatTimeout = setTimeout(
+      this.heartbeatMonitor,
+      HEARTBEAT_TIMEOUT
+    );
+  };
+
   /**
    * Check robot status if it doesn't receive any updates in more than 10s
    *  Set timeout to check online/offline state in 10s
@@ -230,17 +243,7 @@ class RobotManager {
    */
   private checkStatus = (robot: ProtectedRobot) => {
     const id = robot.id;
-    clearTimeout(this.robotsTimeout[id]);
-    this.robotsTimeout[id] = setTimeout(() => {
-      this.cachedRobots[id].Online = robot.updateStatus();
-      robot.sendUpdates(WS_EVENT_TYPES.SET);
-      // Call subscribed onChange functions
-      Object.keys(this.subscribedOnDataChange).forEach(key => {
-        const changedKeys = robot.getChangedKeysAndResetData();
-        if (changedKeys.length)
-          this.subscribedOnDataChange[key].send(robot.data, WS_EVENT_TYPES.SET);
-      });
-    }, TIME_TO_OFFLINE);
+    this.cachedRobots[id].Online = robot.updateStatus();
   };
 
   /**
@@ -272,13 +275,8 @@ class RobotManager {
           robot.setData(objKey, _merge(prevRobotValue, value));
         }
       });
-      // Update Online Status on set new Status data
-      if (SET_WS_EVENTS.includes(event))
-        this.cachedRobots[robotId].Online = robot.updateStatus();
       // Send updated data to subscribed components
       robot.sendUpdates(event);
-      // Check robot status after 10s
-      this.checkStatus(robot);
     });
   };
 
