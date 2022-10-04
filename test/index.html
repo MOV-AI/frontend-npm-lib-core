@@ -1,19 +1,31 @@
-<html>
-  <head>
-    <script src="../dist/index.js"></script>
-  </head>
-  <script>
-    const { Utils, Database, Authentication, MasterDB } = Movai;
-    Utils.range(0, 10).forEach(x => console.log(x));
+<!DOCTYPE html>
+<html lang="en">
 
-    Authentication.login("movai", "movai", true)
-      .then(data => {
-        MasterDB.subscribe(
-          { Scope: "Robot", Name: "*", Status: "*" },
-          data => console.log("Data Update", data),
-          data => console.log("Data", data)
-        );
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movai Lib Core Test</title>
+  <script src="../dist/index.js"></script>
+
+</head>
+
+<body>
+  <script>
+    const { Utils, Database, Authentication, MasterDB, RobotManager } = Movai;
+    Utils.range(0, 10).forEach(x => console.log(x));
+    const robotManager = new RobotManager();
+    robotManager.getAll((data) => {
+      Object.keys(data).forEach(robotId => {
+        robotManager.getRobot(robotId).subscribe({
+          property: "Parameter",
+          propValue: "tf",
+          onUpdate: robotData => console.log("robot tf update", robotData)
+        })
       })
-      .catch(e => console.log("Caught exception", e));
+    })
+
   </script>
+</body>
+
 </html>
