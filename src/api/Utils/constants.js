@@ -1,3 +1,5 @@
+export const GLOBAL_WORKSPACE = "global";
+
 // BroadcastChannel events
 export const BROADCAST_EVENTS = {
   ISOPEN: "ISOPEN",

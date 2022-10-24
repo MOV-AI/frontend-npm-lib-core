@@ -2,18 +2,12 @@ import Acl from "./Acl/Acl";
 import Authentication from "./Authentication/Authentication";
 import InternalUser from "./User/InternalUser";
 import Ldap from "./Ldap/Ldap";
-import {
-  BROADCAST_EVENTS,
-  SERVICE_LIST,
-  DEFAULT_ROBOT_TASKS,
-  WS_EVENT_TYPES,
-  SET_WS_EVENTS
-} from "./Utils/constants";
+import * as CORE_CONSTANTS from "./Utils/constants";
 import BroadcastChannel from "./BroadcastChannel/BroadcastChannel";
 import RobotManager from "./RobotManager/RobotManager";
 import VariableManager from "./VariableManager/VariableManager";
 import LockManager from "./LockManager/LockManager";
-import Utils from "./Utils/Utils";
+import Utils, * as CORE_UTILS from "./Utils/Utils";
 import Database from "./Database/Database";
 import MasterDB from "./Database/MasterDB";
 import AuthWebSocket from "./AuthWebSocket/AuthWebSocket";
@@ -36,6 +30,8 @@ export {
   InternalUser,
   Ldap,
   Utils,
+  CORE_CONSTANTS,
+  CORE_UTILS,
   Database,
   MasterDB,
   AuthWebSocket,
@@ -47,11 +43,6 @@ export {
   BaseModel,
   DataManagerBase,
   BroadcastChannel,
-  BROADCAST_EVENTS,
-  SERVICE_LIST,
-  DEFAULT_ROBOT_TASKS,
-  WS_EVENT_TYPES,
-  SET_WS_EVENTS,
   Document,
   RobotManager,
   VariableManager,
