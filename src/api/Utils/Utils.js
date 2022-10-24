@@ -1,5 +1,5 @@
 import { Maybe } from "monet";
-import { ALPHANUMERIC_REGEX } from "./constants";
+import { ALPHANUMERIC_REGEX, GLOBAL_WORKSPACE } from "./constants";
 import _isEmpty from "lodash/isEmpty";
 import _isEqual from "lodash/isEqual";
 import _isArray from "lodash/isArray";
@@ -96,7 +96,7 @@ Utils.flattenObject = (obj, prefix = "") =>
 Utils.randomGuid = () => {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     // eslint-disable-next-line no-mixed-operators
-    var r = (Math.random() * 16) | 0,
+    let r = (Math.random() * 16) | 0,
       v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
@@ -289,6 +289,81 @@ Utils.difference = (origObj, newObj) => {
     });
   }
   return changes(newObj, origObj);
+};
+
+/**
+ * Simple empty function
+ */
+export const emptyFunction = () => {
+  /* Empty on purpose*/
+};
+
+/**
+ * Returns the document name from an URL
+ * @param {String} url
+ * @returns {String}
+ */
+export function getNameFromURL(url) {
+  if (!url) return "";
+  const splittedUrl = url.split("/");
+  return splittedUrl.length === 1 ? url : splittedUrl[2];
+}
+
+/**
+ * Returns the document scope from an URL
+ * @param {String} url
+ * @returns {String}
+ */
+export function getScopeFromURL(url) {
+  if (!url) return "";
+  const splittedUrl = url.split("/");
+  return splittedUrl[1];
+}
+
+/**
+ * Returns the document workspace from an URL
+ * @param {String} url
+ * @returns {String}
+ */
+export function getWorkspaceFromUrl(url) {
+  if (!url) return "";
+  const splittedUrl = url.split("/");
+  return splittedUrl[0];
+}
+
+/**
+ * Returns the document version from an URL
+ * @param {String} url
+ * @returns {String}
+ */
+export function getVersionFromUrl(url) {
+  if (!url) return "";
+  const splittedUrl = url.split("/");
+  return splittedUrl[3];
+}
+
+/**
+ * Build a document path from a doc
+ * @param {Document} doc
+ * @returns
+ */
+export function buildDocPath(doc) {
+  const { scope, name } = doc;
+  const workspace = doc.workspace ?? GLOBAL_WORKSPACE;
+  return `${workspace}/${scope}/${name}`;
+}
+
+/**
+ * Generate random ID
+ * @returns {String} Random ID in format : "1c76107c-146e-40bc-93fb-8148750cf50a"
+ */
+export const randomId = () => {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  );
 };
 
 export default Utils;
