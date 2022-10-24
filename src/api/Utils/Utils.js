@@ -1,5 +1,5 @@
 import { Maybe } from "monet";
-import { ALPHANUMERIC_REGEX } from "./constants";
+import { ALPHANUMERIC_REGEX, GLOBAL_WORKSPACE } from "./constants";
 import _isEmpty from "lodash/isEmpty";
 import _isEqual from "lodash/isEqual";
 import _isArray from "lodash/isArray";
