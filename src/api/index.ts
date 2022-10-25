@@ -23,6 +23,7 @@ import Workspace from "./Workspace/Workspace";
 import Snapshot from "./Snapshot/Snapshot";
 import Rest from "./Rest/Rest";
 import { ROSBridge, MainROSBridge } from "./ROSBridge/ROSBridge";
+import Role from "./Role/Role";
 
 export {
   Acl,
@@ -39,6 +40,7 @@ export {
   Clipboard,
   WSSub,
   User,
+  Role,
   BaseModel,
   DataManagerBase,
   BroadcastChannel,
