@@ -7,17 +7,16 @@ import _isObject from "lodash/isObject";
 import _transform from "lodash/transform";
 import Role from "../Role/Role";
 
-const Utils = {};
 
-Utils.ofNull = x => Maybe.fromNull(x);
+export const ofNull = x => Maybe.fromNull(x);
 
-Utils.getter = prop => obj => obj[prop];
+export const getter = prop => obj => obj[prop];
 
-Utils.dot = f => g => x => f(g(x));
+export const dot = f => g => x => f(g(x));
 
-Utils.maybeGet = prop => Utils.dot(Utils.ofNull)(Utils.getter(prop));
+export const maybeGet = prop => dot(ofNull)(getter(prop));
 
-Utils.range = (init, end) => {
+export const range = (init, end) => {
   const { i, e } = Maybe.fromNull(end)
     .map(_x => ({ i: init, e: end }))
     .orSome({ i: 0, e: init });
@@ -26,16 +25,16 @@ Utils.range = (init, end) => {
   return ans;
 };
 
-Utils.randomInt = (a, b) => Math.floor(Utils.random(a, b));
+export const randomInt = (a, b) => Math.floor(random(a, b));
 
-Utils.random = (a, b) => {
+export const random = (a, b) => {
   const { init, end } = Maybe.fromNull(b)
     .map(_x => ({ init: a, end: b }))
     .orSome({ init: 0, end: a });
   return init + (end - init) * Math.random();
 };
 
-Utils.normalizeStr = str => {
+export const normalizeStr = str => {
   // from https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
   return str
     .normalize("NFD")
@@ -52,7 +51,7 @@ Utils.normalizeStr = str => {
  *
  * groupBy([1,2,3,4,5,6,7,8,9], x => x % 3) // {0: [3,6,9], 1:[1,4,7], 2:[2,5,8]}
  */
-Utils.groupBy = (array, groupFunction) => {
+export const groupBy = (array, groupFunction) => {
   const ans = {};
   array.forEach(x => {
     const key = groupFunction(x);
@@ -63,7 +62,7 @@ Utils.groupBy = (array, groupFunction) => {
 };
 
 // From https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
-Utils.capitalize = s => {
+export const capitalize = s => {
   if (typeof s !== "string") return "";
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
@@ -71,18 +70,18 @@ Utils.capitalize = s => {
 /**
  * Positive mod function
  */
-Utils.mod = (x, n) => ((x % n) + n) % n;
+export const mod = (x, n) => ((x % n) + n) % n;
 
 /**
  * flatten an object
  * https://github.com/30-seconds/30-seconds-of-code/blob/master/snippets/flattenObject.md
  */
-Utils.flattenObject = (obj, prefix = "") =>
+export const flattenObject = (obj, prefix = "") =>
   Object.keys(obj).reduce((acc, k) => {
     const pre = prefix.length ? prefix + "." : "";
 
     if (typeof obj[k] === "object")
-      Object.assign(acc, Utils.flattenObject(obj[k], pre + k));
+      Object.assign(acc, flattenObject(obj[k], pre + k));
     else acc[pre + k] = obj[k];
 
     return acc;
@@ -93,7 +92,7 @@ Utils.flattenObject = (obj, prefix = "") =>
  *
  * eg: acb3792a-bc9c-48fc-8dfc-92b6ddc0ec8c
  */
-Utils.randomGuid = () => {
+export const randomGuid = () => {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     // eslint-disable-next-line no-mixed-operators
     let r = (Math.random() * 16) | 0,
@@ -109,7 +108,7 @@ Utils.randomGuid = () => {
  * @param {string} regex
  * @returns {boolean} Result of validation
  */
-Utils.validateEntityName = (
+export const validateEntityName = (
   entityName,
   notAllowedWords = ["__"],
   regex = ALPHANUMERIC_REGEX
@@ -127,7 +126,7 @@ Utils.validateEntityName = (
  * @param {object} user
  * @returns {[string]} List of roles
  */
-Utils.getUserRoles = user => {
+export const getUserRoles = user => {
   let userRoles = user.Role || user.roles || user.Roles;
   if (!Array.isArray(userRoles)) userRoles = [userRoles];
   return userRoles;
@@ -139,10 +138,10 @@ Utils.getUserRoles = user => {
  * @param {object} user
  * @returns {[ResourcePermission]} List of permissions
  */
-Utils.parseUserData = async user => {
+export const parseUserData = async user => {
   const resourcesParsedData = [];
-  const userRoles = Utils.getUserRoles(user);
-  const permissionsByResourceType = await Utils.getPermissionsByScope(
+  const userRoles = getUserRoles(user);
+  const permissionsByResourceType = await getPermissionsByScope(
     userRoles
   );
   user.Resources = permissionsByResourceType;
@@ -179,7 +178,7 @@ Utils.parseUserData = async user => {
  * @param {object} user
  * @returns {object} Dictionary with list of permissions by scope
  */
-Utils.getPermissionsByScope = async userRoles => {
+export const getPermissionsByScope = async userRoles => {
   const allRoles = await Role.getAll();
   return userRoles.reduce((prev, role) => {
     const selectedRoleResources = allRoles?.[role]?.Resources ?? {};
@@ -236,7 +235,7 @@ const loadUrl = e => {
  * @param {object} event click event
  * @param {object} element resource data; must include Type, Package, EntryPoint
  */
-Utils.loadResources = (event, element) => {
+export const loadResources = (event, element) => {
   const resourcesMap = {
     application: loadApplication,
     layout: loadLayout,
@@ -275,7 +274,7 @@ export const mapToUserV1PasswordChangeModel = body => {
  * @param  {object} newObj  - New object with potential changes
  * @return {object} differences
  */
-Utils.difference = (origObj, newObj) => {
+export const difference = (origObj, newObj) => {
   function changes(_newObj, _origObj) {
     let arrayIndexCounter = 0;
     return _transform(_newObj, function (result, value, key) {
@@ -366,4 +365,3 @@ export const randomId = () => {
   );
 };
 
-export default Utils;

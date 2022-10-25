@@ -4,7 +4,7 @@ import _get from "lodash/get";
 import _omit from "lodash/omit";
 import _merge from "lodash/merge";
 
-import Utils from "../../Utils/Utils";
+import { Utils } from "../../index";
 import { WS_EVENT_TYPES, EMPTY_FUNCTION } from "../../Utils/constants";
 
 export default class BaseModel {

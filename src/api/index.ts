@@ -2,12 +2,12 @@ import Acl from "./Acl/Acl";
 import Authentication from "./Authentication/Authentication";
 import InternalUser from "./User/InternalUser";
 import Ldap from "./Ldap/Ldap";
-import * as CORE_CONSTANTS from "./Utils/constants";
+import * as CONSTANTS from "./Utils/constants";
 import BroadcastChannel from "./BroadcastChannel/BroadcastChannel";
 import RobotManager from "./RobotManager/RobotManager";
 import VariableManager from "./VariableManager/VariableManager";
 import LockManager from "./LockManager/LockManager";
-import Utils, * as CORE_UTILS from "./Utils/Utils";
+import * as Utils from "./Utils/Utils";
 import Database from "./Database/Database";
 import MasterDB from "./Database/MasterDB";
 import AuthWebSocket from "./AuthWebSocket/AuthWebSocket";
@@ -23,6 +23,7 @@ import Workspace from "./Workspace/Workspace";
 import Snapshot from "./Snapshot/Snapshot";
 import Rest from "./Rest/Rest";
 import { ROSBridge, MainROSBridge } from "./ROSBridge/ROSBridge";
+import Role from "./Role/Role";
 
 export {
   Acl,
@@ -30,8 +31,7 @@ export {
   InternalUser,
   Ldap,
   Utils,
-  CORE_CONSTANTS,
-  CORE_UTILS,
+  CONSTANTS,
   Database,
   MasterDB,
   AuthWebSocket,
@@ -40,6 +40,7 @@ export {
   Clipboard,
   WSSub,
   User,
+  Role,
   BaseModel,
   DataManagerBase,
   BroadcastChannel,

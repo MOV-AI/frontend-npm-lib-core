@@ -10,7 +10,7 @@ import {
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
 import { EMPTY_FUNCTION, VAR_SCOPES, WS_EVENT_TYPES } from "../Utils/constants";
-import Util from "../Utils/Utils";
+import {Utils} from "../index";
 
 // Used as global variable to avoid creation multiple subscribers
 let instance: VariableManager | null = null;
@@ -113,7 +113,7 @@ class VariableManager {
    * Subscribe to changes in variables
    */
   subscribeToChanges(callback: SubscriberCallbackHandler) {
-    const subscriptionId = Util.randomGuid();
+    const subscriptionId = Utils.randomGuid();
     this.subscribedOnDataChange[subscriptionId] = { send: callback };
     return subscriptionId;
   }
@@ -133,7 +133,7 @@ class VariableManager {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedVars);
     } else {
-      const subscriptionId = Util.randomGuid();
+      const subscriptionId = Utils.randomGuid();
       this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
     }
     return this.cachedVars;
@@ -143,7 +143,7 @@ class VariableManager {
   // varName = @recovery_state
   // varName = <robot_name>@recovery_state
   subscribeToVar(varName: string, callback: Function) {
-    const subscriptionId = Util.randomGuid();
+    const subscriptionId = Utils.randomGuid();
     const subscription = {[subscriptionId]: { send: callback }}
     if (!this.subscribedOnVarChange[varName]) this.subscribedOnVarChange[varName] = subscription;
     else this.subscribedOnVarChange[varName][subscriptionId] = { send: callback }

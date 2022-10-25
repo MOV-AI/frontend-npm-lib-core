@@ -1,4 +1,5 @@
 import { PermissionType, ResourcePermission } from "./permission";
+import { RolesMap } from "./role";
 
 export interface ChangePassword {
   CurrentPassword: string;
@@ -14,7 +15,7 @@ export interface ResetPassword {
 export interface UserModel {
   Resources: { [scope: string]: string[] };
   Superuser: boolean;
-  allRoles: string[];
+  allRoles: RolesMap;
   allResourcesPermissions: { [scope: string]: string[] };
   resourcesPermissions: ResourcePermission[];
 }

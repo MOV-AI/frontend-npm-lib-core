@@ -1,6 +1,6 @@
 import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
-import Util from "../Utils/Utils";
+import { Utils } from "../index";
 import {
   EMPTY_FUNCTION,
   SET_WS_EVENTS,
@@ -65,7 +65,7 @@ class RobotManager {
     this.isDataLoaded = false;
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
-    this.managerId = Util.randomGuid();
+    this.managerId = Utils.randomGuid();
     this.robots = {};
     this.cachedRobots = {};
     this.subscribeToRedis();
@@ -146,7 +146,7 @@ class RobotManager {
    * @param {Function} callback : Callback to be called for all property changes at any robot in DB
    */
   subscribeToChanges(callback: Function) {
-    const subscriptionId = Util.randomGuid();
+    const subscriptionId = Utils.randomGuid();
     this.subscribedOnDataChange[subscriptionId] = { send: callback };
     return subscriptionId;
   }
@@ -170,7 +170,7 @@ class RobotManager {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedRobots);
     } else {
-      const subscriptionId = Util.randomGuid();
+      const subscriptionId = Utils.randomGuid();
       this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
     }
     return this.cachedRobots;
@@ -213,7 +213,7 @@ class RobotManager {
    */
   onLoad(onDataLoaded: Function = ON_DATA_LOADED) {
     if (this.isDataLoaded) return onDataLoaded(this.cachedRobots);
-    const subscriptionId = Util.randomGuid();
+    const subscriptionId = Utils.randomGuid();
     this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
   }
 
