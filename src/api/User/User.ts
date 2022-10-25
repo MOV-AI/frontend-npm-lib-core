@@ -1,6 +1,6 @@
 import Authentication from "../../api/Authentication/Authentication";
 import Permissions from "../Permission/Permission";
-import Utils from "../Utils/Utils";
+import {Utils} from "../index";
 import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
 import UserV1 from "./UserV1";
@@ -139,7 +139,7 @@ export class User {
   static withPermissions = async (user: UserModel) => {
     user.allRoles = await Role.getAll();
     user.allResourcesPermissions = await Permissions.getAll();
-    user.resourcesPermissions = await Utils.parseUserData(user);
+    user.resourcesPermissions = Utils.parseUserData(user);
     return user;
   };
 

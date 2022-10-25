@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "testDev": "jest --watchAll",
-    "testStatic": "node test/server.js",
+    "testStatic": "npm run build && echo 'Open browser at http://localhost:3000/test/index.html' && node test/server.js",
     "build": "webpack --mode=production",
     "buildDev": "webpack --mode=development --watch",
     "clean": "rm -r node_modules; rm package-lock.json"

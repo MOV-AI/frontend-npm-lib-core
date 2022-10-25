@@ -12,15 +12,19 @@
 
 <body>
   <script>
-    const { Utils, Database, Authentication, MasterDB, RobotManager } = Movai;
-    Utils.range(0, 10).forEach(x => console.log(x));
-    const robotManager = new RobotManager();
-    robotManager.getAll((data) => {
-      Object.keys(data).forEach(robotId => {
-        robotManager.getRobot(robotId).subscribe({
-          property: "Parameter",
-          propValue: "tf",
-          onUpdate: robotData => console.log("robot tf update", robotData)
+    const { Utils, Database, Authentication, MasterDB, RobotManager, CONSTANTS } = Movai;
+    document.writeln(CONSTANTS.GLOBAL_WORKSPACE)
+    Utils.range(0, 10).forEach(x => document.writeln(x));
+    Authentication.login("pedro", "movaimovai").then(() => {
+      const robotManager = new RobotManager();
+      robotManager.getAll((data) => {
+        Object.keys(data).forEach(robotId => {
+          document.writeln(`Robot id ${robotId}`)
+          robotManager.getRobot(robotId).subscribe({
+            property: "Parameter",
+            propValue: "tf",
+            onUpdate: robotData => document.writeln(robotData)
+          })
         })
       })
     })
