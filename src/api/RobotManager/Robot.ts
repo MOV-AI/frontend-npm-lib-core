@@ -20,7 +20,7 @@ import {
 } from "../Utils/constants";
 import DocumentV2 from "../Document/DocumentV2";
 import MasterDB from "../Database/MasterDB";
-import Util from "../Utils/Utils";
+import { Utils } from "../index";
 import Rest from "../Rest/Rest";
 import Document from "../Document/Document";
 
@@ -191,7 +191,7 @@ class Robot {
    * @param {Function} callback: Function to be called on get logs
    */
   subscribeToData(callback: Function) {
-    const subscriptionId = Util.randomGuid();
+    const subscriptionId = Utils.randomGuid();
     this.dataSubscriptions[subscriptionId] = { send: callback };
     return subscriptionId;
   }
@@ -217,9 +217,9 @@ class Robot {
    */
   protected getChangedKeys(): Array<string> {
     // Get Diff between previous and current data
-    const diff = Util.difference(this.previousData, this.data);
+    const diff = Utils.difference(this.previousData, this.data);
     // Return changed keys
-    return Object.keys(Util.flattenObject(diff)).filter(
+    return Object.keys(Utils.flattenObject(diff)).filter(
       key => !KEYS_TO_DISCONSIDER.includes(key)
     );
   }
@@ -252,7 +252,7 @@ class Robot {
    * @param {Function} callback: Function to be called on get logs
    */
   subscribeToLogs(callback: Function) {
-    const subscriptionId = Util.randomGuid();
+    const subscriptionId = Utils.randomGuid();
     this.logSubscriptions[subscriptionId] = { send: callback };
     if (this.logger.status !== LOGGER_STATUS.running) this.startLogger();
     else if (this.logs) callback(this.logs);

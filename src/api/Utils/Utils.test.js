@@ -1,4 +1,8 @@
-import Utils from "./Utils";
+import * as Utils from "./Utils";
+/**
+ * @jest-environment jsdom
+ */
+
 const { groupBy, range, maybeGet, ofNull } = Utils;
 test("group by", () => {
   const array = [1, 2, 3, 4, 5, 6, 7, 8, 9];

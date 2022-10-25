@@ -7,7 +7,7 @@ import {
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
 import { EMPTY_FUNCTION, WS_EVENT_TYPES } from "../Utils/constants";
-import Util from "../Utils/Utils";
+import { Utils } from "../index";
 
 // Used as global variable to avoid creation multiple subscribers
 var instance: LockManager | null = null;
@@ -90,7 +90,7 @@ class LockManager {
    * Subscribe to changes in locks
    */
   subscribeToChanges(callback: SubscriberCallbackHandler) {
-    const subscriptionId = Util.randomGuid();
+    const subscriptionId = Utils.randomGuid();
     this.subscribedOnDataChange[subscriptionId] = { send: callback };
     return subscriptionId;
   }
@@ -110,7 +110,7 @@ class LockManager {
     if (this.isDataLoaded) {
       onDataLoaded(this.cachedLocks);
     } else {
-      const subscriptionId = Util.randomGuid();
+      const subscriptionId = Utils.randomGuid();
       this.subscribedOnDataLoad[subscriptionId] = { send: onDataLoaded };
     }
     return this.cachedLocks;

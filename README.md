@@ -33,3 +33,12 @@ Its main use will be to build Mov.AI applications.
 
 2. Update package
    - `npm update`
+
+
+## Running tests
+
+`npm run test`
+
+## Running test on html
+
+`npm run testStatic`
