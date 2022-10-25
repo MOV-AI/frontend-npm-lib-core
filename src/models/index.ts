@@ -9,3 +9,4 @@ export * from "./variableManager";
 export * from "./lockManager";
 export * from "./robot";
 export * from "./common";
+export * from "./role";
