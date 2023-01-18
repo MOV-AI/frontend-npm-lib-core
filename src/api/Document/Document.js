@@ -59,6 +59,10 @@ class Document {
    */
 
   static parsePath(_path, dtype = "Node") {
+    if (!_path) {
+      return console.warn("Tried to parse an invalid path", _path);
+    }
+
     const spl = _path.split("/");
 
     const workspace = spl.length > 1 ? spl[0] : "global";
