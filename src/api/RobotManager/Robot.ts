@@ -80,7 +80,7 @@ class Robot {
    * Subscribe to a robot property from redis
    * @param {SubscriberModel} params
    */
-  subscribe(params: SubscriberModel) {
+  private subscribe(params: SubscriberModel) {
     const {
       property,
       propValue = "*",

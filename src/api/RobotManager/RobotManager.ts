@@ -42,6 +42,7 @@ let instance: RobotManager | null = null;
 type LoadedRobots = { [robotId: string]: ProtectedRobot };
 
 // Constants
+const HEART_BEAT = "HEART_BEAT";
 const SUBSCRIPTION_PATTERN = { Scope: "Robot", RobotName: "*", IP: "*" };
 const ON_DATA_LOADED = (_robots: CachedRobots) => {
   /** Empty on purpose */
@@ -228,6 +229,11 @@ class RobotManager {
 
     Object.values(this.robots).forEach(robot => {
       this.checkStatus(robot);
+    });
+
+    // Call subscribed onChange functions
+    Object.keys(this.subscribedOnDataChange).forEach(key => {
+        this.subscribedOnDataChange[key].send(this.robots, HEART_BEAT);
     });
 
     this.heartbeatTimeout = setTimeout(
