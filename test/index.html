@@ -15,7 +15,9 @@
     const { Utils, Database, Authentication, MasterDB, RobotManager, CONSTANTS } = Movai;
     document.writeln(CONSTANTS.GLOBAL_WORKSPACE)
     Utils.range(0, 10).forEach(x => document.writeln(x));
-    Authentication.login("pedro", "movaimovai").then(() => {
+    const user = "admin"
+    const pass = "movaimovai"
+    Authentication.login(user, pass).then(() => {
       const robotManager = new RobotManager();
       robotManager.getAll((data) => {
         Object.keys(data).forEach(robotId => {

@@ -4,7 +4,7 @@
     "dockerfile": "Dockerfile",
     "context": "..",
     "args": {
-      "VARIANT": "16"
+      "VARIANT": "16-bullseye"
     }
   },
   "extensions": [
@@ -18,7 +18,9 @@
   ],
   "postCreateCommand": "npm ci",
   "remoteUser": "node",
-  "runArgs": ["--network=host"],
+  "runArgs": [
+    "--network=host"
+  ],
   "mounts": [
     "type=bind,src=${localEnv:HOME}/.npmrc,dst=/home/node/.npmrc",
     "type=bind,src=${localEnv:HOME}/.ssh,dst=/home/node/.ssh",
