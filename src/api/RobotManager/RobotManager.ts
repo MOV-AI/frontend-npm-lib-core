@@ -44,6 +44,7 @@ type LoadedRobots = { [robotId: string]: ProtectedRobot };
 // Constants
 const HEART_BEAT = "HEART_BEAT";
 const SUBSCRIPTION_PATTERN = { Scope: "Robot", RobotName: "*", IP: "*" };
+
 const ON_DATA_LOADED = (_robots: CachedRobots) => {
   /** Empty on purpose */
 };
