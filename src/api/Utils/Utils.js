@@ -149,7 +149,6 @@ export const parseUserData = async user => {
     user.allResourcesPermissions
   )) {
     const hasUserResource = user?.Resources?.[resourceType] ?? false;
-
     const resource = {
       name: resourcePermissions.Label || resourceType,
       permissions: resourcePermissions.map(perm => {
@@ -160,7 +159,7 @@ export const parseUserData = async user => {
           permValue = hasUserResource.includes(perm);
         }
         return {
-          id: `${user.id}-${resourceType}-${perm}`,
+          id: `${user.AccountName}-${resourceType}-${perm}`,
           name: perm,
           roleDefault: rolePermValue,
           resourceType: resourceType,

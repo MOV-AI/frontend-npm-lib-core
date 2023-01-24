@@ -1,6 +1,6 @@
 import Authentication from "../../api/Authentication/Authentication";
 import Permissions from "../Permission/Permission";
-import {Utils} from "../index";
+import { Utils } from "../index";
 import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
 import UserV1 from "./UserV1";
@@ -14,7 +14,6 @@ import {
 } from "../../models/authentication";
 import {
   ChangePassword,
-  InternalUserModel as InternalUserModel,
   ResetPassword,
   UserModel as UserModel,
   UserPost,
@@ -74,8 +73,6 @@ export class User {
   getCurrentUserWithPermissions = async () => {
     const userWithPermissions =
       await this.instance.getCurrentUserWithPermissions();
-    /*For testing purposes - to be deleted after FP-1642 is merged */
-    console.log("getCurrentUserWithPermissions: ", userWithPermissions);
     return userWithPermissions;
   };
 
@@ -139,7 +136,7 @@ export class User {
   static withPermissions = async (user: UserModel) => {
     user.allRoles = await Role.getAll();
     user.allResourcesPermissions = await Permissions.getAll();
-    user.resourcesPermissions = Utils.parseUserData(user);
+    user.resourcesPermissions = await Utils.parseUserData(user);
     return user;
   };
 
