@@ -10,7 +10,9 @@ import {
   UpdateRobotParam,
   SubscriberModel,
   SubscriptionManager,
-  UnsubscriberModel
+  UnsubscriberModel,
+  Alert,
+  Alerts
 } from "../../models";
 import {
   LOGGER_STATUS,
@@ -40,13 +42,15 @@ class Robot {
   private dataSubscriptions: SubscriptionManager;
   private onGetIPCallback: Function;
   private api: DocumentV2;
+  private alerts: Alerts;
 
   constructor(
     id: string,
-    data: RobotModel = { IP: "", RobotName: "", Status: {} }
+    data: RobotModel = { IP: "", RobotName: "", Status: {}, Alerts: {} }
   ) {
     this.id = id;
     this.ip = data.IP;
+    this.alerts = data.Alerts || {};
     this.name = data.RobotName;
     this.data = { ...data, Online: true };
     this.previousData = this.data;
@@ -124,6 +128,10 @@ class Robot {
         this.data = robotData;
         this.ip = robotData.IP;
         this.name = robotData.RobotName;
+        this.alerts = Object.entries(robotData.Alerts || {}).reduce((a: {}, item: [name: string, value: Alert]) => ({
+          ...a,
+          [item[0]]: item[1],
+        }), {});
       }
       return robotData;
     });

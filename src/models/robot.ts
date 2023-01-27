@@ -15,12 +15,22 @@ export interface RobotParameter {
   [name: string]: { Value: string | number | boolean | object };
 }
 
+export interface Alert {
+  action?: string;
+  alert_info?: string;
+  alert_name?: string;
+  callback?: string;
+}
+
+export interface Alerts { [name: string]: Alert }
+
 export interface RobotModel {
   IP?: string | null;
   Status?: RobotStatus;
   RobotName?: string;
   Parameter?: RobotParameter;
   Online?: boolean;
+  Alerts?: Alerts;
 }
 
 export interface CachedRobots {
