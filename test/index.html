@@ -19,13 +19,19 @@
     const pass = "movaimovai"
     Authentication.login(user, pass).then(() => {
       const robotManager = new RobotManager();
+      robotManager.subscribeToChanges(robots => {
+        console.log(">>>> robots", robots)
+      })
       robotManager.getAll((data) => {
         Object.keys(data).forEach(robotId => {
+          console.log(">>>> robot id", robotId)
           document.writeln(`Robot id ${robotId}`)
           robotManager.getRobot(robotId).subscribe({
             property: "Parameter",
             propValue: "tf",
-            onUpdate: robotData => document.writeln(robotData)
+            onUpdate: robotData => {
+              console.log(">>>>", robotData)
+            }
           })
         })
       })

@@ -226,14 +226,20 @@ class RobotManager {
 
   private heartbeatMonitor = () => {
     clearTimeout(this.heartbeatTimeout);
-
+    const robotsWhichChangedOnlineStatus = [];
     Object.values(this.robots).forEach(robot => {
+      const previousOnlineStatus = this.cachedRobots[robot.id].Online;
       this.checkStatus(robot);
+      if(this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
+        robotsWhichChangedOnlineStatus.push(robot)
+      }
     });
 
     // Call subscribed onChange functions
     Object.keys(this.subscribedOnDataChange).forEach(key => {
-        this.subscribedOnDataChange[key].send(this.robots, HEART_BEAT);
+        if(robotsWhichChangedOnlineStatus.length > 0) {
+          this.subscribedOnDataChange[key].send(this.robots, HEART_BEAT);
+        }
     });
 
     this.heartbeatTimeout = setTimeout(
