@@ -4,6 +4,7 @@ import { Utils } from "../index";
 import {
   EMPTY_FUNCTION,
   SET_WS_EVENTS,
+  DEL_WS_EVENTS,
   HEARTBEAT_TIMEOUT
 } from "../Utils/constants";
 import Robot from "./Robot";
@@ -118,8 +119,7 @@ class RobotManager {
     // Apply changes to update local robots
     const robots = data.key.Robot;
     const dataEventType = data.event;
-    if (SET_WS_EVENTS.includes(dataEventType))
-      this.applyChanges(robots, dataEventType);
+    this.applyChanges(robots, dataEventType);
 
     // Set changed robots
     const changedRobots: CachedRobots = {};
@@ -264,6 +264,10 @@ class RobotManager {
    * @param {string} event : Event type ("set", "hset", "del", "hdel")
    */
   private applyChanges = (robots: CachedRobots, event: string) => {
+    const isSet = SET_WS_EVENTS.includes(event);
+    if (!(isSet || DEL_WS_EVENTS.includes(event)))
+      return;
+
     Object.keys(robots).forEach(robotId => {
       const obj: RobotModel = robots[robotId];
       // Set robot object if not yet created
@@ -279,7 +283,7 @@ class RobotManager {
         const value: any = obj[objKey];
         const prevCachedValue = cachedRobot[objKey];
         const prevRobotValue = robot.getDataKeyValue(objKey);
-        if (objKey === "Status" || typeof value !== "object") {
+        if (objKey === "Status" || typeof value !== "object" || !isSet) {
           cachedRobot[objKey] = value;
           robot.setData(objKey, value);
         } else {
