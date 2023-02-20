@@ -27,10 +27,9 @@
           console.log(">>>> robot id", robotId)
           document.writeln(`Robot id ${robotId}`)
           robotManager.getRobot(robotId).subscribe({
-            property: "Parameter",
-            propValue: "tf",
+            property: "Alerts",
             onUpdate: robotData => {
-              console.log(">>>>", robotData)
+              console.log(`>>>>${robotId}`, robotData)
             }
           })
         })

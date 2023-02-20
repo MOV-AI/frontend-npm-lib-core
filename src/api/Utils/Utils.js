@@ -1,10 +1,10 @@
 import { Maybe } from "monet";
 import { ALPHANUMERIC_REGEX, GLOBAL_WORKSPACE } from "./constants";
 import _isEmpty from "lodash/isEmpty";
-import _isEqual from "lodash/isEqual";
 import _isArray from "lodash/isArray";
 import _isObject from "lodash/isObject";
 import _transform from "lodash/transform";
+import equal from "deep-equal";
 import Role from "../Role/Role";
 
 
@@ -80,9 +80,11 @@ export const flattenObject = (obj, prefix = "") =>
   Object.keys(obj).reduce((acc, k) => {
     const pre = prefix.length ? prefix + "." : "";
 
-    if (typeof obj[k] === "object")
+    if (typeof obj[k] === "object" && !_isEmpty(obj[k])) {
       Object.assign(acc, flattenObject(obj[k], pre + k));
-    else acc[pre + k] = obj[k];
+    } else {
+      acc[pre + k] = obj[k]
+    };
 
     return acc;
   }, {});
@@ -277,7 +279,7 @@ export const difference = (origObj, newObj) => {
   function changes(_newObj, _origObj) {
     let arrayIndexCounter = 0;
     return _transform(_newObj, function (result, value, key) {
-      if (!_isEqual(value, _origObj[key])) {
+      if (!equal(value, _origObj[key])) {
         let resultKey = _isArray(_origObj) ? arrayIndexCounter++ : key;
         result[resultKey] =
           _isObject(value) && _isObject(_origObj[key])
