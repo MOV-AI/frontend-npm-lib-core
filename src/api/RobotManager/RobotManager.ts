@@ -2,9 +2,10 @@ import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
 import { Utils } from "../index";
 import {
+  DEL_WS_EVENTS,
   EMPTY_FUNCTION,
-  SET_WS_EVENTS,
-  HEARTBEAT_TIMEOUT
+  HEARTBEAT_TIMEOUT,
+  SET_WS_EVENTS
 } from "../Utils/constants";
 import Robot from "./Robot";
 import Rest from "../Rest/Rest";
@@ -25,6 +26,10 @@ import {
   UpdateRobotParam
 } from "../../models";
 
+// Constants
+const KEYS_TO_DISCONSIDER_SET_EVENT = ["Status.timestamp"];
+const KEYS_TO_DISCONSIDER_DEL_EVENT = ["Status"];
+
 /**
  * Class to extend from Robot class
  *  Implements more methods that should only be allowed from the RobotManager using protected methods from Robot class
@@ -32,9 +37,7 @@ import {
 class ProtectedRobot extends Robot {
   readonly data: RobotModel;
   getChangedKeysAndResetData() {
-    const keys = this.getChangedKeys();
-    this.updatePreviousData();
-    return keys;
+    return super.getChangedKeysAndResetData();
   }
 }
 
@@ -118,21 +121,39 @@ class RobotManager {
     // Apply changes to update local robots
     const robots = data.key.Robot;
     const dataEventType = data.event;
-    if (SET_WS_EVENTS.includes(dataEventType))
-      this.applyChanges(robots, dataEventType);
+
+    this.applyChanges(robots, dataEventType);
 
     // Set changed robots
     const changedRobots: CachedRobots = {};
     Object.keys(robots).forEach(robotId => {
       const robot = this.robots[robotId];
-      const changedKeys = robot.getChangedKeysAndResetData();
-      if (changedKeys.length)
+      const changedKeys_ = robot.getChangedKeysAndResetData();
+      const changedKeys = changedKeys_
+        // until https://movai.atlassian.net/browse/BP-910 is not solved
+        .filter(
+          key =>
+            !(
+              DEL_WS_EVENTS.includes(dataEventType) &&
+              KEYS_TO_DISCONSIDER_DEL_EVENT.includes(key)
+            )
+        )
+        .filter(
+          key =>
+            !(
+              SET_WS_EVENTS.includes(dataEventType) &&
+              KEYS_TO_DISCONSIDER_SET_EVENT.includes(key)
+            )
+        );
+      if (changedKeys.length) {
         changedRobots[robotId] = this.cachedRobots[robotId];
+      }
     });
     // Call subscribed onChange functions
     Object.keys(this.subscribedOnDataChange).forEach(key => {
-      if (Object.keys(changedRobots).length)
+      if (Object.keys(changedRobots).length) {
         this.subscribedOnDataChange[key].send(changedRobots, dataEventType);
+      }
     });
   };
 
@@ -230,16 +251,16 @@ class RobotManager {
     Object.values(this.robots).forEach(robot => {
       const previousOnlineStatus = this.cachedRobots[robot.id].Online;
       this.checkStatus(robot);
-      if(this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
-        robotsWhichChangedOnlineStatus.push(robot)
+      if (this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
+        robotsWhichChangedOnlineStatus.push(robot);
       }
     });
 
     // Call subscribed onChange functions
     Object.keys(this.subscribedOnDataChange).forEach(key => {
-        if(robotsWhichChangedOnlineStatus.length > 0) {
-          this.subscribedOnDataChange[key].send(this.robots, HEART_BEAT);
-        }
+      if (robotsWhichChangedOnlineStatus.length > 0) {
+        this.subscribedOnDataChange[key].send(this.cachedRobots, HEART_BEAT);
+      }
     });
 
     this.heartbeatTimeout = setTimeout(
@@ -279,13 +300,17 @@ class RobotManager {
         const value: any = obj[objKey];
         const prevCachedValue = cachedRobot[objKey];
         const prevRobotValue = robot.getDataKeyValue(objKey);
-        if (objKey === "Status" || typeof value !== "object") {
-          cachedRobot[objKey] = value;
-          robot.setData(objKey, value);
-        } else {
-          cachedRobot[objKey] = _merge(prevCachedValue, value);
-          robot.setData(objKey, _merge(prevRobotValue, value));
-        }
+
+        const isObject = typeof value === "object";
+        const isDel = DEL_WS_EVENTS.includes(event);
+        const isObjectAndNotDel = isObject && !isDel;
+        cachedRobot[objKey] = isObjectAndNotDel
+          ? _merge(prevCachedValue, value)
+          : value;
+        robot.setData(
+          objKey,
+          isObjectAndNotDel ? _merge(prevRobotValue, value) : value
+        );
       });
       // Send updated data to subscribed components
       robot.sendUpdates(event);

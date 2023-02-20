@@ -26,9 +26,6 @@ import { Utils } from "../index";
 import Rest from "../Rest/Rest";
 import Document from "../Document/Document";
 
-// Constants
-const KEYS_TO_DISCONSIDER = ["Status.timestamp"];
-
 class Robot {
   readonly id: string;
   protected data: RobotModel;
@@ -128,10 +125,13 @@ class Robot {
         this.data = robotData;
         this.ip = robotData.IP;
         this.name = robotData.RobotName;
-        this.alerts = Object.entries(robotData.Alerts || {}).reduce((a: {}, item: [name: string, value: Alert]) => ({
-          ...a,
-          [item[0]]: item[1],
-        }), {});
+        this.alerts = Object.entries(robotData.Alerts || {}).reduce(
+          (a: {}, item: [name: string, value: Alert]) => ({
+            ...a,
+            [item[0]]: item[1]
+          }),
+          {}
+        );
       }
       return robotData;
     });
@@ -227,9 +227,7 @@ class Robot {
     // Get Diff between previous and current data
     const diff = Utils.difference(this.previousData, this.data);
     // Return changed keys
-    return Object.keys(Utils.flattenObject(diff)).filter(
-      key => !KEYS_TO_DISCONSIDER.includes(key)
-    );
+    return Object.keys(Utils.flattenObject(diff));
   }
 
   /**

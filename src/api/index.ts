@@ -8,7 +8,6 @@ import RobotManager from "./RobotManager/RobotManager";
 import VariableManager from "./VariableManager/VariableManager";
 import LockManager from "./LockManager/LockManager";
 import * as Utils from "./Utils/Utils";
-import Database from "./Database/Database";
 import MasterDB from "./Database/MasterDB";
 import AuthWebSocket from "./AuthWebSocket/AuthWebSocket";
 import Style from "./Style/Style";
@@ -32,7 +31,6 @@ export {
   Ldap,
   Utils,
   CONSTANTS,
-  Database,
   MasterDB,
   AuthWebSocket,
   Style,
