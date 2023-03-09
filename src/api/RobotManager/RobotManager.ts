@@ -249,6 +249,7 @@ class RobotManager {
     clearTimeout(this.heartbeatTimeout);
     const robotsWhichChangedOnlineStatus = [];
     Object.values(this.robots).forEach(robot => {
+      if(!robot.id) return;
       const previousOnlineStatus = this.cachedRobots[robot.id].Online;
       this.checkStatus(robot);
       if (this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
@@ -268,6 +269,7 @@ class RobotManager {
       HEARTBEAT_TIMEOUT
     );
   };
+
 
   /**
    * Check robot status if it doesn't receive any updates in more than 10s
