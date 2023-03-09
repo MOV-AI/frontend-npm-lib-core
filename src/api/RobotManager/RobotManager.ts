@@ -269,6 +269,7 @@ class RobotManager {
     );
   };
 
+
   /**
    * Check robot status if it doesn't receive any updates in more than 10s
    *  Set timeout to check online/offline state in 10s

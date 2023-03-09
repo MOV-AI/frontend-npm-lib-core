@@ -78,7 +78,7 @@ class VariableManager {
                 //  Call subscribed Var onChange functions
                 Object.keys(this.subscribedOnVarChange[keyVar]).forEach(id => {
                   this.subscribedOnVarChange[keyVar][id].send(
-                    variables[scope].ID[keyVar].Value
+                    variables[scope].ID[keyVar]?.Value ?? variables[scope].ID[keyVar]
                   );
                 });
               }
@@ -184,7 +184,7 @@ class VariableManager {
     scope = VAR_SCOPES.GLOBAL
   }: {
     scope: string;
-    value: RedisVarType;
+    value: RedisVarType | object;
     key: string;
   }) => {
     if (typeof value === "string") {
