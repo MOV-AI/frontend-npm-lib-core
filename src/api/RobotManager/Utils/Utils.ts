@@ -55,7 +55,7 @@ export function getRequestLevels(
  * @param selectedService : Array of selected services
  * @returns {string} Request query param string for services
  */
-export function getRequestService(selectedService: Array<string>): string {
+export function getRequestService(selectedService: Array<string> = []): string {
   if (
     (Array.isArray(selectedService) &&
       selectedService.length === SERVICE_LIST.length) ||
@@ -80,8 +80,8 @@ export function getRequestService(selectedService: Array<string>): string {
  * @returns {string} Request query param string for dates
  */
 export function getRequestDate(
-  selectedFromDate: TimestampQuery,
-  selectedToDate: TimestampQuery
+  selectedFromDate: TimestampQuery | undefined,
+  selectedToDate: TimestampQuery | undefined
 ): string {
   let res = "";
   try {
@@ -140,7 +140,7 @@ export function getRequestRobots(selectedRobots: Array<string> = []): string {
  * @param {string} message : Search message
  * @returns {string} Request query param string for message
  */
-export function getRequestMessage(message: string): string {
+export function getRequestMessage(message: string = ""): string {
   if (!message || message === "") {
     return "";
   }
