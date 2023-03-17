@@ -105,11 +105,11 @@ export interface LogLevel {
 export type TimestampQuery = number | "";
 
 export interface LogQueryParam {
-  level: { selected: Array<string>; list: Array<LogLevel> };
-  service: { selected: Array<string> };
-  tag: { selected: Array<LogTag> };
-  searchMessage: string;
-  date: { from: TimestampQuery; to: TimestampQuery };
-  robot: { selected: Array<string> };
-  limit: number;
+  level?: { selected: Array<string>; list: Array<LogLevel> };
+  service?: { selected: Array<string> };
+  tag?: { selected: Array<LogTag> };
+  searchMessage?: string;
+  date?: { from: TimestampQuery; to: TimestampQuery };
+  robot?: { selected: Array<string> };
+  limit?: number;
 }

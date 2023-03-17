@@ -5,7 +5,8 @@ import {
   DEL_WS_EVENTS,
   EMPTY_FUNCTION,
   HEARTBEAT_TIMEOUT,
-  SET_WS_EVENTS
+  SET_WS_EVENTS,
+  MAX_LOG_LIMIT
 } from "../Utils/constants";
 import Robot from "./Robot";
 import Rest from "../Rest/Rest";
@@ -269,7 +270,6 @@ class RobotManager {
     );
   };
 
-
   /**
    * Check robot status if it doesn't receive any updates in more than 10s
    *  Set timeout to check online/offline state in 10s
@@ -323,7 +323,6 @@ class RobotManager {
    *                                    Static Methods                                    *
    *                                                                                      */
   //========================================================================================
-
   /**
    * Get Logs for multiple robots
    * @param {LogQueryParam} queryParam : Object to construct query string
@@ -331,18 +330,24 @@ class RobotManager {
    */
   static getLogs(queryParam: LogQueryParam): Promise<any> {
     // Get request parameters
-    const _limit = queryParam.limit || 20;
+    const _limit = queryParam?.limit || MAX_LOG_LIMIT;
     const _levels = getRequestLevels(
-      queryParam.level.selected,
-      queryParam.level.list
+      queryParam?.level?.selected || [],
+      queryParam?.level?.list
+      );
+      const _services = getRequestService(queryParam?.service?.selected);
+      const _tags = getRequestTags(queryParam?.tag?.selected);
+      const _message = getRequestMessage(queryParam?.searchMessage);
+      const _dates = getRequestDate(queryParam?.date?.from, queryParam?.date?.to);
+      const _robots = getRequestRobots(queryParam?.robot?.selected);
+      let path = `v1/logs/?limit=`;
+      [_limit, _levels, _services, _dates, _tags, _message, _robots].forEach(
+        param => {
+          if (!!param || "" !== param) {
+            path += param;
+          }
+        }
     );
-    const _services = getRequestService(queryParam.service.selected);
-    const _tags = getRequestTags(queryParam.tag.selected);
-    const _message = getRequestMessage(queryParam.searchMessage);
-    const _dates = getRequestDate(queryParam.date.from, queryParam.date.to);
-    const _robots = getRequestRobots(queryParam.robot.selected);
-    const path = `v1/logs/?limit=${_limit}${_levels}${_services}${_dates}${_tags}${_message}${_robots}`;
-
     return Rest.get({ path });
   }
 }
