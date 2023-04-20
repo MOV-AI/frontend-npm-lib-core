@@ -30,14 +30,14 @@
           robot.subscribe({
             property: "Alerts",
             onUpdate: robotData => {
-              console.log(`>>>>${robotId}`, robotData)
+              console.log(`>>>>${robotId}`, robotManager.getRobot(robotId))
             }
           })
           robot.subscribe({
             property: "Parameter",
             propValue: "tf",
             onUpdate: robotData => {
-              console.log(`#####${robotId}`, robotData)
+              console.log(`#####${robotId}`, robotManager.getRobot(robotId))
             }
           })
         })
