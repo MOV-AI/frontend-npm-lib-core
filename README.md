@@ -4,7 +4,7 @@
 
 The Mov.AI's core frontend library.
 
-Here we place all reusable/common code regarding frontend.
+Here we place all reusable/common code regarding frontend, such as communication with database, authentication, etc. 
 
 Its main use will be to build Mov.AI applications.
 
@@ -41,4 +41,8 @@ Its main use will be to build Mov.AI applications.
 
 ## Running test on html
 
+A developer can test a build version of this library using the static test html in `test/index.html`, by running
+
 `npm run testStatic`
+
+Then open the browser at `http://localhost:3030/test/index.html`
