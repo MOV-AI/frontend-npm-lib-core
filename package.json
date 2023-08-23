@@ -1,26 +1,23 @@
 {
   "name": "@mov-ai/mov-fe-lib-core",
-  "version": "1.1.2-8",
+  "version": "1.1.2-20",
   "description": "The Mov.AI's core frontend library.",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/mov-ai"
-  },
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "default": "./src/index.ts"
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
-    "./src/*": "./src/*"
+    "./dist/*": "./dist/*"
   },
   "scripts": {
     "decl": "tsc",
     "test": "jest",
     "testDev": "jest --watchAll",
-    "build": "swc --copy-files -d dist src",
-    "buildDev": "webpack --mode=development --watch",
+    "build": "tsc && swc --copy-files -d dist src",
     "clean": "rm -r node_modules; rm package-lock.json"
   },
   "repository": {
@@ -47,8 +44,6 @@
     "@types/react-dom": "^18.0.3",
     "@types/roslib": "^1.1.8",
     "@types/web": "^0.0.114",
-    "express": "^4.18.1",
-    "http-proxy-middleware": "^2.0.6",
     "jest": "^28.1.0"
   },
   "dependencies": {
@@ -58,12 +53,10 @@
     "monet": "^0.9.2",
     "roslib": "^1.3.0",
     "rxjs": "^7.3.0",
-    "ts-jest": "^28.0.3",
     "typescript": "^4.7.2"
   },
   "files": [
     "dist",
-    "src",
     "resources"
   ],
   "typesVersions": {

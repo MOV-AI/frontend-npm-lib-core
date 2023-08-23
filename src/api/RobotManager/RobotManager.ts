@@ -71,7 +71,7 @@ class RobotManager {
     this.subscribedOnDataLoad = {};
     this.subscribedOnDataChange = {};
     this.managerId = Utils.randomGuid();
-    this.robots = {};
+    this.robots = {} as { [key: string]: ProtectedRobot };
     this.cachedRobots = {};
     this.subscribeToRedis();
     this.destroy = function () {
@@ -248,7 +248,7 @@ class RobotManager {
 
   private heartbeatMonitor = () => {
     clearTimeout(this.heartbeatTimeout);
-    const robotsWhichChangedOnlineStatus = [];
+    const robotsWhichChangedOnlineStatus = [] as ProtectedRobot[];
     Object.values(this.robots).forEach(robot => {
       const previousOnlineStatus = this.cachedRobots[robot.id].Online;
       this.checkStatus(robot);

@@ -12,12 +12,12 @@ type setState<T extends any> = (newState: T) => void;
 
 export
 function makeSub<T extends any>(defaultData: T): Sub<T> {
-  const subs = new Map();
+  const subs = new Map<Function, boolean>();
   const valueMap = { value: defaultData };
 
   async function update(obj: T): Promise<T> {
     valueMap.value = obj;
-    let allPromises = [];
+    let allPromises = [] as any[];
     for (const [sub] of subs)
       allPromises.push(sub(obj));
     return obj;
