@@ -13,7 +13,7 @@
       "default": "./src/index.ts"
     },
     "./package.json": "./package.json",
-    "./*": "./src/*"
+    "./src/*": "./src/*"
   },
   "scripts": {
     "decl": "tsc",
@@ -63,6 +63,7 @@
   },
   "files": [
     "dist",
+    "src",
     "resources"
   ],
   "typesVersions": {
