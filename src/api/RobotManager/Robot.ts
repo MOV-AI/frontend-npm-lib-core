@@ -191,7 +191,7 @@ class Robot {
    */
   stopLogger() {
     this.logger.status = LOGGER_STATUS.paused;
-    clearTimeout(this.logger.timeout);
+    clearTimeout(this.logger.timeout as NodeJS.Timeout);
   }
 
   /**
@@ -289,7 +289,7 @@ class Robot {
    * Refresh logs
    */
   refreshLogs() {
-    clearTimeout(this.logger.timeout);
+    clearTimeout(this.logger.timeout as NodeJS.Timeout);
     this._getLogs();
   }
 
@@ -355,7 +355,7 @@ class Robot {
    * Enqueue next request to get logs
    */
   private _enqueueNextRequest() {
-    clearTimeout(this.logger.timeout);
+    clearTimeout(this.logger.timeout as NodeJS.Timeout);
     this.logger.timeout = setTimeout(() => this._getLogs(), this.logger.time);
   }
 
