@@ -5,19 +5,20 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mov-ai"
   },
-  "main": "./dist/index.js",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/index.js"
+      "default": "./src/index.ts"
     },
     "./package.json": "./package.json",
     "./*": "./src/*"
   },
   "scripts": {
+    "decl": "tsc",
     "test": "jest",
     "testDev": "jest --watchAll",
-    "testStatic": "webpack --mode=development && echo 'Open browser at http://localhost:3030/test/index.html' && node test/server.js",
     "build": "swc --copy-files -d dist src",
     "buildDev": "webpack --mode=development --watch",
     "clean": "rm -r node_modules; rm package-lock.json"
