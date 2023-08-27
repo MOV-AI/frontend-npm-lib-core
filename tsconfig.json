@@ -26,7 +26,8 @@
     "noImplicitAny": true,
     "strictPropertyInitialization": false,
 
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "jest"]
   }, 
   "include": [
 	  "src/**/*.js",
@@ -35,6 +36,7 @@
 	  "src/**/*.tsx"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "src/**/*.test.*"
   ]
 }

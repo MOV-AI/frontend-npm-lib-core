@@ -143,7 +143,7 @@ class Robot {
    * @param value : Robot data key value
    */
   setData(key: keyof RobotModel, value: any) {
-    this.data[key] = value;
+    (this.data as { [key: string]: any })[key] = value;
   }
 
   /**

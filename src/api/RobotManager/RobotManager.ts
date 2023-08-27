@@ -305,7 +305,7 @@ class RobotManager {
         const isObject = typeof value === "object";
         const isDel = DEL_WS_EVENTS.includes(event);
         const isObjectAndNotDel = isObject && !isDel;
-        cachedRobot[objKey] = isObjectAndNotDel
+        (cachedRobot as { [key: string]: any })[objKey] = isObjectAndNotDel
           ? _merge(prevCachedValue, value)
           : value;
         robot.setData(

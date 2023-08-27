@@ -100,7 +100,7 @@ export class ROSBridge {
         (result: any) => {
           resolve(result);
         },
-        error => {
+        (error: string) => {
           reject(error);
         }
       );
@@ -116,7 +116,7 @@ export class ROSBridge {
       console.debug("ROS Bridge connected!");
       this.onConnectSubs.forEach(f => f());
     });
-    this.ros.on("error", error => {
+    this.ros.on("error", (error: string) => {
       console.debug("ROS Bridge error!");
       this.onErrorSubs.forEach(f => f(error));
     });
