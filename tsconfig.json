@@ -4,6 +4,8 @@
     "target": "es6",
     "module": "es2020",
     "baseUrl": "./src",
+    "rootDir": "./src",
+
     "paths": {
 	    "~/*": [ "./src/*" ]
     },
@@ -14,7 +16,7 @@
     "checkJs": false,
 
     "declaration": true,
-    "declarationDir": "./src",
+    "emitDeclarationOnly": true,
     "outDir": "dist",
 
     "esModuleInterop": true,
@@ -24,7 +26,8 @@
     "noImplicitAny": true,
     "strictPropertyInitialization": false,
 
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "jest"]
   }, 
   "include": [
 	  "src/**/*.js",
@@ -33,6 +36,7 @@
 	  "src/**/*.tsx"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "src/**/*.test.*"
   ]
 }

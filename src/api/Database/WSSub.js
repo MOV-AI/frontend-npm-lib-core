@@ -126,8 +126,6 @@ class WSSub {
    * creates a new pair if does not exits and returns it
    * @param {Map} map sub_callbacks or evt_callbacks
    * @param {string} pattern is the map key
-   *
-   * @returns {array} the value associated with the pattern
    */
   getOrCreate = (map, pattern) => {
     return map.get(pattern) || map.set(pattern, []).get(pattern);
@@ -192,7 +190,7 @@ class WSSub {
   /**
    * execute callbacks subscribed to events or patterns
    * @param {string} pattern pattern or event
-   * @param {bool} is_command when true callback only executes once
+   * @param {boolean} is_command when true callback only executes once
    * @param {any} message data to pass to the callback
    */
   dispatch = (pattern, message, is_command = true) => {
@@ -281,7 +279,7 @@ class WSSub {
 
   /**
    * Start offline validation
-   * @param {Object} callback
+   * @param {any} callback
    *  {
    *    onOnline  -> function to be called when the user is back online
    *    onOffline -> function to be called when the user is offline

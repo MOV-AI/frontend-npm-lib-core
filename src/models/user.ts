@@ -61,7 +61,7 @@ export interface InternalUserModel {
 export interface UserWithPermissions {
   Label: string;
   Resources: { [scopeName: string]: PermissionType[] };
-  Superuser: boolean;
+  Superuser: boolean | Promise<boolean>;
   Roles: string[];
 }
 
