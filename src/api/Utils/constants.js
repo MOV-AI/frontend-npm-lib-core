@@ -60,5 +60,5 @@ export const WS_EVENT_TYPES = {
 export const DEL_WS_EVENTS = [WS_EVENT_TYPES.DEL, WS_EVENT_TYPES.HDEL];
 export const SET_WS_EVENTS = [WS_EVENT_TYPES.SET, WS_EVENT_TYPES.HSET];
 
-export const TIME_TO_OFFLINE = 10000;
-export const HEARTBEAT_TIMEOUT = 3000;
+export const TIME_TO_OFFLINE = 5000;
+export const HEARTBEAT_TIMEOUT = 2000;

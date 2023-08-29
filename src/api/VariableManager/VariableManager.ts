@@ -247,7 +247,7 @@ class VariableManager {
    */
   private applyChanges = (vars: VarMap, event: string) => {
     Object.keys(vars).forEach((scope: string) => {
-      const obj = vars?.[scope] ?? {};
+      const obj = vars?.[scope] ?? { ID: undefined };
       // Set scope if not yet created
       if (!this.variables[scope]) {
         this.variables = Object.assign(this.variables, { [scope]: { ID: {} } });

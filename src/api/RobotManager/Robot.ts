@@ -79,7 +79,6 @@ class Robot {
 
   /**
    * Subscribe to a robot property from redis
-   * @param {SubscriberModel} params
    */
   private subscribe(params: SubscriberModel) {
     const {
@@ -101,8 +100,6 @@ class Robot {
 
   /**
    * Unsubscribe to a robot property from redis
-   *
-   * @param {UnsubscriberModel} params: Property name and value to unsubscribe
    */
   unsubscribe(params: UnsubscriberModel) {
     const { property, propValue = "*" } = params;
@@ -122,6 +119,7 @@ class Robot {
     return this.api.read().then((data: RobotMap) => {
       const robotData = data?.Robot?.[this.id];
       if (robotData) {
+        console.log("Robot.getData2", robotData);
         this.data = robotData;
         this.ip = robotData.IP;
         this.name = robotData.RobotName;
@@ -134,6 +132,8 @@ class Robot {
         );
       }
       return robotData;
+    }).catch((e: Error) => {
+      console.error("Robot.getData", e);
     });
   }
 
@@ -143,7 +143,7 @@ class Robot {
    * @param value : Robot data key value
    */
   setData(key: keyof RobotModel, value: any) {
-    this.data[key] = value;
+    (this.data as { [key: string]: any })[key] = value;
   }
 
   /**
@@ -191,7 +191,7 @@ class Robot {
    */
   stopLogger() {
     this.logger.status = LOGGER_STATUS.paused;
-    clearTimeout(this.logger.timeout);
+    clearTimeout(this.logger.timeout as NodeJS.Timeout);
   }
 
   /**
@@ -289,7 +289,7 @@ class Robot {
    * Refresh logs
    */
   refreshLogs() {
-    clearTimeout(this.logger.timeout);
+    clearTimeout(this.logger.timeout as NodeJS.Timeout);
     this._getLogs();
   }
 
@@ -355,14 +355,14 @@ class Robot {
    * Enqueue next request to get logs
    */
   private _enqueueNextRequest() {
-    clearTimeout(this.logger.timeout);
+    clearTimeout(this.logger.timeout as NodeJS.Timeout);
     this.logger.timeout = setTimeout(() => this._getLogs(), this.logger.time);
   }
 
   /**
    * Function to be called when robot IP subscribed loads
    *
-   * @param {Object} data: Data returned on IP subscribe event
+   * @param {Robot} data: Data returned on IP subscribe event
    */
   private _loadIP(robot: Robot) {
     return (data: LoadRobotParam) => {

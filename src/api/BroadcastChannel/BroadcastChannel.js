@@ -35,10 +35,6 @@ class BroadcastChannel {
 
   /**
    * Post message in broadcast
-   *
-   * @param {String} event: Event name -> should be a valid event name present in BROADCAST_EVENTS
-   * @param {String} target: App name that should receive the event
-   * @param {Object} data: Data to be passed to target app
    */
   postMessage = ({ event, target, data }) => {
     console.log("BroadcastChannel postMessage to", target);

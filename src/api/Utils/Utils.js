@@ -138,7 +138,6 @@ export const getUserRoles = user => {
  * Build permissions
  * @param {string} id
  * @param {object} user
- * @returns {[ResourcePermission]} List of permissions
  */
 export const parseUserData = async user => {
   const resourcesParsedData = [];

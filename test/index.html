@@ -20,16 +20,24 @@
     Authentication.login(user, pass).then(() => {
       const robotManager = new RobotManager();
       robotManager.subscribeToChanges(robots => {
-        console.log(">>>> robots", robots)
+        console.log("$$$$ robots", robots)
       })
       robotManager.getAll((data) => {
         Object.keys(data).forEach(robotId => {
           console.log(">>>> robot id", robotId)
           document.writeln(`Robot id ${robotId}`)
-          robotManager.getRobot(robotId).subscribe({
+          const robot = robotManager.getRobot(robotId);
+          robot.subscribe({
             property: "Alerts",
             onUpdate: robotData => {
-              console.log(`>>>>${robotId}`, robotData)
+              console.log(`>>>>${robotId}`, robotData, robotManager.getRobot(robotId))
+            }
+          })
+          robot.subscribe({
+            property: "Parameter",
+            propValue: "tf",
+            onUpdate: robotData => {
+              console.log(`#####${robotId}`, robotData, robotManager.getRobot(robotId))
             }
           })
         })

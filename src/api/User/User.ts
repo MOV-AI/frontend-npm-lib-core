@@ -136,7 +136,7 @@ export class User {
   static withPermissions = async (user: UserModel) => {
     user.allRoles = await Role.getAll();
     user.allResourcesPermissions = await Permissions.getAll();
-    user.resourcesPermissions = await Utils.parseUserData(user);
+    (user.resourcesPermissions as any[]) = await Utils.parseUserData(user);
     return user;
   };
 

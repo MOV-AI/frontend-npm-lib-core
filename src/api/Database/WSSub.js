@@ -35,7 +35,7 @@ class WSSub {
     this.RESEND_TIMEOUT = 1000;
     this.RETRIES = 3;
     this.NORMAL_CLOSE_EVT = 1000;
-
+    
     // supported commands
     this.commands = {
       SUBSCRIBE: "subscribe",
@@ -126,8 +126,6 @@ class WSSub {
    * creates a new pair if does not exits and returns it
    * @param {Map} map sub_callbacks or evt_callbacks
    * @param {string} pattern is the map key
-   *
-   * @returns {array} the value associated with the pattern
    */
   getOrCreate = (map, pattern) => {
     return map.get(pattern) || map.set(pattern, []).get(pattern);
@@ -192,7 +190,7 @@ class WSSub {
   /**
    * execute callbacks subscribed to events or patterns
    * @param {string} pattern pattern or event
-   * @param {bool} is_command when true callback only executes once
+   * @param {boolean} is_command when true callback only executes once
    * @param {any} message data to pass to the callback
    */
   dispatch = (pattern, message, is_command = true) => {
@@ -281,7 +279,7 @@ class WSSub {
 
   /**
    * Start offline validation
-   * @param {Object} callback
+   * @param {any} callback
    *  {
    *    onOnline  -> function to be called when the user is back online
    *    onOffline -> function to be called when the user is offline
@@ -321,6 +319,10 @@ class WSSub {
     return connectionPromise;
   };
 
+  handleFalseConnection = (statusText) => {
+    if(statusText === "Token must be a string!") return Authentication.logout();
+  }
+
   /**
    * Check connection state by doing requests
    * @returns Heartbeat fetch promise
@@ -330,12 +332,14 @@ class WSSub {
       method: "POST",
       body: JSON.stringify({ token: getToken() })
     })
-      .then(_res => {
+      .then(res => {
+        if (!res.ok && res.status !== 200) return this.handleFalseConnection(res.statusText);
         if (this.connectionState === CONNECTION.online) return;
         this.connectionState = CONNECTION.online;
         this.onOnline();
       })
       .catch(_err => {
+        console.warn(_err);
         if (this.connectionState === CONNECTION.offline) return;
         this.connectionState = CONNECTION.offline;
         this.onOffline();
