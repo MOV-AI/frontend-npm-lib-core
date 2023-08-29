@@ -35,7 +35,7 @@ class WSSub {
     this.RESEND_TIMEOUT = 1000;
     this.RETRIES = 3;
     this.NORMAL_CLOSE_EVT = 1000;
-
+    
     // supported commands
     this.commands = {
       SUBSCRIBE: "subscribe",
@@ -319,6 +319,10 @@ class WSSub {
     return connectionPromise;
   };
 
+  handleFalseConnection = (statusText) => {
+    if(statusText === "Token must be a string!") return Authentication.logout();
+  }
+
   /**
    * Check connection state by doing requests
    * @returns Heartbeat fetch promise
@@ -328,12 +332,14 @@ class WSSub {
       method: "POST",
       body: JSON.stringify({ token: getToken() })
     })
-      .then(_res => {
+      .then(res => {
+        if (!res.ok && res.status !== 200) return this.handleFalseConnection(res.statusText);
         if (this.connectionState === CONNECTION.online) return;
         this.connectionState = CONNECTION.online;
         this.onOnline();
       })
       .catch(_err => {
+        console.warn(_err);
         if (this.connectionState === CONNECTION.offline) return;
         this.connectionState = CONNECTION.offline;
         this.onOffline();
