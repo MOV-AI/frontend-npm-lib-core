@@ -14,7 +14,6 @@ import Style from "./Style/Style";
 import UndoManager from "./UndoManager/UndoManager";
 import Clipboard from "./Clipboard/Clipboard";
 import WSSub from "./Database/WSSub";
-export { makeSub }  from "./Utils/Sub";
 import { User } from "./User/User";
 import BaseModel from "./Database/Models/BaseModel";
 import DataManagerBase from "./Database/Manager/DataManagerBase";
