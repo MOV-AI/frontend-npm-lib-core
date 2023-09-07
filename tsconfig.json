@@ -16,7 +16,6 @@
     "checkJs": false,
 
     "declaration": true,
-    "emitDeclarationOnly": true,
     "outDir": "dist",
 
     "esModuleInterop": true,
