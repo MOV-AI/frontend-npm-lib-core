@@ -1,4 +1,4 @@
-import { Utils } from "../index";
+import * as Utils from "./../Utils/Utils";
 
 class BroadcastChannel {
   constructor(appName) {

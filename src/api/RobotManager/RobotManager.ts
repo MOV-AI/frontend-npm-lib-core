@@ -1,6 +1,6 @@
 import _merge from "lodash/merge";
 import MasterDB from "../Database/MasterDB";
-import { Utils } from "../index";
+import * as Utils from "./../Utils/Utils";
 import {
   DEL_WS_EVENTS,
   EMPTY_FUNCTION,
