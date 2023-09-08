@@ -36,7 +36,6 @@ const KEYS_TO_DISCONSIDER_DEL_EVENT = ["Status"];
  *  Implements more methods that should only be allowed from the RobotManager using protected methods from Robot class
  */
 class ProtectedRobot extends Robot {
-  readonly data: RobotModel;
   getChangedKeysAndResetData() {
     return super.getChangedKeysAndResetData();
   }

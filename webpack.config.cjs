@@ -7,14 +7,14 @@ module.exports = {
     path: path.resolve("./"),
     filename: "dist/index.js",
     library: "Movai",
-    libraryTarget: "umd"
+    libraryTarget: "commonjs2"
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
   target: "web",
   devtool: "source-map",
-  // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   module: {
     rules: [
       {
