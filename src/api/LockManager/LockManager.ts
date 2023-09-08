@@ -7,7 +7,7 @@ import {
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
 import { EMPTY_FUNCTION, WS_EVENT_TYPES } from "../Utils/constants";
-import { Utils } from "../index";
+import * as Utils from "./../Utils/Utils";
 
 // Used as global variable to avoid creation multiple subscribers
 var instance: LockManager | null = null;

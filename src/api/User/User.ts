@@ -1,6 +1,6 @@
 import Authentication from "../../api/Authentication/Authentication";
 import Permissions from "../Permission/Permission";
-import { Utils } from "../index";
+import * as Utils from "./../Utils/Utils";
 import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
 import UserV1 from "./UserV1";

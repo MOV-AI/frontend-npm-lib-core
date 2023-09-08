@@ -22,7 +22,7 @@ import {
 } from "../Utils/constants";
 import DocumentV2 from "../Document/DocumentV2";
 import MasterDB from "../Database/MasterDB";
-import { Utils } from "../index";
+import * as Utils from "./../Utils/Utils";
 import Rest from "../Rest/Rest";
 import Document from "../Document/Document";
 
