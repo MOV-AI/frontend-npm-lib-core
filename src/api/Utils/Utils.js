@@ -4,7 +4,7 @@ import _isEmpty from "lodash/isEmpty";
 import _isArray from "lodash/isArray";
 import _isObject from "lodash/isObject";
 import _transform from "lodash/transform";
-import equal from "deep-equal";
+import { deepEqual as equal } from "fast-equals";
 import Role from "../Role/Role";
 
 
