@@ -5,3 +5,4 @@
 - [FP-2202: Robot power off but online in the fleetboard alerts window](https://movai.atlassian.net/browse/FP-2202)
 - [FP-2233: De-activating alerts is not removing alerts in real-time](https://movai.atlassian.net/browse/FP-2233)
 - [FP-2537: Offline robot status is not working in fleet manager - or just slow?](https://movai.atlassian.net/browse/FP-2537)
+- [FP-2557: Removing frontend callbacks from backend](https://movai.atlassian.net/browse/FP-2557)
