@@ -116,14 +116,17 @@ RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
   return RestBase.post({ path, body, customHeaders });
 };
 
+let currentApp = '';
+RestBase.setApp = ({ name }) => {
+  currentApp = name;
+};
 /**
  * Execute remote procedure call
- * @param {String} cbName - Callback name
  * @param {String} func - Function in the callback
  * @param {Object} args - Args to pass to the function
  */
-RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
-  const path = `v1/function/${cbName}/`;
+RestBase.cloudFunction = ({ func = "", args, customHeaders = {} }) => {
+  const path = `v1/frontend/${currentApp}/`;
   const body = { func, args };
 
   return RestBase.post({ path, body, customHeaders });
