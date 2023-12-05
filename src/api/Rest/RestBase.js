@@ -1,3 +1,5 @@
+import Authentication from "../Authentication/Authentication";
+const { checkLogin, getToken } = Authentication;
 const RestBase = {};
 
 /**
@@ -131,5 +133,27 @@ RestBase.cloudFunction = ({ func = "", args, customHeaders = {} }) => {
 
   return RestBase.post({ path, body, customHeaders });
 };
+
+const wsMap = {};
+export
+async function WSOpen(config) {
+  const {
+    path = "",
+    host = window.location.hostname,
+    port = window.location.port,
+    proto = window.location.protocol === "https:" ? "wss" : "ws",
+    params = new URLSearchParams(),
+  } = typeof config === "string" ? { path: config } : config ?? {};
+  const url = proto + "://" + host + ":" + port + path;
+  if (wsMap[url])
+    return wsMap[url];
+  if (!(await checkLogin()))
+    throw new AuthException("login error");
+  let wsUrl = new URL(url);
+  params.set("token", getToken());
+  wsUrl.search = params;
+  return wsMap[url] = new WebSocket(wsUrl.toString());
+}
+RestBase.open = globalThis.WSOpen = WSOpen;
 
 export default RestBase;

@@ -1,8 +1,4 @@
-# 1.1.2
+# 1.2.0
 
-- [FP-2297: Redirect to login after losing token](https://movai.atlassian.net/browse/FP-2297)
-- [FP-2049: Use Roles v2 endpoint](https://movai.atlassian.net/browse/FP-2049)
-- [FP-2202: Robot power off but online in the fleetboard alerts window](https://movai.atlassian.net/browse/FP-2202)
-- [FP-2233: De-activating alerts is not removing alerts in real-time](https://movai.atlassian.net/browse/FP-2233)
-- [FP-2537: Offline robot status is not working in fleet manager - or just slow?](https://movai.atlassian.net/browse/FP-2537)
-- [FP-2557: Removing frontend callbacks from backend](https://movai.atlassian.net/browse/FP-2557)
+- [FP-2557](https://movai.atlassian.net/browse/FP-2557): Removing frontend callbacks from backend
+- [FP-2558](https://movai.atlassian.net/browse/FP-2558): implement log streaming
