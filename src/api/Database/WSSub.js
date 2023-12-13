@@ -192,8 +192,8 @@ class WSSub {
   /**
    * execute callbacks subscribed to events or patterns
    * @param {string} pattern pattern or event
-   * @param {bool} is_command when true callback only executes once
    * @param {any} message data to pass to the callback
+   * @param {boolean} is_command when true callback only executes once
    */
   dispatch = (pattern, message, is_command = true) => {
     const _map = is_command ? this.evt_callbacks : this.sub_callbacks;

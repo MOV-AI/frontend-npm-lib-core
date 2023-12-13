@@ -52,8 +52,8 @@ class UserV1 extends BaseUser {
 
   isInternalUser = () => true;
 
-  isSuperUser = () => {
-    return this.getData().then(({ response: user }) => user.Superuser);
+  isSuperUser = async () => {
+    return (await this.getData()).response.SuperUser;
   };
 
   changePassword = body => {
