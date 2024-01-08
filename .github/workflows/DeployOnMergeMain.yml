@@ -7,7 +7,7 @@ on:
 
 jobs:
   CI:
-    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@v2
+    uses: MOV-AI/.github/.github/workflows/legacy-npm-workflow.yml@v2
     with:
       deploy: "true"
       run_tests: "true"
