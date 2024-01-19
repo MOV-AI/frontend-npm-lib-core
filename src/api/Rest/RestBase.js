@@ -119,16 +119,36 @@ RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
 };
 
 let currentApp = '';
-RestBase.setApp = ({ name }) => {
-  currentApp = name;
+let currentEe = 0;
+let features = {
+  restLogs: true,
+  feCallbacks: true,
 };
+
+export
+function getFeatures() {
+  return features;
+}
+
+RestBase.setApp = ({ name, ee }) => {
+  currentApp = name;
+  currentEe = ee;
+  if (name || currentEe >= 241) {
+    features.feCallbacks = false;
+    features.restLogs = false;
+  }
+};
+
 /**
  * Execute remote procedure call
+ * @param {String} cbName - Callback name (non-mandatory in some situations)
  * @param {String} func - Function in the callback
  * @param {Object} args - Args to pass to the function
  */
-RestBase.cloudFunction = ({ func = "", args, customHeaders = {} }) => {
-  const path = `v1/frontend/${currentApp}/`;
+RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
+  const path = features.feCallbacks
+    ? `v1/function/${cbName}/`
+    : `v1/frontend/${currentApp}/`;
   const body = { func, args };
 
   return RestBase.post({ path, body, customHeaders });
