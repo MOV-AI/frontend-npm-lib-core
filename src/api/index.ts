@@ -20,7 +20,7 @@ import DataManagerBase from "./Database/Manager/DataManagerBase";
 import Document from "./Document/Document";
 import Workspace from "./Workspace/Workspace";
 import Snapshot from "./Snapshot/Snapshot";
-import { getFeatures } from "./Rest/RestBase";
+import { getFeatures, setFeature } from "./Rest/RestBase";
 import Rest from "./Rest/Rest";
 import { ROSBridge, MainROSBridge } from "./ROSBridge/ROSBridge";
 import Role from "./Role/Role";
@@ -51,6 +51,7 @@ export {
   Snapshot,
   Rest,
   getFeatures,
+  setFeature,
   ROSBridge,
   MainROSBridge
 };
