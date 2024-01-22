@@ -130,6 +130,11 @@ function getFeatures() {
   return features;
 }
 
+export
+function setFeature(name, value) {
+  features[name] = value;
+}
+
 RestBase.setApp = ({ name, ee }) => {
   currentApp = name;
   currentEe = ee;
