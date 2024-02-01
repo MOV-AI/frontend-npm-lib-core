@@ -33,12 +33,20 @@ export const EMPTY_FUNCTION = () => {
 };
 
 export const SERVICE_LIST = [
-  { value: "BACKEND", label: "Backend" },
-  { value: "SPAWNER", label: "Spawner" },
-  { value: "REDIS", label: "Redis" },
-  { value: "ROS", label: "Ros" },
-  { value: "HAPROXY", label: "ha-proxy" }
+  { value: "backend", label: "Backend" },
+  { value: "spawner", label: "Spawner" },
+  { value: "redis", label: "Redis" },
+  { value: "ros", label: "Ros" },
+  { value: "haproxy", label: "ha-proxy" }
 ];
+
+export const SERVICE_LABEL = {
+  backend: "Backend",
+  spawner: "Spawner",
+  redis: "Redis",
+  ros: "Ros",
+  haproxy: "ha-proxy",
+};
 
 export const VAR_SCOPES = {
   GLOBAL: "global",

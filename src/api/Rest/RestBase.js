@@ -1,5 +1,5 @@
 import Authentication from "../Authentication/Authentication";
-const { checkLogin, getToken } = Authentication;
+import Features from "../Features";
 const RestBase = {};
 
 /**
@@ -118,31 +118,8 @@ RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
   return RestBase.post({ path, body, customHeaders });
 };
 
-let currentApp = '';
-let currentEe = 0;
-let features = {
-  restLogs: true,
-  feCallbacks: true,
-};
-
-export
-function getFeatures() {
-  return features;
-}
-
-export
-function setFeature(name, value) {
-  features[name] = value;
-}
-
-RestBase.setApp = ({ name, ee }) => {
-  currentApp = name;
-  currentEe = ee;
-  if (name || currentEe >= 241) {
-    features.feCallbacks = false;
-    features.restLogs = false;
-  }
-};
+let currentApp = "";
+RestBase.setApp = ({ name }) => { currentApp = name; };
 
 /**
  * Execute remote procedure call
@@ -151,34 +128,12 @@ RestBase.setApp = ({ name, ee }) => {
  * @param {Object} args - Args to pass to the function
  */
 RestBase.cloudFunction = ({ cbName, func = "", args, customHeaders = {} }) => {
-  const path = features.feCallbacks
-    ? `v1/function/${cbName}/`
-    : `v1/frontend/${currentApp}/`;
+  const path = Features.get("noAppCallbacks")
+    ? `v1/frontend/${currentApp}/`
+    : `v1/function/${cbName}/`;
   const body = { func, args };
 
   return RestBase.post({ path, body, customHeaders });
 };
-
-const wsMap = {};
-export
-async function WSOpen(config) {
-  const {
-    path = "",
-    host = window.location.hostname,
-    port = window.location.port,
-    proto = window.location.protocol === "https:" ? "wss" : "ws",
-    params = new URLSearchParams(),
-  } = typeof config === "string" ? { path: config } : config ?? {};
-  const url = proto + "://" + host + ":" + port + path;
-  if (wsMap[url])
-    return wsMap[url];
-  if (!(await checkLogin()))
-    throw new AuthException("login error");
-  let wsUrl = new URL(url);
-  params.set("token", getToken());
-  wsUrl.search = params;
-  return wsMap[url] = new WebSocket(wsUrl.toString());
-}
-RestBase.open = globalThis.WSOpen = WSOpen;
 
 export default RestBase;
