@@ -1,0 +1,21 @@
+import yaml from "js-yaml";
+import Document from "../Document/Document"
+let features = {};
+
+if (!window.mock)
+  Document.factory({ type: "Configuration", name: "ee" }).read().then(((val) => {
+    const json = yaml.load(val.Yaml);
+    if (json.Features?.length)
+      for (const key of json.Features)
+        features[key] = true;
+    console.log("EE: " + (json.Version ?? "2.4.0 (assumed)") + "\nFEATURES: " + Object.keys(features).join(","));
+  }));
+
+const Features = {
+  get: key => features[key],
+  set: key => { features[key] = value; },
+  enable: key => { features[key] = true; },
+  disable: key => { features[key] = false; },
+};
+
+export default Features;

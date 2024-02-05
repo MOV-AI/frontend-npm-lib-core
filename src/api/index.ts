@@ -1,3 +1,4 @@
+export { default as  Features } from "./Features";
 import Acl from "./Acl/Acl";
 import Authentication from "./Authentication/Authentication";
 import InternalUser from "./User/InternalUser";
@@ -10,6 +11,7 @@ import LockManager from "./LockManager/LockManager";
 import * as Utils from "./Utils/Utils";
 import MasterDB from "./Database/MasterDB";
 import AuthWebSocket from "./AuthWebSocket/AuthWebSocket";
+import { webSocketOpen } from "./WebSocket";
 import Style from "./Style/Style";
 import UndoManager from "./UndoManager/UndoManager";
 import Clipboard from "./Clipboard/Clipboard";
@@ -20,7 +22,6 @@ import DataManagerBase from "./Database/Manager/DataManagerBase";
 import Document from "./Document/Document";
 import Workspace from "./Workspace/Workspace";
 import Snapshot from "./Snapshot/Snapshot";
-import { getFeatures, setFeature } from "./Rest/RestBase";
 import Rest from "./Rest/Rest";
 import { ROSBridge, MainROSBridge } from "./ROSBridge/ROSBridge";
 import Role from "./Role/Role";
@@ -34,6 +35,7 @@ export {
   CONSTANTS,
   MasterDB,
   AuthWebSocket,
+  webSocketOpen,
   Style,
   UndoManager,
   Clipboard,
@@ -50,8 +52,6 @@ export {
   Workspace,
   Snapshot,
   Rest,
-  getFeatures,
-  setFeature,
   ROSBridge,
   MainROSBridge
 };
