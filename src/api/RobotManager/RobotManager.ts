@@ -10,6 +10,7 @@ import {
 } from "../Utils/constants";
 import Robot from "./Robot";
 import Rest from "../Rest/Rest";
+import { webSocketOpen } from "../WebSocket";
 import {
   getRequestDate,
   getRequestLevels,
@@ -348,14 +349,14 @@ class RobotManager {
    * @param {LogQueryParam} queryParam : Object to construct query string
    * @returns {Promise} Request promise
    */
-  static openLogs(queryParam: LogQueryParam): Promise<WebSocket> {
+  static openLogs(queryParam: LogQueryParam): WebSocket {
     const splits = RobotManager.getLogsParam(queryParam).split("&");
     let params = new URLSearchParams();
     for (const split in splits) {
       const [key, value] = split.split("=");
       params.set(value ? key : "limit", value ?? key);
     }
-    return Rest.open({ path: "/ws/logs", params });
+    return webSocketOpen({ path: "/ws/logs", params });
   }
 
   //========================================================================================
