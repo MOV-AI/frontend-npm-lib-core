@@ -23,8 +23,8 @@ class Document {
 
   /**
    * Create instance of DocumentV1 or DocumentV2
-   * @param {*} args : Constructor arguments
-   * @param {string} docVersion : Specify document version
+   * Xparam {*} args : Constructor arguments
+   * Xparam {string} docVersion : Specify document version
    * @returns
    */
   static factory(args, docVersion = "v1") {
@@ -34,8 +34,8 @@ class Document {
 
   /**
    * Forward create call to the correct Document version
-   * @param {Object} args Object with arguments to forward
-   * @param {String} docVersion Document version to use
+   * Xparam {object} args Object with arguments to forward
+   * Xparam {string} docVersion Document version to use
    */
   static create(args, docVersion = "v1") {
     return withDocVersion(docVersion).create(args);
@@ -43,8 +43,8 @@ class Document {
 
   /**
    * Forward delete call to the correct version
-   * @param {Object} args Object with arguments to forward
-   * @param {String} docVersion Document version to use
+   * Xparam {object} args Object with arguments to forward
+   * Xparam {string} docVersion Document version to use
    */
   static delete(args, docVersion = "v1") {
     return withDocVersion(docVersion).delete(args);
@@ -52,10 +52,10 @@ class Document {
 
   /**
    * Parse path into an object
-   * @param {String} path The path to parse
-   * @param {String} dtype Default type
+   * Xparam {string} path The path to parse
+   * Xparam {string} dtype Default type
    *
-   * @return {Object} An object with workspace, type, name, version
+   * @return {object} An object with workspace, type, name, version
    */
 
   static parsePath(_path, dtype = "Node") {
@@ -77,7 +77,7 @@ class Document {
   /**
    * Check if document exists in redis or archive
    *
-   * @param {*} data
+   * Xparam {*} data
    * {
    *  name      : document name
    *  scope     : document scope (Annotation, Callback, ...)

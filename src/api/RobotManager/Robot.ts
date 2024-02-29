@@ -138,8 +138,8 @@ class Robot {
 
   /**
    * Set robot data
-   * @param key : Robot data key name
-   * @param value : Robot data key value
+   * Xparam key : Robot data key name
+   * Xparam value : Robot data key value
    */
   setData(key: keyof RobotModel, value: any) {
     (this.data as { [key: string]: any })[key] = value;
@@ -159,7 +159,7 @@ class Robot {
 
   /**
    * Get data value for given key
-   * @param key : Robot data key name
+   * Xparam key : Robot data key name
    * @returns Robot data key value
    */
   getDataKeyValue(key: keyof RobotModel) {
@@ -168,7 +168,7 @@ class Robot {
 
   /**
    * Get robot IP
-   * @param {Function} callback: Function to be called on robot IP data load
+   * Xparam {Function} callback: Function to be called on robot IP data load
    */
   getIP(callback: Function = EMPTY_FUNCTION) {
     if (this.ip !== "") return this.ip;
@@ -195,7 +195,7 @@ class Robot {
 
   /**
    * Subscribe to changes in robot's data
-   * @param {Function} callback: Function to be called on get logs
+   * Xparam {Function} callback: Function to be called on get logs
    */
   subscribeToData(callback: Function) {
     const subscriptionId = Utils.randomGuid();
@@ -254,7 +254,7 @@ class Robot {
 
   /**
    * Subscribe to the robot logs
-   * @param {Function} callback: Function to be called on get logs
+   * Xparam {Function} callback: Function to be called on get logs
    */
   subscribeToLogs(callback: Function) {
     const subscriptionId = Utils.randomGuid();
@@ -266,7 +266,7 @@ class Robot {
 
   /**
    * Unsubscribe to the robot logs
-   * @param {string} subscriptionId: Subscription id that needs to be canceled
+   * Xparam {string} subscriptionId: Subscription id that needs to be canceled
    */
   unsubscribeToLogs(subscriptionId: string) {
     if (!subscriptionId || !this.logSubscriptions[subscriptionId]) return;
@@ -277,7 +277,7 @@ class Robot {
   /**
    * Unsubscribe to the robot data
    *
-   * @param {String} subscriptionId: Subscription id that needs to be canceled
+   * Xparam {string} subscriptionId: Subscription id that needs to be canceled
    */
   unsubscribeToData(subscriptionId: string) {
     if (!subscriptionId || !this.dataSubscriptions[subscriptionId]) return;
@@ -361,7 +361,7 @@ class Robot {
   /**
    * Function to be called when robot IP subscribed loads
    *
-   * @param {Robot} data: Data returned on IP subscribe event
+   * Xparam {Robot} data: Data returned on IP subscribe event
    */
   private _loadIP(robot: Robot) {
     return (data: LoadRobotParam) => {

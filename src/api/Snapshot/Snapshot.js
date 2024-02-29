@@ -4,12 +4,12 @@ const Snapshot = {};
 
 /**
  * Create a snapshot from a specific document
- * @param {Object} target Object with the following params
- * @param {Object} source Object with the following params
- *  @param {String} workspace Target workspace where the document will be
- *  @param {String} type Type of the document
- *  @param {String} name Source name of the document
- *  @param {String} version Source version of the snapshot
+ * Xparam {object} target Object with the following params
+ * Xparam {object} source Object with the following params
+ *  Xparam {string} workspace Target workspace where the document will be
+ *  Xparam {string} type Type of the document
+ *  Xparam {string} name Source name of the document
+ *  Xparam {string} version Source version of the snapshot
  */
 Snapshot._create = ({ target, body = {} }) => {
   const { workspace, type, name, version } = target;
@@ -21,12 +21,12 @@ Snapshot._create = ({ target, body = {} }) => {
 
 /**
  * Create a snapshot from a specific document
- * @param {Object} target Object with the following params
- *  @param {String} workspace Target workspace where the document will be
- *  @param {String} type Type of the document
- *  @param {String} name Source name of the document
- *  @param {String} version Source version of the snapshot
- * @param {Object} body Document data
+ * Xparam {object} target Object with the following params
+ *  Xparam {string} workspace Target workspace where the document will be
+ *  Xparam {string} type Type of the document
+ *  Xparam {string} name Source name of the document
+ *  Xparam {string} version Source version of the snapshot
+ * Xparam {object} body Document data
  */
 Snapshot.create = ({ target, body = {} }) => {
   Snapshot._create({ target, body: { data: body } });
@@ -34,12 +34,12 @@ Snapshot.create = ({ target, body = {} }) => {
 
 /**
  * Create document by referencing an existing document
- * @param {Object} target Object with the following params
- * @param {Object} source Object with the following params
- *  @param {String} workspace Target workspace where the document will be
- *  @param {String} type Type of the document
- *  @param {String} name Source name of the document
- *  @param {String} version Source version of the snapshot
+ * Xparam {object} target Object with the following params
+ * Xparam {object} source Object with the following params
+ *  Xparam {string} workspace Target workspace where the document will be
+ *  Xparam {string} type Type of the document
+ *  Xparam {string} name Source name of the document
+ *  Xparam {string} version Source version of the snapshot
  */
 Snapshot.createByRef = ({ target, source }) => {
   const body = {
@@ -58,10 +58,10 @@ Snapshot.delete = () => {
 
 /**
  * Get the data of a snapshot
- * @param {String} workspace Workspace to read from
- * @param {String} type Type of the document
- * @param {String} name Name of the snapshot
- * @param {String} version Version of the snapshot
+ * Xparam {string} workspace Workspace to read from
+ * Xparam {string} type Type of the document
+ * Xparam {string} name Name of the snapshot
+ * Xparam {string} version Version of the snapshot
  */
 Snapshot.read = ({ workspace, type, name, version }) => {
   const path = `v2/db/${workspace}/${type}/${name}/${version}`;
@@ -71,12 +71,12 @@ Snapshot.read = ({ workspace, type, name, version }) => {
 
 /**
  * Create document in the global workspace
- * @param {Object} target Object with the following params
- * @param {Object} source Object with the following params
- *  @param {String} workspace Target workspace where the document will be
- *  @param {String} type Type of the document
- *  @param {String} name Source name of the document
- *  @param {String} version Source version of the snapshot
+ * Xparam {object} target Object with the following params
+ * Xparam {object} source Object with the following params
+ *  Xparam {string} workspace Target workspace where the document will be
+ *  Xparam {string} type Type of the document
+ *  Xparam {string} name Source name of the document
+ *  Xparam {string} version Source version of the snapshot
  */
 Snapshot.restore = ({ target, source }) => {
   target.workspace = "global";
@@ -86,9 +86,9 @@ Snapshot.restore = ({ target, source }) => {
 
 /**
  * Get all the snapshots of a document
- * @param {String} workspace Workspace to read from
- * @param {String} type Type of the document
- * @param {String} name Name of the document
+ * Xparam {string} workspace Workspace to read from
+ * Xparam {string} type Type of the document
+ * Xparam {string} name Name of the document
  */
 Snapshot.getAll = ({ workspace, type, name }) => {
   const path = `v2/db/${workspace}/${type}/${name}`;

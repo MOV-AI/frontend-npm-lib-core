@@ -136,7 +136,7 @@ export default class Authentication {
 
   /**
    * Logout from app : Remove tokens locally and do request to remove from server
-   * @param redirect : Redirect location after successfull logout
+   * Xparam redirect : Redirect location after successfull logout
    */
   static logout = (redirect = "") => {
     // Call logout method to invalid token from server side
