@@ -10,7 +10,7 @@ class BaseUser {
   constructor(
     public tokenData = Authentication.getTokenData(),
     public data = null,
-    public timestamp = null,
+    public timestamp: number | null = null,
     public TIMEOUT_MS = 3000
   ) {}
 
@@ -18,8 +18,8 @@ class BaseUser {
     return this.tokenData?.message?.name;
   };
 
-  isSuperUser = (): boolean => {
-    return this.tokenData?.message?.superUser;
+  isSuperUser = () => {
+    return Promise.resolve(this.tokenData?.message?.superUser);
   };
 
   getAllowedApps = async (): Promise<string[]> => {
