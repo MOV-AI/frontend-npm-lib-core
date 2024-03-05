@@ -9,7 +9,9 @@ if (!window.mock)
       for (const key of json.Features)
         features[key] = true;
     console.log("EE: " + (json.Version ?? "2.4.0 (assumed)") + "\nFEATURES: " + Object.keys(features).join(","));
-  }));
+  })).catch((err) => {
+    console.log("NO FEATURES", err.statusText ?? err);
+  });
 
 const Features = {
   get: key => features[key],

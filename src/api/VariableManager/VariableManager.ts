@@ -242,8 +242,8 @@ class VariableManager {
 
   /**
    * Apply variable changes to cachedVariables and variables
-   * @param {VarMap} vars
-   * @param {string} event
+   * Xparam {VarMap} vars
+   * Xparam {string} event
    */
   private applyChanges = (vars: VarMap, event: string) => {
     Object.keys(vars).forEach((scope: string) => {

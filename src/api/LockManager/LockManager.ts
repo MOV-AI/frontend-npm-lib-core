@@ -132,8 +132,8 @@ class LockManager {
 
   /**
    * Apply changes to cachedLocks and locks
-   * @param {LockVar} locks
-   * @param {string} event
+   * Xparam {LockVar} locks
+   * Xparam {string} event
    */
   private applyChanges = (locks: LockVar, event: string) => {
     Object.entries(locks).forEach(([lockName, lock]) => {
