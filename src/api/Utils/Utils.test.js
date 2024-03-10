@@ -1,9 +1,8 @@
-import * as Utils from "./Utils";
+import { groupBy, range, maybeGet, ofNull, difference, flattenObject } from "./Utils";
 /**
  * @jest-environment jsdom
  */
 
-const { groupBy, range, maybeGet, ofNull, difference, flattenObject } = Utils;
 test("group by", () => {
   const array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const dict = groupBy(array, x => x % 3);

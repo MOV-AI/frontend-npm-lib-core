@@ -37,7 +37,6 @@ const KEYS_TO_DISCONSIDER_DEL_EVENT = ["Status"];
  *  Implements more methods that should only be allowed from the RobotManager using protected methods from Robot class
  */
 class ProtectedRobot extends Robot {
-  readonly data: RobotModel;
   getChangedKeysAndResetData() {
     return super.getChangedKeysAndResetData();
   }
@@ -249,7 +248,7 @@ class RobotManager {
 
   private heartbeatMonitor = () => {
     clearTimeout(this.heartbeatTimeout);
-    const robotsWhichChangedOnlineStatus = [];
+    const robotsWhichChangedOnlineStatus: ProtectedRobot[] = [];
     Object.values(this.robots).forEach(robot => {
       const previousOnlineStatus = this.cachedRobots[robot.id].Online;
       this.checkStatus(robot);
