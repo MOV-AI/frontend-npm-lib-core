@@ -28,7 +28,7 @@ import Document from "../Document/Document";
 
 class Robot {
   readonly id: string;
-  protected data: RobotModel;
+  private data: RobotModel;
   private ip: RobotModel["IP"];
   private name?: RobotModel["RobotName"];
   private previousData: RobotModel;
