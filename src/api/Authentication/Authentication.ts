@@ -230,22 +230,16 @@ export default class Authentication {
       token: refreshToken
     };
 
-    return Authentication.request({ url, body })
-      .then(response => {
-        if (response.status != 200) {
-          throw new Error("Not Allowed");
-        }
-        return response.json();
-      })
-      .then(data => {
-        Authentication.storeTokens(data, remember, {
-          storeRefreshToken: false
-        });
-        return true;
-      })
-      .catch(_error => {
-        Authentication.deleteTokens();
-        return false;
-      });
+    const response = await Authentication.request({ url, body });
+    if (response.status != 200)
+      throw new Error("Not Allowed");
+
+    const data = await response.json();
+
+    Authentication.storeTokens(data, remember, {
+      storeRefreshToken: false
+    });
+
+    return true;
   };
 }
