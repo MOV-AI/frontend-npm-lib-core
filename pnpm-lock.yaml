@@ -29,8 +29,8 @@ dependencies:
 
 devDependencies:
   '@tty-pt/scripts':
-    specifier: ^0.5.18
-    version: 0.5.18(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)(esbuild@0.18.20)
+    specifier: ^0.6.0-0
+    version: 0.6.0-0(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
   '@types/jest':
     specifier: 27.5.1
     version: 27.5.1
@@ -3183,8 +3183,8 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
-  /@tty-pt/scripts@0.5.18(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)(esbuild@0.18.20):
-    resolution: {integrity: sha512-0amnK2f0CIvLGV4jorqkKFryBk3rYY6kmO9JJ9mfdABD2IdEgJlee0UVx8Lnq0bDJ7GBb+qHsQWdSPcfj6Ytfw==}
+  /@tty-pt/scripts@0.6.0-0(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9):
+    resolution: {integrity: sha512-8zyxmIpvYaxJU5LfDdKNWRtLLOPjwlwhtD+0RcUpWVsEZpctdYLZok/F/oAZx/ORLtG0LikJzGa+dnVvQ8Nzrw==}
     hasBin: true
     peerDependencies:
       '@types/node': ^20.10.4
@@ -3222,7 +3222,9 @@ packages:
       copy-webpack-plugin: 12.0.2(webpack@5.90.1)
       css-loader: 6.10.0(webpack@5.90.1)
       ejs-loader: 0.5.0
+      esbuild: 0.20.1
       esbuild-loader: 4.1.0(webpack@5.90.1)
+      esbuild-plugin-external-global: 1.0.1
       esbuild-webpack-plugin: 1.1.0(webpack@5.90.1)
       eslint: 8.57.0
       eslint-plugin-react: 7.34.0(eslint@8.57.0)
@@ -3240,7 +3242,7 @@ packages:
       style-loader: 3.3.4(webpack@5.90.1)
       swc-loader: 0.2.6(@swc/core@1.4.6)(webpack@5.90.1)
       swc-webpack-plugin: 1.0.0(@swc/core@1.4.6)(webpack@5.90.1)
-      terser-webpack-plugin: 5.3.10(@swc/core@1.4.6)(esbuild@0.18.20)(webpack@5.90.1)
+      terser-webpack-plugin: 5.3.10(@swc/core@1.4.6)(esbuild@0.20.1)(webpack@5.90.1)
       ts-loader: 9.5.1(typescript@5.4.2)(webpack@5.90.1)
       tslib: 2.6.2
       typescript: 5.4.2
@@ -3267,7 +3269,6 @@ packages:
       - bufferutil
       - canvas
       - encoding
-      - esbuild
       - node-notifier
       - sockjs-client
       - supports-color
@@ -5571,6 +5572,10 @@ packages:
 
   /esbuild-plugin-alias@0.2.1:
     resolution: {integrity: sha512-jyfL/pwPqaFXyKnj8lP8iLk6Z0m099uXR45aSN8Av1XD4vhvQutxxPzgA2bTcAwQpa1zCXDcWOlhFgyP3GKqhQ==}
+    dev: true
+
+  /esbuild-plugin-external-global@1.0.1:
+    resolution: {integrity: sha512-NDzYHRoShpvLqNcrgV8ZQh61sMIFAry5KLTQV83BPG5iTXCCu7h72SCfJ97bW0GqtuqDD/1aqLbKinI/rNgUsg==}
     dev: true
 
   /esbuild-register@3.5.0(esbuild@0.18.20):
@@ -9965,6 +9970,32 @@ packages:
       '@jridgewell/trace-mapping': 0.3.22
       '@swc/core': 1.4.6
       esbuild: 0.18.20
+      jest-worker: 27.5.1
+      schema-utils: 3.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.27.0
+      webpack: 5.90.1(@swc/core@1.4.6)(esbuild@0.18.20)(webpack-cli@5.1.4)
+    dev: true
+
+  /terser-webpack-plugin@5.3.10(@swc/core@1.4.6)(esbuild@0.20.1)(webpack@5.90.1):
+    resolution: {integrity: sha512-BKFPWlPDndPs+NGGCr1U59t0XScL5317Y0UReNrHaw9/FwhPENlq6bfgs+4yPfyP51vqC1bQ4rp1EfXW5ZSH9w==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      '@swc/core': '*'
+      esbuild: '*'
+      uglify-js: '*'
+      webpack: ^5.1.0
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      esbuild:
+        optional: true
+      uglify-js:
+        optional: true
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.22
+      '@swc/core': 1.4.6
+      esbuild: 0.20.1
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2

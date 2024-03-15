@@ -6,8 +6,8 @@
     "registry": "https://npm.pkg.github.com/mov-ai"
   },
   "main": "dist/mov-core.umd.js",
-  "!browser": "dist/mov-core.web.js",
-  "!module": "dist/mov-core.mjs",
+  "browser": "dist/mov-core.web.js",
+  "module": "dist/mov-core.mjs",
   "entry": "./src/mov-core.ts",
   "library": "Movai",
   "scripts": {
@@ -33,7 +33,7 @@
   "license": "ISC",
   "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
   "devDependencies": {
-    "@tty-pt/scripts": "^0.5.9",
+    "@tty-pt/scripts": "^0.6.0-1",
     "@types/jest": "27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.11.27",
