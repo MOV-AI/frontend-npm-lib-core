@@ -1,4 +1,3 @@
-import { Maybe } from "monet";
 import { ALPHANUMERIC_REGEX, GLOBAL_WORKSPACE } from "./constants";
 import _isEmpty from "lodash/isEmpty";
 import _isArray from "lodash/isArray";
@@ -7,30 +6,30 @@ import _transform from "lodash/transform";
 import { deepEqual as equal } from "fast-equals";
 import Role from "../Role/Role";
 
-
-export const ofNull = x => Maybe.fromNull(x);
+ export const ofNull = x => x !== null && x !== undefined ? x : null;
 
 export const getter = prop => obj => obj[prop];
 
 export const dot = f => g => x => f(g(x));
 
-export const maybeGet = prop => dot(ofNull)(getter(prop));
+export const maybeGet = prop => obj => {
+  const result = obj[prop];
+  return result !== null && result !== undefined ? result : null;
+};
 
 export const range = (init, end) => {
-  const { i, e } = Maybe.fromNull(end)
-    .map(_x => ({ i: init, e: end }))
-    .orSome({ i: 0, e: init });
+  const start = end !== undefined ? init : 0;
+  const stop = end !== undefined ? end : init;
   const ans = [];
-  for (let j = i; j < e; j++) ans.push(j);
+  for (let j = start; j < stop; j++) ans.push(j);
   return ans;
 };
 
 export const randomInt = (a, b) => Math.floor(random(a, b));
 
 export const random = (a, b) => {
-  const { init, end } = Maybe.fromNull(b)
-    .map(_x => ({ init: a, end: b }))
-    .orSome({ init: 0, end: a });
+  const init = b !== undefined ? a : 0;
+  const end = b !== undefined ? b : a;
   return init + (end - init) * Math.random();
 };
 

@@ -250,9 +250,11 @@ class RobotManager {
     clearTimeout(this.heartbeatTimeout);
     const robotsWhichChangedOnlineStatus: ProtectedRobot[] = [];
     Object.values(this.robots).forEach(robot => {
+      if (!this.cachedRobots[robot.id])
+        return;
       const previousOnlineStatus = this.cachedRobots[robot.id].Online;
       this.checkStatus(robot);
-      if (this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
+      if (this.cachedRobots[robot.id]?.Online !== previousOnlineStatus) {
         robotsWhichChangedOnlineStatus.push(robot);
       }
     });

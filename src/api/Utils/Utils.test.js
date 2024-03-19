@@ -17,22 +17,6 @@ test("range", () => {
   expect(range(10, 3)).toStrictEqual([]);
 });
 
-test("Maybe get", () => {
-  const a = { b: { c: "alive" } };
-  const cat = ofNull(a)
-    .flatMap(maybeGet("b"))
-    .flatMap(maybeGet("c"))
-    .orSome("dead");
-
-  const deadCat = ofNull(a)
-    .flatMap(maybeGet("b"))
-    .flatMap(maybeGet("d"))
-    .orSome("dead");
-
-  expect("alive").toStrictEqual(cat);
-  expect("dead").toStrictEqual(deadCat);
-});
-
 test("Differences", () => {
   const a = { b: { c: "alive" } };
   const b = { b: { c: "alive" } };

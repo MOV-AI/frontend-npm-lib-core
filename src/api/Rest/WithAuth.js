@@ -6,12 +6,11 @@ const { checkLogin, getToken } = Authentication;
 const withAuth = (obj, props = {}) => {
   const handler = {
     __checkLogin: (target, prop) => {
-      return args =>
-        checkLogin().then(res => {
+      return async args => {
+          const res = await checkLogin();
           // check login error
-          if (!res) {
+          if (!res)
             throw new AuthException("Login error");
-          }
 
           // inject authorization headers
           const customHeaders = {
@@ -21,7 +20,7 @@ const withAuth = (obj, props = {}) => {
 
           // return the original call with custom headers and original arguments
           return Reflect.get(target, prop)({ customHeaders, ...args });
-        });
+      }
     },
 
     get: function (target, prop) {
