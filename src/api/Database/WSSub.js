@@ -26,10 +26,10 @@ const DEFAULT_METHOD = () => {
  */
 class WSSub {
   constructor() {
-    const isHttps = window.location.protocol === "https:";
-    this.host = `${window.location.hostname}:${window.location.port}`;
+    const isHttps = globalThis.location?.protocol === "https:";
+    this.host = `${globalThis.location?.hostname}:${globalThis.location?.port}`;
     this.url = `${isHttps ? "wss" : "ws"}://${this.host}/ws/subscriber`;
-    this.REST_API = `${window.location.protocol}//${this.host}/api/v1/`;
+    this.REST_API = `${globalThis.location?.protocol}//${this.host}/api/v1/`;
     this.RECONN_TIMEOUT = 3000;
     this.RECONN_VALIDATION_TIMEOUT = 5000;
     this.RESEND_TIMEOUT = 1000;

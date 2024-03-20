@@ -4,7 +4,7 @@ class BroadcastChannel {
   constructor(appName) {
     this.appName = appName;
     this.subscribed_events = {};
-    this.instance = new window.BroadcastChannel("channel");
+    this.instance = new globalThis.BroadcastChannel("channel");
     this.instance.onmessage = this._onMessage;
     console.log("BroadcastChannel start for", this.appName);
   }

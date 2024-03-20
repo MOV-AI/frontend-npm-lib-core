@@ -24,15 +24,15 @@ export default class Authentication {
   static DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
 
   static getToken = () => {
-    return window.localStorage.getItem(STORAGE_KEYS.TOKEN) || false;
+    return globalThis.localStorage?.getItem(STORAGE_KEYS.TOKEN) || false;
   };
 
   static getRefreshToken = () => {
-    return window.localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) || false;
+    return globalThis.localStorage?.getItem(STORAGE_KEYS.REFRESH_TOKEN) || false;
   };
 
   static getRememberToken = () => {
-    return window.localStorage.getItem(STORAGE_KEYS.TOKEN_REMEMBER) || false;
+    return globalThis.localStorage?.getItem(STORAGE_KEYS.TOKEN_REMEMBER) || false;
   };
 
   static decodeToken = (token: string | boolean) => {
@@ -73,7 +73,7 @@ export default class Authentication {
   static isNewToken = (token: Token) => !!token[NEW_TOKEN_VERSION_ID];
 
   static getSessionFlag = () => {
-    return window.sessionStorage.getItem(STORAGE_KEYS.SESSION) || false;
+    return globalThis.sessionStorage?.getItem(STORAGE_KEYS.SESSION) || false;
   };
 
   static storeTokens = (
@@ -81,20 +81,20 @@ export default class Authentication {
     remember: boolean,
     options = { storeRefreshToken: true }
   ) => {
-    window.localStorage.setItem(STORAGE_KEYS.TOKEN, data["access_token"]);
+    globalThis.localStorage.setItem(STORAGE_KEYS.TOKEN, data["access_token"]);
     const refreshToken = data["refresh_token"];
     if (options.storeRefreshToken && refreshToken) {
-      window.localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+      globalThis.localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
     }
-    window.localStorage.setItem(STORAGE_KEYS.TOKEN_REMEMBER, `${remember}`);
-    window.sessionStorage.setItem(STORAGE_KEYS.SESSION, `${true}`);
+    globalThis.localStorage.setItem(STORAGE_KEYS.TOKEN_REMEMBER, `${remember}`);
+    globalThis.sessionStorage.setItem(STORAGE_KEYS.SESSION, `${true}`);
   };
 
   static deleteTokens = () => {
-    window.localStorage.removeItem(STORAGE_KEYS.TOKEN);
-    window.localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    window.localStorage.removeItem(STORAGE_KEYS.TOKEN_REMEMBER);
-    window.sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+    globalThis.localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    globalThis.localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+    globalThis.localStorage.removeItem(STORAGE_KEYS.TOKEN_REMEMBER);
+    globalThis.sessionStorage.removeItem(STORAGE_KEYS.SESSION);
   };
 
   static login = async (
@@ -148,7 +148,7 @@ export default class Authentication {
       // Clear Tokens from client side
       Authentication.deleteTokens();
       // Redirect the user to login page
-      window.location.replace(redirect || window.location.origin);
+      globalThis.location.replace(redirect || globalThis.location.origin);
     });
   };
 

@@ -18,8 +18,8 @@ RestBase.encodeURI = data => {
  * Xparam {string} path - Relative path
  */
 RestBase.getUrl = ({ path, search = {} }) => {
-  const protocol = `${window.location.protocol}`;
-  const host = `${window.location.host}`;
+  const protocol = `${globalThis.location?.protocol}`;
+  const host = `${globalThis.location?.host}`;
 
   const params = new URLSearchParams(RestBase.encodeURI(search)).toString();
   const queryParams = params ? `?${params}` : "";

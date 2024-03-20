@@ -205,7 +205,7 @@ const SAME_TAB = "_self";
  */
 const loadLayout = (e, ctrlKey = false) => {
   window.open(
-    `${window.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.URL}`,
+    `${globalThis.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.URL}`,
     ctrlKey ? NEW_TAB : SAME_TAB
   );
 };
@@ -216,8 +216,8 @@ const loadLayout = (e, ctrlKey = false) => {
  * Xparam {boolean} ctrlKey ctrlKey pressed
  */
 const loadApplication = (e, ctrlKey = false) => {
-  window.open(
-    `${window.location.origin}/${API_VERSION}/${e.URL}/`,
+  globalThis.open(
+    `${globalThis.location.origin}/${API_VERSION}/${e.URL}/`,
     ctrlKey ? NEW_TAB : SAME_TAB
   );
 };
@@ -227,7 +227,7 @@ const loadApplication = (e, ctrlKey = false) => {
  * Xparam {object} e application's object
  */
 const loadUrl = e => {
-  window.open(`${e.URL}`);
+  globalThis.open(`${e.URL}`);
 };
 
 /**

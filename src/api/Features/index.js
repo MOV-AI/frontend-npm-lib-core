@@ -2,7 +2,7 @@ import yaml from "js-yaml";
 import Document from "../Document/Document"
 let features = {};
 
-if (!window.mock)
+if (!globalThis.mock)
   Document.factory({ type: "Configuration", name: "ee" }).read().then(((val) => {
     const json = yaml.load(val.Yaml);
     if (json.Features?.length)
