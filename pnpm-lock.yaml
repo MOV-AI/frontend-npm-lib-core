@@ -26,8 +26,8 @@ dependencies:
 
 devDependencies:
   '@tty-pt/scripts':
-    specifier: ^0.6.0-10
-    version: 0.6.0-10(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
+    specifier: ^0.6.0-14
+    version: 0.6.0-14(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
   '@types/jest':
     specifier: 27.5.1
     version: 27.5.1
@@ -49,9 +49,6 @@ devDependencies:
   http-proxy-middleware:
     specifier: ^2.0.6
     version: 2.0.6
-  typescript:
-    specifier: ^5.4.2
-    version: 5.4.2
 
 packages:
 
@@ -3066,8 +3063,8 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
-  /@tty-pt/scripts@0.6.0-10(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9):
-    resolution: {integrity: sha512-qXbX2LuW5z4NXADOC/RDQhiE6Y7sZhkR7snvhZpLEw4lo/GoTVdtkF5OGn+sp0gN3r2hrRjg/Z5YWxnkRLES9Q==}
+  /@tty-pt/scripts@0.6.0-14(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9):
+    resolution: {integrity: sha512-JUgxJqe4PPmP0Yhdv/hXNW4TAFKbg2MxSzupt/YVtkKJbmj/P5EYsAdkuY7gaH8NCz12ZdOThx6hgOiUuU2xsA==}
     hasBin: true
     peerDependencies:
       '@types/node': ^20.10.4

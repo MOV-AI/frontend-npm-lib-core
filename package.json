@@ -5,20 +5,20 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mov-ai"
   },
-  "main": "dist/mov-core.cjs.js",
-  "browser": "dist/mov-core.web.js",
-  "module": "dist/mov-core.js",
+  "main": "cjs/mov-core.js",
+  "browser": "web/mov-core.js",
+  "module": "esm/mov-core.js",
   "entry": "src/mov-core.ts",
-  "types": "dist/mov-core.d.ts",
+  "types": "types/mov-core.d.ts",
   "library": "Movai",
   "scripts": {
     "lock": "mv ../../pnpm-workspace.yaml ../../pnpm-workspace.yaml.bak ; pnpm i ; mv ../../pnpm-workspace.yaml.bak ../../pnpm-workspace.yaml",
     "test": "scripts test",
     "testDev": "jest --watchAll",
     "testStatic": "webpack --mode=development && echo 'Open browser at http://localhost:3030/test/index.html' && node test/server.js",
-    "build": "tsc --emitDeclarationOnly && scripts build",
+    "build": "scripts build",
     "watch": "scripts watch",
-    "clean": "rm -r node_modules; rm package-lock.json"
+    "clean": "rm -rf cjs esm web types"
   },
   "repository": {
     "type": "git",
@@ -34,15 +34,14 @@
   "license": "ISC",
   "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
   "devDependencies": {
-    "@tty-pt/scripts": "^0.6.0-10",
+    "@tty-pt/scripts": "^0.6.0-14",
     "@types/jest": "27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.11.27",
     "@types/react": "^18.2.55",
     "@types/roslib": "^1.1.8",
     "express": "^4.18.1",
-    "http-proxy-middleware": "^2.0.6",
-    "typescript": "^5.4.2"
+    "http-proxy-middleware": "^2.0.6"
   },
   "dependencies": {
     "fast-equals": "^5.0.1",
@@ -53,7 +52,10 @@
     "rxjs": "^7.3.0"
   },
   "files": [
-    "dist",
+    "cjs",
+    "web",
+    "esm",
+    "types",
     "resources"
   ],
   "typesVersions": {

@@ -12,7 +12,6 @@ import * as Utils from "./Utils/Utils";
 import MasterDB from "./Database/MasterDB";
 import AuthWebSocket from "./AuthWebSocket/AuthWebSocket";
 import { webSocketOpen } from "./WebSocket";
-import Style from "./Style/Style";
 import UndoManager from "./UndoManager/UndoManager";
 import Clipboard from "./Clipboard/Clipboard";
 import WSSub from "./Database/WSSub";
@@ -36,7 +35,6 @@ export {
   MasterDB,
   AuthWebSocket,
   webSocketOpen,
-  Style,
   UndoManager,
   Clipboard,
   WSSub,
