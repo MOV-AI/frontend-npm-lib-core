@@ -11,6 +11,9 @@
   "entry": "src/mov-core.ts",
   "types": "types/mov-core.d.ts",
   "library": "Movai",
+  "external": {
+    "lodash": "_"
+  },
   "scripts": {
     "lock": "mv ../../pnpm-workspace.yaml ../../pnpm-workspace.yaml.bak ; pnpm i ; mv ../../pnpm-workspace.yaml.bak ../../pnpm-workspace.yaml",
     "test": "scripts test",
@@ -34,7 +37,7 @@
   "license": "ISC",
   "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
   "devDependencies": {
-    "@tty-pt/scripts": "^0.6.0-14",
+    "@tty-pt/scripts": "^0.6.0-27",
     "@types/jest": "27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.11.27",
