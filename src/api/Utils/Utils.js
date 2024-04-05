@@ -204,7 +204,7 @@ const SAME_TAB = "_self";
  * Currently, the layout viewer is distributed in the mov-fe-app-ide package
  */
 const loadLayout = (e, ctrlKey = false) => {
-  window.open(
+  globalThis.open(
     `${globalThis.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.URL}`,
     ctrlKey ? NEW_TAB : SAME_TAB
   );

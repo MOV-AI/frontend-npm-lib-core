@@ -26,8 +26,8 @@ dependencies:
 
 devDependencies:
   '@tty-pt/scripts':
-    specifier: ^0.6.0-28
-    version: 0.6.0-28(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
+    specifier: ^0.6.0-29
+    version: 0.6.0-29(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
   '@types/jest':
     specifier: 27.5.1
     version: 27.5.1
@@ -3077,8 +3077,8 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
-  /@tty-pt/scripts@0.6.0-28(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9):
-    resolution: {integrity: sha512-sSnyF5+QxPO7xBsEcXC0iTm9et+KCqrXROKAZ648yfUhr7dA6lNnh5athXWDAQwX6gOKsA8FcuWN8IpQGNGrFg==}
+  /@tty-pt/scripts@0.6.0-29(@swc/core@1.4.6)(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9):
+    resolution: {integrity: sha512-/4gZfT5k2QuwkfsiOjJouRnF3Ab/NjlazWHycVuK5RyX5xiD1J8w5B8aQK78O7TgrWSwIuXpW+AGCxN2gWRUOA==}
     hasBin: true
     peerDependencies:
       '@types/node': ^20.11.30

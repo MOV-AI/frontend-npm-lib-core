@@ -1,3 +1,3 @@
 jest.mock('roslib', () => {
 });
-window.mock = true;
+globalThis.mock = true;
