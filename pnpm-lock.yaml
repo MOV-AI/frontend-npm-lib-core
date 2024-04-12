@@ -26,8 +26,8 @@ dependencies:
 
 devDependencies:
   '@mov-ai/mov-fe-lib-scripts':
-    specifier: ^0.6.0-34
-    version: 0.6.0-36(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
+    specifier: ^0.6.0-37
+    version: 0.6.0-37(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
   '@types/jest':
     specifier: 27.5.1
     version: 27.5.1
@@ -2118,8 +2118,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@mov-ai/mov-fe-lib-scripts@0.6.0-36(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9):
-    resolution: {integrity: sha512-wmglPTlTDS10qSMgpwIQwy7X+z832ELzoHARbnM3XdB/qB8tI+urn/yxL6/qqpyijPQ0Dc3IYV/qwcarrtAZfw==, tarball: https://npm.pkg.github.com/download/@mov-ai/mov-fe-lib-scripts/0.6.0-36/dc3f520ba705995ee5ae4b32507102f5ffb2eca8}
+  /@mov-ai/mov-fe-lib-scripts@0.6.0-37(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9):
+    resolution: {integrity: sha512-Gs4qtTao4n/Qxyq/SXX0LjcaWfWh5IE9piE40w+sBiBycPybvDpySBoAx3Lfd4CsU1drFRyu4R+yQjWwdZ1FCw==, tarball: https://npm.pkg.github.com/download/@mov-ai/mov-fe-lib-scripts/0.6.0-37/98751c720fec4dd3feecb49fca10afdccd4c94be}
     hasBin: true
     peerDependencies:
       '@types/node': ^20.11.30
