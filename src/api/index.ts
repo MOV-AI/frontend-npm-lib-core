@@ -1,6 +1,7 @@
 export { default as  Features } from "./Features";
 import Acl from "./Acl/Acl";
 import Authentication from "./Authentication/Authentication";
+export * from "./Authentication/authSub";
 import InternalUser from "./User/InternalUser";
 import Ldap from "./Ldap/Ldap";
 import * as CONSTANTS from "./Utils/constants";

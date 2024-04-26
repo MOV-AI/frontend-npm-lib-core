@@ -19,7 +19,9 @@
     }
   },
   "external": {
-    "lodash": "_"
+    "lodash": "global _",
+    "react": "global React",
+    "@mov-ai/mov-fe-lib-sub": "global ttySub"
   },
   "scripts": {
     "lock": "mv ../../pnpm-workspace.yaml ../../pnpm-workspace.yaml.bak ; pnpm i ; mv ../../pnpm-workspace.yaml.bak ../../pnpm-workspace.yaml",
@@ -45,6 +47,7 @@
   "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
   "devDependencies": {
     "@mov-ai/mov-fe-lib-scripts": "^0.6.0-37",
+    "@mov-ai/mov-fe-lib-sub": "2.2.31-2",
     "@types/jest": "27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.11.27",
@@ -52,6 +55,12 @@
     "@types/roslib": "^1.1.8",
     "express": "^4.18.1",
     "http-proxy-middleware": "^2.0.6"
+  },
+  "peerDependencies": {
+    "@mov-ai/mov-fe-lib-sub": "2.2.31-2"
+  },
+  "optionalDependencies": {
+    "react": "^18.2.0"
   },
   "dependencies": {
     "fast-equals": "^5.0.1",

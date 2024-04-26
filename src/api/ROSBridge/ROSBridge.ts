@@ -1,4 +1,5 @@
 import { Ros, Service, ServiceRequest } from "roslib";
+import { authSub } from "./../Authentication/authSub";
 /**
  * Experimental ROSBridge wrapper
  * - Add promises to services
@@ -32,6 +33,10 @@ export class ROSBridge {
 
   constructor(url: string = BRIDGE_CONNECTION_DEFAULT) {
     this.url = url;
+    authSub.subscribe(({ loggedIn }) => {
+      if (loggedIn)
+        this.connect();
+    });
   }
 
   setURL(url: string): ROSBridge {
@@ -56,9 +61,8 @@ export class ROSBridge {
   }
 
   connect(): ROSBridge {
-    if (!this.ros || !this.ros.isConnected) {
+    if (!this.ros || !this.ros.isConnected)
       this.reconnect();
-    }
     return this;
   }
 
