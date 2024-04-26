@@ -24,10 +24,18 @@ dependencies:
     specifier: ^7.3.0
     version: 7.8.1
 
+optionalDependencies:
+  react:
+    specifier: ^18.2.0
+    version: 18.2.0
+
 devDependencies:
   '@mov-ai/mov-fe-lib-scripts':
     specifier: ^0.6.0-37
     version: 0.6.0-37(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
+  '@mov-ai/mov-fe-lib-sub':
+    specifier: 2.2.31-3
+    version: 2.2.31-3(lodash@4.17.21)
   '@types/jest':
     specifier: 27.5.1
     version: 27.5.1
@@ -2224,6 +2232,17 @@ packages:
       - webpack-bundle-analyzer
       - webpack-dev-server
       - webpack-plugin-serve
+    dev: true
+
+  /@mov-ai/mov-fe-lib-sub@2.2.31-3(lodash@4.17.21):
+    resolution: {integrity: sha512-dvJ7+GWslySvOVkplkP4ecpIfqgaZqU8lXLvbyn6+frKfiHxWNiCA7yr7GRtb/i9+HnrZ+jXQNMcns1lAgchvQ==, tarball: https://npm.pkg.github.com/download/@mov-ai/mov-fe-lib-sub/2.2.31-3/cec5ffa4cf4d841f04087f709a11bc6969f75661}
+    peerDependencies:
+      lodash: ^4.17.21
+    dependencies:
+      lodash: 4.17.21
+    optionalDependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: true
 
   /@ndelangen/get-tarball@3.0.9:
@@ -8098,7 +8117,6 @@ packages:
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
-    dev: true
 
   /js-yaml@3.14.1:
     resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
@@ -8469,7 +8487,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: true
 
   /lower-case@2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
@@ -9589,7 +9606,6 @@ packages:
     requiresBuild: true
     dependencies:
       loose-envify: 1.4.0
-    dev: true
 
   /read-pkg-up@7.0.1:
     resolution: {integrity: sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==}
