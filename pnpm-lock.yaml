@@ -34,8 +34,8 @@ devDependencies:
     specifier: ^0.6.0-39
     version: 0.6.0-39(@types/jest@27.5.1)(@types/node@20.11.27)(@types/react-dom@18.2.21)(@types/react@18.2.64)(@types/testing-library__jest-dom@5.14.9)
   '@mov-ai/mov-fe-lib-sub':
-    specifier: 2.2.31-3
-    version: 2.2.31-3(lodash@4.17.21)
+    specifier: 2.2.31-4
+    version: 2.2.31-4(lodash@4.17.21)
   '@types/jest':
     specifier: 27.5.1
     version: 27.5.1
@@ -2234,8 +2234,8 @@ packages:
       - webpack-plugin-serve
     dev: true
 
-  /@mov-ai/mov-fe-lib-sub@2.2.31-3(lodash@4.17.21):
-    resolution: {integrity: sha512-dvJ7+GWslySvOVkplkP4ecpIfqgaZqU8lXLvbyn6+frKfiHxWNiCA7yr7GRtb/i9+HnrZ+jXQNMcns1lAgchvQ==, tarball: https://npm.pkg.github.com/download/@mov-ai/mov-fe-lib-sub/2.2.31-3/cec5ffa4cf4d841f04087f709a11bc6969f75661}
+  /@mov-ai/mov-fe-lib-sub@2.2.31-4(lodash@4.17.21):
+    resolution: {integrity: sha512-Jz8nl61FxneVz5z/SBx+Yg8bJpuo1Ir/wiaN9ltDcAJ+c9zI4g25Fy235J+/iSyqkpv4ghKKqz61LKLXMQmcdw==, tarball: https://npm.pkg.github.com/download/@mov-ai/mov-fe-lib-sub/2.2.31-4/dbbc1f7ae9bff5af49e3ae8b9a86f8b895df7f90}
     peerDependencies:
       lodash: ^4.17.21
     dependencies:

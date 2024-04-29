@@ -47,7 +47,7 @@
   "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
   "devDependencies": {
     "@mov-ai/mov-fe-lib-scripts": "^0.6.0-39",
-    "@mov-ai/mov-fe-lib-sub": "2.2.31-3",
+    "@mov-ai/mov-fe-lib-sub": "2.2.31-4",
     "@types/jest": "27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.11.27",
@@ -57,7 +57,7 @@
     "http-proxy-middleware": "^2.0.6"
   },
   "peerDependencies": {
-    "@mov-ai/mov-fe-lib-sub": "2.2.31-3"
+    "@mov-ai/mov-fe-lib-sub": "2.2.31-4"
   },
   "optionalDependencies": {
     "react": "^18.2.0"
