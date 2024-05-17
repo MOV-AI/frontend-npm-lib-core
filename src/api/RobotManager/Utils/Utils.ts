@@ -9,7 +9,7 @@ import { SERVICE_LIST } from "../../Utils/constants";
 
 /**
  * @private Get date disconsidering seconds
- * Xparam date : Date to parse
+ * @param date : Date to parse
  * @returns Timestamp of date without seconds
  */
 function getDateWithoutSeconds(date: number): number {
@@ -26,8 +26,8 @@ function getDateWithoutSeconds(date: number): number {
  * Converts the levels in the state for the string for the request
  *  Input: ["INFO", "DEBUG"]
  *  Output: "level=info,debug"
- * Xparam {Array<string>} selectedLevels : Selected levels from filter
- * Xparam {Array<string>} levelsList : All levels list available
+ * @param {Array<string>} selectedLevels : Selected levels from filter
+ * @param {Array<string>} levelsList : All levels list available
  * @returns {string} Request query param string for levels
  */
 export function getRequestLevels(
@@ -52,7 +52,7 @@ export function getRequestLevels(
 
 /**
  * Converts array of selected services into request param
- * Xparam selectedService : Array of selected services
+ * @param selectedService : Array of selected services
  * @returns {string} Request query param string for services
  */
 export function getRequestService(selectedService: Array<string> = []): string {
@@ -75,8 +75,8 @@ export function getRequestService(selectedService: Array<string> = []): string {
 
 /**
  * Convert date timestamp into request query params
- * Xparam selectedFromDate : Logs "From" date
- * Xparam selectedToDate : Logs "To" date
+ * @param selectedFromDate : Logs "From" date
+ * @param selectedToDate : Logs "To" date
  * @returns {string} Request query param string for dates
  */
 export function getRequestDate(
@@ -102,7 +102,7 @@ export function getRequestDate(
  * Converts the levels in the state for the string for the request
  *  Input: [{ key: 0, label: "ui" }, { key: 1, label: "tasks" }]
  *  Output: "&tags=ui,tasks"
- * Xparam selectedTags : Array with selected tags
+ * @param selectedTags : Array with selected tags
  * @returns {string} Request query param string for tags
  */
 export function getRequestTags(selectedTags: Array<LogTag> = []): string {
@@ -117,7 +117,7 @@ export function getRequestTags(selectedTags: Array<LogTag> = []): string {
 
 /**
  * Convert array of selected robots into query param string
- * Xparam {Array<string>} selectedRobots : Selected robot names
+ * @param {Array<string>} selectedRobots : Selected robot names
  * @returns {string} Request query param string for robots
  */
 export function getRequestRobots(selectedRobots: Array<string> = []): string {
@@ -137,7 +137,7 @@ export function getRequestRobots(selectedRobots: Array<string> = []): string {
  * Converts the levels in the state for the string for the request
  *  Input: "r'started\.$"
  *  Output: "&message=r'started\.$"
- * Xparam {string} message : Search message
+ * @param {string} message : Search message
  * @returns {string} Request query param string for message
  */
 export function getRequestMessage(message: string = ""): string {

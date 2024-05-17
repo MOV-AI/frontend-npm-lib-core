@@ -32,7 +32,7 @@ export class User {
 
   /**
    * Get all apps
-   * Xreturns {Promise<array>} List with all apps
+   * @returns {Promise<array>} List with all apps
    */
   getAllApps = () => {
     return Application.getAll();
@@ -40,7 +40,7 @@ export class User {
 
   /**
    * Get user class
-   * Xreturns the class which the user belongs
+   * @returns the class which the user belongs
    */
   getUserClass = () => {
     if (!Authentication.isNewToken(this.tokenData)) return UserV1;
@@ -56,7 +56,7 @@ export class User {
 
   /**
    * Get user data
-   * Xreturns {Promise<User>}
+   * @returns {Promise<User>}
    */
   getData = async (): Promise<InternalUser> => {
     return this.instance.getData();
@@ -64,7 +64,7 @@ export class User {
 
   /**
    * Get allowed apps
-   * Xreturns {Promise<array>} List of allowed apps
+   * @returns {Promise<array>} List of allowed apps
    */
   getAllowedApps = async () => {
     return this.instance.getAllowedApps();
@@ -78,7 +78,7 @@ export class User {
 
   /**
    * Get authenticated username
-   * Xreturns {string} username
+   * @returns {string} username
    */
   getUsername = () => {
     return this.instance.getUsername();
@@ -86,7 +86,7 @@ export class User {
 
   /**
    * Parse token to get superuser information
-   * Xreturns {boolean}
+   * @returns {boolean}
    */
   isSuperUser = async () => {
     return this.instance.isSuperUser();
@@ -94,7 +94,7 @@ export class User {
 
   /**
    * Checks if user is internal
-   * Xreturns {string} username
+   * @returns {string} username
    */
   isInternalUser = () => {
     if (!Authentication.isNewToken(this.tokenData)) return true;
@@ -106,8 +106,8 @@ export class User {
 
   /**
    * Change user password
-   * Xparam {{current_password: string, new_password: string, confirm_password: string}} body : Request body
-   * Xreturns {Promise} Response promise
+   * @param {{current_password: string, new_password: string, confirm_password: string}} body : Request body
+   * @returns {Promise} Response promise
    */
   changePassword = (body: ChangePassword) => {
     return this.instance.changePassword(body);
@@ -121,9 +121,9 @@ export class User {
 
   /**
    * Reset user password
-   * Xparam {string} userId : userId to change password
-   * Xparam {{new_password: string, confirm_password: string}} body : Request body
-   * Xreturns {Promise} Response promise
+   * @param {string} userId : userId to change password
+   * @param {{new_password: string, confirm_password: string}} body : Request body
+   * @returns {Promise} Response promise
    */
   static resetPassword = (userId: string, body: ResetPassword) => {
     return InternalUser.resetPassword(userId, body);
@@ -131,7 +131,7 @@ export class User {
 
   /**
    * Adds the roles and old permissions properties to a user
-   * Xreturns {{ allRoles: [object], allResourcesPermissions: object, resourcesPermissions: object}} returns the user with permissions dictionaries
+   * @returns {{ allRoles: [object], allResourcesPermissions: object, resourcesPermissions: object}} returns the user with permissions dictionaries
    */
   static withPermissions = async (user: UserModel) => {
     user.allRoles = await Role.getAll();
@@ -142,10 +142,10 @@ export class User {
 
   /**
    * Check if user has permission for a resource operation
-   * Xparam {{SuperUser: boolean, Resources: object }} user : The User
-   * Xparam {string} resource : Resource or Scope
-   * Xparam {string} operation :  The operation on the scope - "read", "write", "create" or "delete"
-   * Xreturns {boolean} true if user has permission
+   * @param {{SuperUser: boolean, Resources: object }} user : The User
+   * @param {string} resource : Resource or Scope
+   * @param {string} operation :  The operation on the scope - "read", "write", "create" or "delete"
+   * @returns {boolean} true if user has permission
    */
   static hasPermission = (
     user: UserModel,
@@ -158,13 +158,13 @@ export class User {
 
   /**
    * Create a new User entity
-   * Xparam {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Post model
+   * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Post model
    */
   static create = (model: UserPost) => InternalUser.create(model);
 
   /**
    * Update a new User
-   * Xparam {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Put model
+   * @param {{AccountName: string, Password: string, Roles: [string], CommonName: string, Email: string, ReadOnly: boolean, SuperUser: boolean, SendReport: boolean }} model : The User Put model
    */
   static update = (userId: string, model: UserPut) =>
     InternalUser.update(userId, model);

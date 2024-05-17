@@ -2,16 +2,14 @@ import yaml from "js-yaml";
 import Document from "../Document/Document"
 let features = {};
 
-if (!globalThis.mock)
+if (!window.mock)
   Document.factory({ type: "Configuration", name: "ee" }).read().then(((val) => {
     const json = yaml.load(val.Yaml);
     if (json.Features?.length)
       for (const key of json.Features)
         features[key] = true;
     console.log("EE: " + (json.Version ?? "2.4.0 (assumed)") + "\nFEATURES: " + Object.keys(features).join(","));
-  })).catch((err) => {
-    console.log("NO FEATURES", err.statusText ?? err);
-  });
+  }));
 
 const Features = {
   get: key => features[key],

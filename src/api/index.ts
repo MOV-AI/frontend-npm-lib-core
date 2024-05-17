@@ -1,7 +1,6 @@
 export { default as  Features } from "./Features";
 import Acl from "./Acl/Acl";
 import Authentication from "./Authentication/Authentication";
-export * from "./Authentication/authSub";
 import InternalUser from "./User/InternalUser";
 import Ldap from "./Ldap/Ldap";
 import * as CONSTANTS from "./Utils/constants";
@@ -13,6 +12,7 @@ import * as Utils from "./Utils/Utils";
 import MasterDB from "./Database/MasterDB";
 import AuthWebSocket from "./AuthWebSocket/AuthWebSocket";
 import { webSocketOpen } from "./WebSocket";
+import Style from "./Style/Style";
 import UndoManager from "./UndoManager/UndoManager";
 import Clipboard from "./Clipboard/Clipboard";
 import WSSub from "./Database/WSSub";
@@ -36,6 +36,7 @@ export {
   MasterDB,
   AuthWebSocket,
   webSocketOpen,
+  Style,
   UndoManager,
   Clipboard,
   WSSub,

@@ -12,7 +12,7 @@ on:
 
 jobs:
   CI:
-    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@v2.1
+    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@pnpm
     with:
       deploy: "false"
       run_tests: "true"
