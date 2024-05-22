@@ -1,3 +1,1 @@
-jest.mock('roslib', () => {
-});
-globalThis.mock = true;
+window.mock = true;

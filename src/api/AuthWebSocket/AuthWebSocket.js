@@ -1,7 +1,6 @@
 import Authentication, {
   AuthException
 } from "../Authentication/Authentication";
-import { authSub } from "./../Authentication/authSub";
 
 const { checkLogin, getToken } = Authentication;
 
@@ -23,11 +22,8 @@ export default class AuthWebSocket {
 
     this.wsUrl = url;
     this.socket = false;
+    this.timerId = false;
     this.connected = false;
-    authSub.subscribe(({ loggedIn }) => {
-      if (loggedIn)
-        this.createSocket();
-    });
   }
 
   _onOpen = evt => {
@@ -36,7 +32,17 @@ export default class AuthWebSocket {
 
   _onClose = evt => {
     console.log("Socket Close: ", evt);
+
     this.connected = false;
+
+    // Deal with reconnecting the socket
+    this.socket = null;
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+    }
+    this.timerId = setTimeout(() => {
+      this.createSocket();
+    }, 5000);
   };
 
   _onError = evt => {
@@ -120,6 +126,7 @@ export default class AuthWebSocket {
   close() {
     if (this.socket) {
       this.socket.close();
+      clearTimeout(this.timerId);
       this.connected = false;
     }
   }

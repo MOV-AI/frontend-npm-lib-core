@@ -24,15 +24,15 @@ export default class Authentication {
   static DEFAULT_PROVIDER = INTERNAL_AUTHENTICATION;
 
   static getToken = () => {
-    return globalThis.localStorage?.getItem(STORAGE_KEYS.TOKEN) || false;
+    return window.localStorage.getItem(STORAGE_KEYS.TOKEN) || false;
   };
 
   static getRefreshToken = () => {
-    return globalThis.localStorage?.getItem(STORAGE_KEYS.REFRESH_TOKEN) || false;
+    return window.localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN) || false;
   };
 
   static getRememberToken = () => {
-    return globalThis.localStorage?.getItem(STORAGE_KEYS.TOKEN_REMEMBER) || false;
+    return window.localStorage.getItem(STORAGE_KEYS.TOKEN_REMEMBER) || false;
   };
 
   static decodeToken = (token: string | boolean) => {
@@ -73,7 +73,7 @@ export default class Authentication {
   static isNewToken = (token: Token) => !!token[NEW_TOKEN_VERSION_ID];
 
   static getSessionFlag = () => {
-    return globalThis.sessionStorage?.getItem(STORAGE_KEYS.SESSION) || false;
+    return window.sessionStorage.getItem(STORAGE_KEYS.SESSION) || false;
   };
 
   static storeTokens = (
@@ -81,20 +81,20 @@ export default class Authentication {
     remember: boolean,
     options = { storeRefreshToken: true }
   ) => {
-    globalThis.localStorage.setItem(STORAGE_KEYS.TOKEN, data["access_token"]);
+    window.localStorage.setItem(STORAGE_KEYS.TOKEN, data["access_token"]);
     const refreshToken = data["refresh_token"];
     if (options.storeRefreshToken && refreshToken) {
-      globalThis.localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+      window.localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
     }
-    globalThis.localStorage.setItem(STORAGE_KEYS.TOKEN_REMEMBER, `${remember}`);
-    globalThis.sessionStorage.setItem(STORAGE_KEYS.SESSION, `${true}`);
+    window.localStorage.setItem(STORAGE_KEYS.TOKEN_REMEMBER, `${remember}`);
+    window.sessionStorage.setItem(STORAGE_KEYS.SESSION, `${true}`);
   };
 
   static deleteTokens = () => {
-    globalThis.localStorage.removeItem(STORAGE_KEYS.TOKEN);
-    globalThis.localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    globalThis.localStorage.removeItem(STORAGE_KEYS.TOKEN_REMEMBER);
-    globalThis.sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+    window.localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    window.localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+    window.localStorage.removeItem(STORAGE_KEYS.TOKEN_REMEMBER);
+    window.sessionStorage.removeItem(STORAGE_KEYS.SESSION);
   };
 
   static login = async (
@@ -136,7 +136,7 @@ export default class Authentication {
 
   /**
    * Logout from app : Remove tokens locally and do request to remove from server
-   * Xparam redirect : Redirect location after successfull logout
+   * @param redirect : Redirect location after successfull logout
    */
   static logout = (redirect = "") => {
     // Call logout method to invalid token from server side
@@ -148,7 +148,7 @@ export default class Authentication {
       // Clear Tokens from client side
       Authentication.deleteTokens();
       // Redirect the user to login page
-      globalThis.location.replace(redirect || globalThis.location.origin);
+      window.location.replace(redirect || window.location.origin);
     });
   };
 
@@ -230,16 +230,22 @@ export default class Authentication {
       token: refreshToken
     };
 
-    const response = await Authentication.request({ url, body });
-    if (response.status != 200)
-      throw new Error("Not Allowed");
-
-    const data = await response.json();
-
-    Authentication.storeTokens(data, remember, {
-      storeRefreshToken: false
-    });
-
-    return true;
+    return Authentication.request({ url, body })
+      .then(response => {
+        if (response.status != 200) {
+          throw new Error("Not Allowed");
+        }
+        return response.json();
+      })
+      .then(data => {
+        Authentication.storeTokens(data, remember, {
+          storeRefreshToken: false
+        });
+        return true;
+      })
+      .catch(_error => {
+        Authentication.deleteTokens();
+        return false;
+      });
   };
 }

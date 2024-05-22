@@ -1,5 +1,4 @@
 import { Ros, Service, ServiceRequest } from "roslib";
-import { authSub } from "./../Authentication/authSub";
 /**
  * Experimental ROSBridge wrapper
  * - Add promises to services
@@ -12,9 +11,9 @@ import { authSub } from "./../Authentication/authSub";
  *                                                                                      */
 //========================================================================================
 
-const isHttps = globalThis.location?.protocol === "https:";
+const isHttps = window.location.protocol === "https:";
 const BRIDGE_CONNECTION_DEFAULT = `${isHttps ? "wss" : "ws"}://${
-  globalThis.location?.hostname
+  window.location.hostname
 }:9090`;
 const NOT_CONNECTED_ERROR = "ROSBridge not connected";
 
@@ -33,10 +32,6 @@ export class ROSBridge {
 
   constructor(url: string = BRIDGE_CONNECTION_DEFAULT) {
     this.url = url;
-    authSub.subscribe(({ loggedIn }) => {
-      if (loggedIn)
-        this.connect();
-    });
   }
 
   setURL(url: string): ROSBridge {
@@ -61,8 +56,9 @@ export class ROSBridge {
   }
 
   connect(): ROSBridge {
-    if (!this.ros || !this.ros.isConnected)
+    if (!this.ros || !this.ros.isConnected) {
       this.reconnect();
+    }
     return this;
   }
 
