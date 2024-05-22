@@ -17,7 +17,7 @@ export interface UserModel {
   Superuser: boolean;
   allRoles: RolesMap;
   allResourcesPermissions: { [scope: string]: string[] };
-  resourcesPermissions: { name: string, permissions: ResourcePermission }[];
+  resourcesPermissions: ResourcePermission[];
 }
 
 export interface UserPost {

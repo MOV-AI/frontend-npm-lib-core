@@ -1,3 +1,4 @@
+import { Maybe } from "monet";
 import { ALPHANUMERIC_REGEX, GLOBAL_WORKSPACE } from "./constants";
 import _isEmpty from "lodash/isEmpty";
 import _isArray from "lodash/isArray";
@@ -6,30 +7,30 @@ import _transform from "lodash/transform";
 import { deepEqual as equal } from "fast-equals";
 import Role from "../Role/Role";
 
- export const ofNull = x => x !== null && x !== undefined ? x : null;
+
+export const ofNull = x => Maybe.fromNull(x);
 
 export const getter = prop => obj => obj[prop];
 
 export const dot = f => g => x => f(g(x));
 
-export const maybeGet = prop => obj => {
-  const result = obj[prop];
-  return result !== null && result !== undefined ? result : null;
-};
+export const maybeGet = prop => dot(ofNull)(getter(prop));
 
 export const range = (init, end) => {
-  const start = end !== undefined ? init : 0;
-  const stop = end !== undefined ? end : init;
+  const { i, e } = Maybe.fromNull(end)
+    .map(_x => ({ i: init, e: end }))
+    .orSome({ i: 0, e: init });
   const ans = [];
-  for (let j = start; j < stop; j++) ans.push(j);
+  for (let j = i; j < e; j++) ans.push(j);
   return ans;
 };
 
 export const randomInt = (a, b) => Math.floor(random(a, b));
 
 export const random = (a, b) => {
-  const init = b !== undefined ? a : 0;
-  const end = b !== undefined ? b : a;
+  const { init, end } = Maybe.fromNull(b)
+    .map(_x => ({ init: a, end: b }))
+    .orSome({ init: 0, end: a });
   return init + (end - init) * Math.random();
 };
 
@@ -43,8 +44,8 @@ export const normalizeStr = str => {
 
 /**
  *
- * Xparam {*} array
- * Xparam {*} groupFunction : function x => group class;
+ * @param {*} array
+ * @param {*} groupFunction : function x => group class;
  *
  * Usage example:
  *
@@ -104,9 +105,9 @@ export const randomGuid = () => {
 
 /**
  * Document name validation
- * Xparam {string} entityName
- * Xparam {[string]} notAllowedWords
- * Xparam {string} regex
+ * @param {string} entityName
+ * @param {[string]} notAllowedWords
+ * @param {string} regex
  * @returns {boolean} Result of validation
  */
 export const validateEntityName = (
@@ -124,7 +125,7 @@ export const validateEntityName = (
 
 /**
  * Return user roles
- * Xparam {object} user
+ * @param {object} user
  * @returns {[string]} List of roles
  */
 export const getUserRoles = user => {
@@ -135,9 +136,9 @@ export const getUserRoles = user => {
 
 /**
  * Build permissions
- * Xparam {string} id
- * Xparam {object} user
- * Xreturns {[ResourcePermission]} List of permissions
+ * @param {string} id
+ * @param {object} user
+ * @returns {[ResourcePermission]} List of permissions
  */
 export const parseUserData = async user => {
   const resourcesParsedData = [];
@@ -175,7 +176,7 @@ export const parseUserData = async user => {
 
 /**
  * Get permissions by scope
- * Xparam {object} user
+ * @param {object} user
  * @returns {object} Dictionary with list of permissions by scope
  */
 export const getPermissionsByScope = async userRoles => {
@@ -198,8 +199,8 @@ const SAME_TAB = "_self";
 
 /**
  * loadLayout - loads the requested layout
- * Xparam {object} e application's object
- * Xparam {boolean} ctrlKey ctrlKey pressed
+ * @param {object} e application's object
+ * @param {boolean} ctrlKey ctrlKey pressed
  *
  * Currently, the layout viewer is distributed in the mov-fe-app-ide package
  */
@@ -212,8 +213,8 @@ const loadLayout = (e, ctrlKey = false) => {
 
 /**
  * loads the requested application
- * Xparam {object} e application's object
- * Xparam {boolean} ctrlKey ctrlKey pressed
+ * @param {object} e application's object
+ * @param {boolean} ctrlKey ctrlKey pressed
  */
 const loadApplication = (e, ctrlKey = false) => {
   window.open(
@@ -224,7 +225,7 @@ const loadApplication = (e, ctrlKey = false) => {
 
 /**
  * loads the requested external page
- * Xparam {object} e application's object
+ * @param {object} e application's object
  */
 const loadUrl = e => {
   window.open(`${e.URL}`);
@@ -232,8 +233,8 @@ const loadUrl = e => {
 
 /**
  *  load resource by type
- * Xparam {object} event click event
- * Xparam {object} element resource data; must include Type, Package, EntryPoint
+ * @param {object} event click event
+ * @param {object} element resource data; must include Type, Package, EntryPoint
  */
 export const loadResources = (event, element) => {
   const resourcesMap = {
@@ -249,7 +250,7 @@ export const loadResources = (event, element) => {
 
 /**
  * Maps new user password change model to old one
- * Xparam {object} body Object corresponding to either old or new password change model
+ * @param {object} body Object corresponding to either old or new password change model
  * @returns {object} Object corresponding to old model for V1 user
  */
 export const mapToUserV1PasswordChangeModel = body => {
@@ -270,8 +271,8 @@ export const mapToUserV1PasswordChangeModel = body => {
 
 /**
  * Find difference between two objects
- * Xparam  {object} origObj - Source object to compare newObj against
- * Xparam  {object} newObj  - New object with potential changes
+ * @param  {object} origObj - Source object to compare newObj against
+ * @param  {object} newObj  - New object with potential changes
  * @return {object} differences
  */
 export const difference = (origObj, newObj) => {
@@ -299,8 +300,8 @@ export const emptyFunction = () => {
 
 /**
  * Returns the document name from an URL
- * Xparam {string} url
- * @returns {string}
+ * @param {String} url
+ * @returns {String}
  */
 export function getNameFromURL(url) {
   if (!url) return "";
@@ -310,8 +311,8 @@ export function getNameFromURL(url) {
 
 /**
  * Returns the document scope from an URL
- * Xparam {string} url
- * @returns {string}
+ * @param {String} url
+ * @returns {String}
  */
 export function getScopeFromURL(url) {
   if (!url) return "";
@@ -321,8 +322,8 @@ export function getScopeFromURL(url) {
 
 /**
  * Returns the document workspace from an URL
- * Xparam {string} url
- * @returns {string}
+ * @param {String} url
+ * @returns {String}
  */
 export function getWorkspaceFromUrl(url) {
   if (!url) return "";
@@ -332,8 +333,8 @@ export function getWorkspaceFromUrl(url) {
 
 /**
  * Returns the document version from an URL
- * Xparam {string} url
- * @returns {string}
+ * @param {String} url
+ * @returns {String}
  */
 export function getVersionFromUrl(url) {
   if (!url) return "";
@@ -343,7 +344,7 @@ export function getVersionFromUrl(url) {
 
 /**
  * Build a document path from a doc
- * Xparam {Document} doc
+ * @param {Document} doc
  * @returns
  */
 export function buildDocPath(doc) {
@@ -354,7 +355,7 @@ export function buildDocPath(doc) {
 
 /**
  * Generate random ID
- * @returns {string} Random ID in format : "1c76107c-146e-40bc-93fb-8148750cf50a"
+ * @returns {String} Random ID in format : "1c76107c-146e-40bc-93fb-8148750cf50a"
  */
 export const randomId = () => {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
