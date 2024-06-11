@@ -1,4 +1,8 @@
+# Version to be assign
+
+- [FP-2847 - Review and enable lib-core unit tests](https://movai.atlassian.net/browse/FP-2847)
+
 # 1.2.0
 
-- [FP-2557](https://movai.atlassian.net/browse/FP-2557): Removing frontend callbacks from backend
-- [FP-2558](https://movai.atlassian.net/browse/FP-2558): implement log streaming
+- [FP-2557 - Removing frontend callbacks from backend](https://movai.atlassian.net/browse/FP-2557)
+- [FP-2558 - Implement log streaming](https://movai.atlassian.net/browse/FP-2558)
