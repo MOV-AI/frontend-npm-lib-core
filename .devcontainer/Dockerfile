@@ -7,3 +7,4 @@ LABEL maintaner="frontend@mov.ai"
 USER 1000:1000
 
 RUN npm install standard --global
+RUN npm install -g pnpm
