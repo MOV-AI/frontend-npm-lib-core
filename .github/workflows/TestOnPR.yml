@@ -12,10 +12,11 @@ on:
 
 jobs:
   CI:
-    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@v2.1
+    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@bugfix/QAP-3942-set-pnpm-version
     with:
       deploy: "false"
       run_tests: "true"
+      use_nvmrc: "true"
       pm: "pnpm"
     secrets:
       auto_commit_user: ${{ secrets.RAISE_BOT_COMMIT_USER }}
