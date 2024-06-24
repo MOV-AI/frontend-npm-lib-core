@@ -78,5 +78,6 @@
         "dist/src/models/index.d.ts"
       ]
     }
-  }
+  },
+  "packageManager": "pnpm@9.4.0"
 }
