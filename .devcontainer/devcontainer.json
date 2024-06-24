@@ -20,7 +20,7 @@
       ]
     }
   },
-  "postCreateCommand": "pnpm i",
+  "postCreateCommand": "pnpm clean && pnpm install",
   "remoteUser": "node",
   "runArgs": [
     "--network=host"
