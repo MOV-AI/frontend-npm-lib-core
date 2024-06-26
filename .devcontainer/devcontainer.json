@@ -20,7 +20,7 @@
       ]
     }
   },
-  "postCreateCommand": "pnpm clean && pnpm install",
+  "postCreateCommand": "bash -i -c 'nvm install $(cat .nvmrc) -y && nvm use && corepack enable && pnpm clean && pnpm install'",
   "remoteUser": "node",
   "runArgs": [
     "--network=host"
