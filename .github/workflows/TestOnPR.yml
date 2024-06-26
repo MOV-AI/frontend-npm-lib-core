@@ -12,7 +12,7 @@ on:
 
 jobs:
   CI:
-    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@bugfix/QAP-3942-set-pnpm-version
+    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@v2.1
     with:
       deploy: "false"
       run_tests: "true"
