@@ -11,7 +11,6 @@ Its main use will be to build Mov.AI applications.
 <!-- TOC -->
 * [MOV.AI Core](#movai-core)
 * [Table of Content](#table-of-content)
-* [Version compatibility](#version-compatibility)
 * [Setting Up Your Development Environment](#setting-up-your-development-environment)
     * [Common Configuration](#common-configuration)
       * [Configure ~/.npmrc](#configure-npmrc)
@@ -29,13 +28,6 @@ Its main use will be to build Mov.AI applications.
   * [Running tests](#running-tests)
   * [Running test on html](#running-test-on-html)
 <!-- TOC -->
-
-# Version compatibility
-
-| MOV.AI  | Branch         | Version   | Build status                                                                                                                                                                                                                          |
-|---------|----------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 2.3.1   | releases/2.2.3 | 2.2.3-*   | Badge not available                                                                                                                                                                                                                   |
-| 2.4.1   | main           | 2.5.2-*   | [![Deploy - On branch main/release Push](https://github.com/MOV-AI/frontend-npm-launcher/actions/workflows/DeployOnMergeMain.yml/badge.svg)](https://github.com/MOV-AI/frontend-npm-launcher/actions/workflows/DeployOnMergeMain.yml) |
 
 # Setting Up Your Development Environment
 
