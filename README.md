@@ -163,7 +163,7 @@ To install `pnpm`, follow these steps:
 
 1. - Install package:
     ```bash
-    "npm install @mov-ai/mov-fe-lib-core"
+    "pnpm install @mov-ai/mov-fe-lib-core"
     ```
 
 ## How to Link this library locally to an App
