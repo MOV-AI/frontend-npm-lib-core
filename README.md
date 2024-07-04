@@ -77,7 +77,7 @@ To install Node.js using `nvm` (Node Version Manager), follow these steps:
    Open your terminal and run the following command to install `nvm`:
 
     ```bash
-    curl -o- <https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh> | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
     ```
 
 2. **Load `nvm`:**
@@ -121,21 +121,7 @@ To install Node.js using `nvm` (Node Version Manager), follow these steps:
 
 To install `pnpm`, follow these steps:
 
-1. Install `pnpm`:
-
-   With Node.js installed, you can use `npm` to install `pnpm` globally:
-
-    ```bash
-    npm install -g pnpm
-    ```
-
-2. Verify the installation:
-
-    ```bash
-    pnpm -v # prints the installed pnpm version
-    ```
-
-3. Using the required pnpm version:
+1. Using the required pnpm version:
 
     The pnpm version required is specify in the `package.json` file as:
     ```json
@@ -201,12 +187,12 @@ Here's how it can be done:
 
 ## Running tests
 
-`npm run test`
+`pnpm run test`
 
 ## Running test on html
 
 A developer can test a build version of this library using the static test html in `test/index.html`, by running
 
-`npm run testStatic`
+`pnpm run testStatic`
 
 Then open the browser at `http://localhost:3030/test/index.html`
