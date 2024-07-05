@@ -3,7 +3,7 @@
 ![Movai](https://www.mov.ai/wp-content/uploads/2021/06/MOV.AI-logo-3.png)
 
 The Mov.AI's core frontend library.
-Here we place all reusable/common code regarding frontend, such as communication with database, authentication, etc. 
+Here we place all reusable/common code regarding frontend, such as communication with database, authentication, etc.
 Its main use will be to build Mov.AI applications.
 
 # Table of Content
@@ -94,11 +94,6 @@ To install Node.js using `nvm` (Node Version Manager), follow these steps:
 
     ```bash
     nvm install && nvm use # uses the node version specify in the .nvmrc file
-    ```
-   
-    You might need to install it before using it:
-    ```bash
-    nvm install
     ```
 
 4. **Set the used Node.js as the default version:**
