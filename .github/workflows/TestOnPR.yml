@@ -12,7 +12,7 @@ on:
 
 jobs:
   CI:
-    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@v2.1
+    uses: MOV-AI/.github/.github/workflows/npm-workflow.yml@feature/QAP-3970-forward-test-coverage-for-lib-core
     with:
       deploy: "false"
       run_tests: "true"
