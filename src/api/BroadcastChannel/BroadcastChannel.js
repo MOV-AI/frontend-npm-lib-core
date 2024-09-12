@@ -13,8 +13,8 @@ class BroadcastChannel {
    * Subscribe to an event type.
    * Whenever an event of this type is triggered, the callback will be executed.
    *
-   * Xparam {string} event: event name -> should be a valid event name present in BROADCAST_EVENTS
-   * Xparam {Function} callback: function to be executed when the event is triggered
+   * @param {string} event: event name -> should be a valid event name present in BROADCAST_EVENTS
+   * @param callback: function to be executed when the event is triggered
    */
   subscribe = (event, callback) => {
     const currentEvents = this.subscribed_events[event] || [];
@@ -25,7 +25,7 @@ class BroadcastChannel {
   /**
    * Unsubscribe to an event type.
    *
-   * Xparam {string} event: event name -> should be a valid event name present in BROADCAST_EVENTS
+   * @param {string} event: event name -> should be a valid event name present in BROADCAST_EVENTS
    */
   unsubscribe = event => {
     if (!this.subscribed_events.hasOwnProperty(event)) return;
@@ -36,9 +36,9 @@ class BroadcastChannel {
   /**
    * Post message in broadcast
    *
-   * Xparam {string} event: Event name -> should be a valid event name present in BROADCAST_EVENTS
-   * Xparam {string} target: App name that should receive the event
-   * Xparam {object} data: Data to be passed to target app
+   * @param {string} event: Event name -> should be a valid event name present in BROADCAST_EVENTS
+   * @param {string} target: App name that should receive the event
+   * @param {object} data: Data to be passed to target app
    */
   postMessage = ({ event, target, data }) => {
     console.log("BroadcastChannel postMessage to", target);
@@ -63,7 +63,7 @@ class BroadcastChannel {
    * Private method that receives all messages from broadcast channel
    * and sends to the apps if they are subscribed to that event
    *
-   * Xparam {Event} message: Message event containing origin and data passed from the postMessage
+   * @param message: Message event containing origin and data passed from the postMessage
    */
   _onMessage = message => {
     const messageData = message.data;

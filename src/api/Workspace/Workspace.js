@@ -20,6 +20,9 @@ Workspace.getAll = () => {
 
 /**
  * Get all existing documents in a workspace
+ * @param {string} workspace - workspace to search
+ * @param {string} type - filter documents by type
+ * @param {string} id - further filter documents by type and id
  */
 Workspace.getDocs = ({ workspace, scope, id }) => {
   const _scope = scope ? `/${scope}` : "";

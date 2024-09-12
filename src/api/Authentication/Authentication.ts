@@ -136,7 +136,7 @@ export default class Authentication {
 
   /**
    * Logout from app : Remove tokens locally and do request to remove from server
-   * Xparam redirect : Redirect location after successfull logout
+   * @param redirect : Redirect location after successfull logout
    */
   static logout = (redirect = "") => {
     // Call logout method to invalid token from server side
@@ -230,16 +230,22 @@ export default class Authentication {
       token: refreshToken
     };
 
-    const response = await Authentication.request({ url, body });
-    if (response.status != 200)
-      throw new Error("Not Allowed");
-
-    const data = await response.json();
-
-    Authentication.storeTokens(data, remember, {
-      storeRefreshToken: false
-    });
-
-    return true;
+    return Authentication.request({ url, body })
+      .then(response => {
+        if (response.status != 200) {
+          throw new Error("Not Allowed");
+        }
+        return response.json();
+      })
+      .then(data => {
+        Authentication.storeTokens(data, remember, {
+          storeRefreshToken: false
+        });
+        return true;
+      })
+      .catch(_error => {
+        Authentication.deleteTokens();
+        return false;
+      });
   };
 }

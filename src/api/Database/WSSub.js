@@ -124,10 +124,10 @@ class WSSub {
 
   /**
    * creates a new pair if does not exits and returns it
-   * Xparam {Map} map sub_callbacks or evt_callbacks
-   * Xparam {string} pattern is the map key
+   * @param {Map} map sub_callbacks or evt_callbacks
+   * @param {string} pattern is the map key
    *
-   * @returns {Array} the value associated with the pattern
+   * @returns {array} the value associated with the pattern
    */
   getOrCreate = (map, pattern) => {
     return map.get(pattern) || map.set(pattern, []).get(pattern);
@@ -135,9 +135,9 @@ class WSSub {
 
   /**
    * push callback to the map
-   * Xparam {Map} sub_callbacks or evt_callbacks
-   * Xparam {string} pattern is the map key
-   * Xparam {function} callback function to execute
+   * @param {Map} sub_callbacks or evt_callbacks
+   * @param {string} pattern is the map key
+   * @param {function} callback function to execute
    */
   pushCallback = (map, pattern, callback) => {
     this.getOrCreate(map, pattern).push(callback);
@@ -147,8 +147,8 @@ class WSSub {
 
   /**
    * add subscriber callback
-   * Xparam {function} callback function to execute
-   * Xparam {string} pattern pattern to subscribe to
+   * @param {function} callback function to execute
+   * @param {string} pattern pattern to subscribe to
    */
   addSubscriberCallback = (callback, pattern) => {
     if (typeof callback !== "function") return this;
@@ -158,9 +158,9 @@ class WSSub {
 
   /**
    * add event callback
-   * Xparam {string} command command to send; event to subscribe
-   * Xparam {function} callback function to execute
-   * Xparam {string} pattern pattern to subscribe to
+   * @param {string} command command to send; event to subscribe
+   * @param {function} callback function to execute
+   * @param {string} pattern pattern to subscribe to
    */
   addEventCallback = (command, callback, pattern) => {
     if (typeof callback !== "function") return this;
@@ -173,7 +173,7 @@ class WSSub {
 
   /**
    * sends a message to the server
-   * Xparam {any} message to send to the server
+   * @param {any} message to send to the server
    */
   send = (message, retry = 0) => {
     try {
@@ -191,9 +191,9 @@ class WSSub {
 
   /**
    * execute callbacks subscribed to events or patterns
-   * Xparam {string} pattern pattern or event
-   * Xparam {boolean} is_command when true callback only executes once
-   * Xparam {any} message data to pass to the callback
+   * @param {string} pattern pattern or event
+   * @param {bool} is_command when true callback only executes once
+   * @param {any} message data to pass to the callback
    */
   dispatch = (pattern, message, is_command = true) => {
     const _map = is_command ? this.evt_callbacks : this.sub_callbacks;
@@ -208,8 +208,8 @@ class WSSub {
 
   /**
    * format the message to send to the server
-   * Xparam {string} event event to send to the server
-   * Xparam {string} pattern pattern to send to the server
+   * @param {string} event event to send to the server
+   * @param {string} pattern pattern to send to the server
    */
   fmtMessage = (event, pattern) => ({ event, pattern });
 
@@ -281,7 +281,7 @@ class WSSub {
 
   /**
    * Start offline validation
-   * Xparam {object} callback
+   * @param {Object} callback
    *  {
    *    onOnline  -> function to be called when the user is back online
    *    onOffline -> function to be called when the user is offline
@@ -350,9 +350,9 @@ class WSSub {
 
   /**
    * subscribe to a redis pattern
-   * Xparam {string | object} pattern pattern to subscribe to
-   * Xparam {function} callback function to execute on changes
-   * Xparam {function} evt_callback function to execute on the subscription event
+   * @param {string | object} pattern pattern to subscribe to
+   * @param {function} callback function to execute on changes
+   * @param {function} evt_callback function to execute on the subscription event
    *
    */
   subscribe = (pattern, callback, evt_callback) => {
@@ -383,8 +383,8 @@ class WSSub {
 
   /**
    * Unsubscribe from changes related to the pattern
-   * Xparam {string | object} pattern pattern to unsubscribe
-   * Xparam {function} callback function to execute on event unsubscribe
+   * @param {string | object} pattern pattern to unsubscribe
+   * @param {function} callback function to execute on event unsubscribe
    *
    */
   unsubscribe = (pattern, callback) => {
@@ -399,7 +399,7 @@ class WSSub {
 
   /**
    * get the list of the current pattern subscriptions
-   * Xparam {function} evt_callback function to execute on event
+   * @param {function} evt_callback function to execute on event
    */
   list = evt_callback => {
     const { LIST } = this.commands;
@@ -410,9 +410,9 @@ class WSSub {
 
   /**
    * execute - executes a remote procedure call
-   * Xparam {string} remote_callback name of the remote callback to execute
-   * Xparam {object} data data to send to the remote callback
-   * Xparam {function} evt_callback function to execute on event
+   * @param {string} remote_callback name of the remote callback to execute
+   * @param {object} data data to send to the remote callback
+   * @param {function} evt_callback function to execute on event
    */
   execute = (remote_callback, data, evt_callback) => {
     const { EXECUTE } = this.commands;
@@ -423,8 +423,8 @@ class WSSub {
 
   /**
    * subscribe to events onopen, onclose, onerror
-   * Xparam {string} event name of the event to subscribe
-   * Xparam {function} callback function to execute on event
+   * @param {string} event name of the event to subscribe
+   * @param {function} callback function to execute on event
    */
   onEvent = (event, callback) => {
     this.initSocket().addEventCallback(event, callback);
@@ -518,8 +518,8 @@ class WSSub {
 
   /**
    * Send response to requests
-   * Xparam {*} response : Fetch response
-   * Xparam {*} callback : Callback to be called with response
+   * @param {*} response : Fetch response
+   * @param {*} callback : Callback to be called with response
    */
   _sendResponse = (response, callback, sendAlert) => {
     if (callback) {
@@ -547,8 +547,8 @@ class WSSub {
 
   /**
    * GET value from url
-   * Xparam url String
-   * Xparam callback function
+   * @param url String
+   * @param callback function
    * @memberof Database
    */
   get = async (url, callback = undefined) => {
@@ -572,11 +572,11 @@ class WSSub {
 
   /**
    * Set value from key in Scope
-   * Xparam scope String
-   * Xparam name String - Instance Name
-   * Xparam key String - Key to override
-   * Xparam value Obj
-   * Xparam callback function
+   * @param scope String
+   * @param name String - Instance Name
+   * @param key String - Key to override
+   * @param value Obj
+   * @param callback function
    * @memberof Database
    */
   post = (scope, name, key, value, callback = undefined) => {
@@ -621,10 +621,10 @@ class WSSub {
 
   /**
    * Update key
-   * Xparam scope String
-   * Xparam name String - Instance Name
-   * Xparam value Obj
-   * Xparam callback function
+   * @param scope String
+   * @param name String - Instance Name
+   * @param value Obj
+   * @param callback function
    * @memberof Database
    */
   put = (scope, name, value, callback = undefined) => {
@@ -654,11 +654,11 @@ class WSSub {
 
   /**
    * Set value from key in Scope
-   * Xparam scope String
-   * Xparam name String - Instance Name
-   * Xparam key String - Key to override
-   * Xparam value Obj
-   * Xparam callback function
+   * @param scope String
+   * @param name String - Instance Name
+   * @param key String - Key to override
+   * @param value Obj
+   * @param callback function
    * @memberof Database
    */
   delete = (scope, name, callback = undefined, data = {}) => {
@@ -688,10 +688,10 @@ class WSSub {
 
   /**
    * Set value from key in Scope
-   * Xparam cloudFunction String - callback name
-   * Xparam func String - Function in the callback. default ""
-   * Xparam args Object - Args {key:value}... key is the param in the function
-   * Xparam callback func - Callback to parse the response
+   * @param cloudFunction String - callback name
+   * @param func String - Function in the callback. default ""
+   * @param args Object - Args {key:value}... key is the param in the function
+   * @param callback func - Callback to parse the response
    * @memberof Database
    */
   cloudFunction = (
@@ -729,11 +729,11 @@ class WSSub {
 
   /**
    * Set tabs in a currentUser
-   * Xparam scope String
-   * Xparam name String - Instance Name
-   * Xparam key String - Key to override
-   * Xparam value Obj
-   * Xparam callback function
+   * @param scope String
+   * @param name String - Instance Name
+   * @param key String - Key to override
+   * @param value Obj
+   * @param callback function
    * @memberof Database
    */
   postTabs = (name, value, callback = undefined) => {

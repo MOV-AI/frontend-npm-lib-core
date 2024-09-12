@@ -20,7 +20,7 @@ class DocumentV2 extends DocumentV1 {
 
   /**
    * Update the document using PUT request
-   * Xparam {object} body Request payload
+   * @param {object} body Request payload
    */
   update = body => {
     const { workspace, type, name, version } = this;
@@ -33,8 +33,8 @@ class DocumentV2 extends DocumentV1 {
 
   /**
    *
-   * Xparam {string} trgWorkspace Workspace where to create the snapshot
-   * Xparam {string} version Snapshot version
+   * @param trgWorkspace Workspace where to create the snapshot
+   * @param version Snapshot version
    */
   createSnapshot = ({ trgWorkspace, version }) => {
     const { workspace, type, name } = this;
@@ -65,9 +65,9 @@ class DocumentV2 extends DocumentV1 {
 
   /**
    *
-   * Xparam {string} type Type of the document
-   * Xparam {string} name Name of the document
-   * Xparam {string} workspace Workspace of the document
+   * @param type Type of the document
+   * @param name Name of the document
+   * @param workspace Workspace of the document
    */
   static create({ type, name, workspace }) {
     const path = `v2/db/${workspace}/${type}/${name}`;
@@ -78,10 +78,10 @@ class DocumentV2 extends DocumentV1 {
 
   /**
    * Delete document or partial deletion of the document
-   * Xparam {string} type Type of the document
-   * Xparam {string} name Name of the document
-   * Xparam {object} body Data of the document
-   * Xparam {string} workspace Workspace of the document
+   * @param type Type of the document
+   * @param name Name of the document
+   * @param body Data of the document
+   * @param workspace Workspace of the document
    */
   static delete({ type, name, body, workspace = "global" }) {
     const path = `v2/db/${workspace}/${type}/${name}`;
@@ -91,9 +91,9 @@ class DocumentV2 extends DocumentV1 {
 
   /**
    * Get all existing documents in a workspace
-   * Xparam {string} workspace workspace to search
-   * Xparam {string} type filter documents by type
-   * Xparam {string} id further filter documents by type and id
+   * @param workspace workspace to search
+   * @param type filter documents by type
+   * @param id further filter documents by type and id
    */
   static getDocs = ({ workspace, scope, id }) => {
     const _scope = scope ? `/${scope}` : "";

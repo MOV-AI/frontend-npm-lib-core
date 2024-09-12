@@ -28,7 +28,8 @@
     "test": "scripts test",
     "testDev": "jest --watchAll",
     "testStatic": "webpack --mode=development && echo 'Open browser at http://localhost:3030/test/index.html' && node test/server.js",
-    "build": "scripts build",
+    "build": "scripts types && scripts build",
+    "fast": "scripts build",
     "watch": "scripts watch",
     "clean": "rm -rf cjs esm web types"
   },
@@ -46,8 +47,8 @@
   "license": "ISC",
   "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
   "devDependencies": {
-    "@mov-ai/mov-fe-lib-scripts": "^0.6.7-0",
-    "@mov-ai/mov-fe-lib-sub": "^2.2.40-0",
+    "@mov-ai/mov-fe-lib-scripts": "^0.6.7-1",
+    "@mov-ai/mov-fe-lib-sub": "^2.3.1-1",
     "@types/jest": "27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.11.27",
@@ -57,7 +58,7 @@
     "http-proxy-middleware": "^2.0.6"
   },
   "peerDependencies": {
-    "@mov-ai/mov-fe-lib-sub": "^2.2.40-0"
+    "@mov-ai/mov-fe-lib-sub": "^2.3.1-1"
   },
   "optionalDependencies": {
     "react": "^18.2.0"
@@ -86,5 +87,6 @@
         "dist/src/models/index.d.ts"
       ]
     }
-  }
+  },
+  "packageManager": "pnpm@9.4.0"
 }

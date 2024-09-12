@@ -23,8 +23,8 @@ class Document {
 
   /**
    * Create instance of DocumentV1 or DocumentV2
-   * Xparam {*} args : Constructor arguments
-   * Xparam {string} docVersion : Specify document version
+   * @param {*} args : Constructor arguments
+   * @param {string} docVersion : Specify document version
    * @returns
    */
   static factory(args, docVersion = "v1") {
@@ -34,8 +34,8 @@ class Document {
 
   /**
    * Forward create call to the correct Document version
-   * Xparam {object} args Object with arguments to forward
-   * Xparam {string} docVersion Document version to use
+   * @param {object} args Object with arguments to forward
+   * @param {string} docVersion Document version to use
    */
   static create(args, docVersion = "v1") {
     return withDocVersion(docVersion).create(args);
@@ -43,8 +43,8 @@ class Document {
 
   /**
    * Forward delete call to the correct version
-   * Xparam {object} args Object with arguments to forward
-   * Xparam {string} docVersion Document version to use
+   * @param {object} args Object with arguments to forward
+   * @param {string} docVersion Document version to use
    */
   static delete(args, docVersion = "v1") {
     return withDocVersion(docVersion).delete(args);
@@ -52,8 +52,8 @@ class Document {
 
   /**
    * Parse path into an object
-   * Xparam {string} path The path to parse
-   * Xparam {string} dtype Default type
+   * @param {string} path The path to parse
+   * @param {string} dtype Default type
    *
    * @return {object} An object with workspace, type, name, version
    */
@@ -77,7 +77,7 @@ class Document {
   /**
    * Check if document exists in redis or archive
    *
-   * Xparam {*} data
+   * @param {*} data
    * {
    *  name      : document name
    *  scope     : document scope (Annotation, Callback, ...)

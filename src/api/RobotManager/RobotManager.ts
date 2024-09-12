@@ -94,7 +94,7 @@ class RobotManager {
 
   /**
    * On SubscriberToRedis initialize
-   * Xparam {LoadRobotParam} data : Loaded data
+   * @param {LoadRobotParam} data : Loaded data
    */
   onDataLoad = (data: LoadRobotParam) => {
     this.isDataLoaded = true;
@@ -116,7 +116,7 @@ class RobotManager {
 
   /**
    * On SubscribeToRedis data change handler
-   * Xparam {UpdateRobotParam} data : Changed event data
+   * @param {UpdateRobotParam} data : Changed event data
    */
   onDataChange = (data: UpdateRobotParam) => {
     // Apply changes to update local robots
@@ -166,7 +166,7 @@ class RobotManager {
 
   /**
    * Subscribe to changes in robots
-   * Xparam {Function} callback : Callback to be called for all property changes at any robot in DB
+   * @param {Function} callback : Callback to be called for all property changes at any robot in DB
    */
   subscribeToChanges(callback: Function) {
     const subscriptionId = Utils.randomGuid();
@@ -177,7 +177,7 @@ class RobotManager {
   /**
    * Unsubscribe to changes in robots
    *
-   * Xparam {string} subscriptionId: Subscription id that needs to be canceled
+   * @param {string} subscriptionId: Subscription id that needs to be canceled
    */
   unsubscribeToChanges(subscriptionId: string) {
     if (!subscriptionId || !this.subscribedOnDataChange[subscriptionId]) return;
@@ -186,7 +186,7 @@ class RobotManager {
 
   /**
    * Get all robots
-   * Xparam {Function} onDataLoaded : Function to be called on data first load
+   * @param {Function} onDataLoaded : Function to be called on data first load
    * @returns {CachedRobots} All cached robots
    */
   getAll(onDataLoaded: Function = ON_DATA_LOADED): CachedRobots {
@@ -201,7 +201,7 @@ class RobotManager {
 
   /**
    * Get robot by ID
-   * Xparam {string} id : Robot id
+   * @param {string} id : Robot id
    * @returns {Robot} Instance of Robot class for requested id
    */
   getRobot(id: string): Robot {
@@ -232,7 +232,7 @@ class RobotManager {
 
   /**
    * To trigger callback (passed in arguments) when robots are loaded
-   * Xparam onDataLoaded : Function to be called on data first load
+   * @param onDataLoaded : Function to be called on data first load
    */
   onLoad(onDataLoaded: Function = ON_DATA_LOADED) {
     if (this.isDataLoaded) return onDataLoaded(this.cachedRobots);
@@ -254,7 +254,7 @@ class RobotManager {
         return;
       const previousOnlineStatus = this.cachedRobots[robot.id].Online;
       this.checkStatus(robot);
-      if (this.cachedRobots[robot.id]?.Online !== previousOnlineStatus) {
+      if (this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
         robotsWhichChangedOnlineStatus.push(robot);
       }
     });
@@ -275,7 +275,7 @@ class RobotManager {
   /**
    * Check robot status if it doesn't receive any updates in more than 10s
    *  Set timeout to check online/offline state in 10s
-   * Xparam {ProtectedRobot} robot
+   * @param {ProtectedRobot} robot
    */
   private checkStatus = (robot: ProtectedRobot) => {
     const id = robot.id;
@@ -284,8 +284,8 @@ class RobotManager {
 
   /**
    * Apply robot changes to cachedRobots and robots
-   * Xparam {CachedRobots} robots : Robots changes
-   * Xparam {string} event : Event type ("set", "hset", "del", "hdel")
+   * @param {CachedRobots} robots : Robots changes
+   * @param {string} event : Event type ("set", "hset", "del", "hdel")
    */
   private applyChanges = (robots: CachedRobots, event: string) => {
     Object.keys(robots).forEach(robotId => {
@@ -327,7 +327,7 @@ class RobotManager {
   //========================================================================================
   /**
    * Get Logs params
-   * Xparam {LogQueryParam} queryParam : Object to construct query string
+   * @param {LogQueryParam} queryParam : Object to construct query string
    * @returns {string} query parameter string
    */
   static getLogsParam(queryParam: LogQueryParam): string {
@@ -347,7 +347,7 @@ class RobotManager {
 
   /**
    * Open Websocket connection to get the logs
-   * Xparam {LogQueryParam} queryParam : Object to construct query string
+   * @param {LogQueryParam} queryParam : Object to construct query string
    * @returns {Promise} Request promise
    */
   static openLogs(queryParam: LogQueryParam): WebSocket {
@@ -367,7 +367,7 @@ class RobotManager {
   //========================================================================================
   /**
    * Get Logs for multiple robots
-   * Xparam {LogQueryParam} queryParam : Object to construct query string
+   * @param {LogQueryParam} queryParam : Object to construct query string
    * @returns {Promise} Request promise
    */
   static async getLogs(queryParam: LogQueryParam): Promise<any> {

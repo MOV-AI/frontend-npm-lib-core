@@ -43,8 +43,8 @@ export const normalizeStr = str => {
 
 /**
  *
- * Xparam {*} array
- * Xparam {*} groupFunction : function x => group class;
+ * @param array
+ * @param groupFunction : function x => group class;
  *
  * Usage example:
  *
@@ -104,9 +104,9 @@ export const randomGuid = () => {
 
 /**
  * Document name validation
- * Xparam {string} entityName
- * Xparam {[string]} notAllowedWords
- * Xparam {string} regex
+ * @param {string} entityName
+ * @param notAllowedWords
+ * @param {string} regex
  * @returns {boolean} Result of validation
  */
 export const validateEntityName = (
@@ -124,8 +124,8 @@ export const validateEntityName = (
 
 /**
  * Return user roles
- * Xparam {object} user
- * @returns {[string]} List of roles
+ * @param {object} user
+ * @returns List of roles
  */
 export const getUserRoles = user => {
   let userRoles = user.Role || user.roles || user.Roles;
@@ -135,9 +135,9 @@ export const getUserRoles = user => {
 
 /**
  * Build permissions
- * Xparam {string} id
- * Xparam {object} user
- * Xreturns {[ResourcePermission]} List of permissions
+ * @param {string} id
+ * @param {object} user
+ * @returns {[ResourcePermission]} List of permissions
  */
 export const parseUserData = async user => {
   const resourcesParsedData = [];
@@ -175,7 +175,7 @@ export const parseUserData = async user => {
 
 /**
  * Get permissions by scope
- * Xparam {object} user
+ * @param {object} user
  * @returns {object} Dictionary with list of permissions by scope
  */
 export const getPermissionsByScope = async userRoles => {
@@ -198,8 +198,8 @@ const SAME_TAB = "_self";
 
 /**
  * loadLayout - loads the requested layout
- * Xparam {object} e application's object
- * Xparam {boolean} ctrlKey ctrlKey pressed
+ * @param {object} e application's object
+ * @param {boolean} ctrlKey ctrlKey pressed
  *
  * Currently, the layout viewer is distributed in the mov-fe-app-ide package
  */
@@ -212,8 +212,8 @@ const loadLayout = (e, ctrlKey = false) => {
 
 /**
  * loads the requested application
- * Xparam {object} e application's object
- * Xparam {boolean} ctrlKey ctrlKey pressed
+ * @param {object} e application's object
+ * @param {boolean} ctrlKey ctrlKey pressed
  */
 const loadApplication = (e, ctrlKey = false) => {
   globalThis.open(
@@ -224,7 +224,7 @@ const loadApplication = (e, ctrlKey = false) => {
 
 /**
  * loads the requested external page
- * Xparam {object} e application's object
+ * @param {object} e application's object
  */
 const loadUrl = e => {
   globalThis.open(`${e.URL}`);
@@ -232,8 +232,8 @@ const loadUrl = e => {
 
 /**
  *  load resource by type
- * Xparam {object} event click event
- * Xparam {object} element resource data; must include Type, Package, EntryPoint
+ * @param {object} event click event
+ * @param {object} element resource data; must include Type, Package, EntryPoint
  */
 export const loadResources = (event, element) => {
   const resourcesMap = {
@@ -249,7 +249,7 @@ export const loadResources = (event, element) => {
 
 /**
  * Maps new user password change model to old one
- * Xparam {object} body Object corresponding to either old or new password change model
+ * @param {object} body Object corresponding to either old or new password change model
  * @returns {object} Object corresponding to old model for V1 user
  */
 export const mapToUserV1PasswordChangeModel = body => {
@@ -270,8 +270,8 @@ export const mapToUserV1PasswordChangeModel = body => {
 
 /**
  * Find difference between two objects
- * Xparam  {object} origObj - Source object to compare newObj against
- * Xparam  {object} newObj  - New object with potential changes
+ * @param  {object} origObj - Source object to compare newObj against
+ * @param  {object} newObj  - New object with potential changes
  * @return {object} differences
  */
 export const difference = (origObj, newObj) => {
@@ -299,7 +299,7 @@ export const emptyFunction = () => {
 
 /**
  * Returns the document name from an URL
- * Xparam {string} url
+ * @param {string} url
  * @returns {string}
  */
 export function getNameFromURL(url) {
@@ -310,7 +310,7 @@ export function getNameFromURL(url) {
 
 /**
  * Returns the document scope from an URL
- * Xparam {string} url
+ * @param {string} url
  * @returns {string}
  */
 export function getScopeFromURL(url) {
@@ -321,7 +321,7 @@ export function getScopeFromURL(url) {
 
 /**
  * Returns the document workspace from an URL
- * Xparam {string} url
+ * @param {string} url
  * @returns {string}
  */
 export function getWorkspaceFromUrl(url) {
@@ -332,7 +332,7 @@ export function getWorkspaceFromUrl(url) {
 
 /**
  * Returns the document version from an URL
- * Xparam {string} url
+ * @param {string} url
  * @returns {string}
  */
 export function getVersionFromUrl(url) {
@@ -343,7 +343,7 @@ export function getVersionFromUrl(url) {
 
 /**
  * Build a document path from a doc
- * Xparam {Document} doc
+ * @param {Document} doc
  * @returns
  */
 export function buildDocPath(doc) {

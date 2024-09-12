@@ -71,7 +71,7 @@ class DocumentV1 {
 
   /**
    * Update the document using PUT request
-   * Xparam {object} body Request payload
+   * @param {object} body Request payload
    */
   update = body => {
     const { type, name } = this;
@@ -82,7 +82,7 @@ class DocumentV1 {
 
   /**
    * Overwrite document using POST
-   * Xparam {object} body : Request body
+   * @param {object} body : Request body
    * @returns Request promise
    */
   overwrite = body => {
@@ -96,7 +96,7 @@ class DocumentV1 {
 
   /**
    * Subscribe to document changes (notifications only available in the global workspace)
-   * Xparam {Function} callback Callback to execute when the document is updated
+   * @param {Function} callback Callback to execute when the document is updated
    */
   subscribe = callback => {
     this.resubscribe(callback);
@@ -104,7 +104,7 @@ class DocumentV1 {
 
   /**
    * Resubscribe to document changes (notifications only available in the global workspace)
-   * Xparam {Function} callback Callback to execute when the document is updated
+   * @param {Function} callback Callback to execute when the document is updated
    */
   resubscribe = callback => {
     if (this.readOnly) return;
@@ -134,8 +134,8 @@ class DocumentV1 {
 
   /**
    *
-   * Xparam {string} type Type of the document
-   * Xparam {string} name Name of the document
+   * @param type Type of the document
+   * @param name Name of the document
    */
   static create({ type, name, body = {} }) {
     const path = `v1/${type}/`;
@@ -145,9 +145,9 @@ class DocumentV1 {
 
   /**
    * Delete document or partial deletion of the document
-   * Xparam {string} type Type of the document
-   * Xparam {string} name Name of the document
-   * Xparam {object} body Data of the document
+   * @param type Type of the document
+   * @param name Name of the document
+   * @param body Data of the document
    */
   static delete({ type, name, body }) {
     const path = `v1/${type}/${name}/`;
