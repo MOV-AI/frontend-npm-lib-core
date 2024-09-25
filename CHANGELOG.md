@@ -4,6 +4,7 @@
 - [QAP-3942](https://movai.atlassian.net/browse/QAP-3942): Review devcontainer configuration for lib-core
 - [FP-2840](https://movai.atlassian.net/browse/FP-2840): Update ReadMe's on all apps
 - [QAP-3970](https://movai.atlassian.net/browse/QAP-3970): Forward test coverage for lib-core
+- [FP-2930](https://movai.atlassian.net/browse/FP-2930): Update node and pnpm versions
 
 # 1.2.0
 
