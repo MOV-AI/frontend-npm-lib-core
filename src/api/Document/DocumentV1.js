@@ -70,7 +70,7 @@ class DocumentV1 {
 
       return apiVersion === "v1" ? documentData : documentData[type][name];
     } catch (e) {
-      console.log(`Error reading document "${name}" of type "${type}"`, e);
+      console.error(`Error reading document "${name}" of type "${type}"`, e);
     }
   };
 
