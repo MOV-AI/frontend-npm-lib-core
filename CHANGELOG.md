@@ -1,4 +1,4 @@
-# TBD
+# 1.2.3
 
 - [FP-2926](https://movai.atlassian.net/browse/FP-2926): Clear console and app errors
 - [FP-2847](https://movai.atlassian.net/browse/FP-2847): Review and enable lib-core unit tests
