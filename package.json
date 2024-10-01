@@ -1,6 +1,6 @@
 {
   "name": "@mov-ai/mov-fe-lib-core",
-  "version": "1.2.2-1",
+  "version": "1.2.3-0",
   "description": "The Mov.AI's core frontend library.",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mov-ai"
@@ -8,12 +8,13 @@
   "main": "./dist/index.js",
   "scripts": {
     "lock": "mv ../../pnpm-workspace.yaml ../../pnpm-workspace.yaml.bak ; pnpm i ; mv ../../pnpm-workspace.yaml.bak ../../pnpm-workspace.yaml",
-    "test": "jest",
+    "test": "jest --coverage",
     "testDev": "jest --watchAll",
     "testStatic": "webpack --mode=development && echo 'Open browser at http://localhost:3030/test/index.html' && node test/server.js",
     "build": "webpack --mode=production",
     "buildDev": "webpack --mode=development --watch",
-    "clean": "rm -r node_modules; rm package-lock.json"
+    "clean": "rm -rf node_modules",
+    "ts": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -78,5 +79,6 @@
         "dist/src/models/index.d.ts"
       ]
     }
-  }
+  },
+  "packageManager": "pnpm@9.11.0"
 }

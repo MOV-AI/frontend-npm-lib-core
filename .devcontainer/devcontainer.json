@@ -2,21 +2,22 @@
   "name": "vsc-${containerWorkspaceFolderBasename}",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "..",
-    "args": {
-      "VARIANT": "16-bullseye"
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "waderyan.gitblame",
+        "eamodio.gitlens",
+        "dbaeumer.vscode-eslint",
+        "makogan.hermes-comments",
+        "burkeholland.simple-react-snippets",
+        "SonarSource.sonarlint-vscode"
+      ]
     }
   },
-  "extensions": [
-    "esbenp.prettier-vscode",
-    "waderyan.gitblame",
-    "eamodio.gitlens",
-    "dbaeumer.vscode-eslint",
-    "makogan.hermes-comments",
-    "burkeholland.simple-react-snippets",
-    "SonarSource.sonarlint-vscode"
-  ],
-  "postCreateCommand": "npm ci",
+  "postCreateCommand": "bash -i -c 'nvm install $(cat .nvmrc) -y && nvm use && corepack enable && pnpm clean && pnpm install'",
   "remoteUser": "node",
   "runArgs": [
     "--network=host"
