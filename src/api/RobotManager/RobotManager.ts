@@ -251,9 +251,9 @@ class RobotManager {
     clearTimeout(this.heartbeatTimeout);
     const robotsWhichChangedOnlineStatus = [];
     Object.values(this.robots).forEach(robot => {
-      const previousOnlineStatus = this.cachedRobots[robot.id].Online;
+      const previousOnlineStatus = this.cachedRobots[robot.id]?.Online;
       this.checkStatus(robot);
-      if (this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
+      if (this.cachedRobots[robot.id]?.Online !== previousOnlineStatus) {
         robotsWhichChangedOnlineStatus.push(robot);
       }
     });
@@ -278,7 +278,9 @@ class RobotManager {
    */
   private checkStatus = (robot: ProtectedRobot) => {
     const id = robot.id;
-    this.cachedRobots[id].Online = robot.updateStatus();
+
+    if (this.cachedRobots[id])
+      this.cachedRobots[id].Online = robot.updateStatus();
   };
 
   /**
@@ -341,7 +343,9 @@ class RobotManager {
     const _message = getRequestMessage(queryParam?.searchMessage);
     const _dates = getRequestDate(queryParam?.date?.from, queryParam?.date?.to);
     const _robots = getRequestRobots(queryParam?.robot?.selected);
-    return [_limit, _levels, _services, _dates, _tags, _message, _robots].join("");
+    return [_limit, _levels, _services, _dates, _tags, _message, _robots].join(
+      ""
+    );
   }
 
   /**
