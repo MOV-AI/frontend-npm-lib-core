@@ -58,15 +58,20 @@ class DocumentV1 {
   /**
    * Get document data
    */
-  read = (apiVersion = "v1") => {
+  read = async (apiVersion = "v1") => {
     const { type, name } = this;
     const path =
       apiVersion === "v1" ? `v1/${type}/${name}/` : `v2/db/${this.path}`;
 
-    return Rest.get({ path }).then(data => {
-      this.data = data;
-      return apiVersion === "v1" ? data : data[type][name];
-    });
+    try {
+      const documentData = await Rest.get({ path });
+
+      this.data = documentData;
+
+      return apiVersion === "v1" ? documentData : documentData[type][name];
+    } catch (e) {
+      console.error(`Error reading document "${name}" of type "${type}"`, e);
+    }
   };
 
   /**
