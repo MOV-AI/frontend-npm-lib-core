@@ -35,10 +35,15 @@
     "buildDev": "webpack --mode=development --watch",
     "clean": "rm -rf node_modules",
     "lock": "mv ../../pnpm-workspace.yaml ../../pnpm-workspace.yaml.bak ; pnpm i ; mv ../../pnpm-workspace.yaml.bak ../../pnpm-workspace.yaml",
+    "prepare": "husky",
     "test": "jest --coverage",
     "testDev": "jest --watchAll",
     "testStatic": "webpack --mode=development && echo 'Open browser at http://localhost:3030/test/index.html' && node test/server.js",
     "ts": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown",
+    "package.json": "sort-package-json"
   },
   "dependencies": {
     "@babel/runtime": "^7.15.4",
@@ -67,8 +72,10 @@
     "babel-loader": "^8.2.2",
     "express": "^4.18.1",
     "http-proxy-middleware": "^2.0.6",
+    "husky": "^9.1.6",
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.2.10",
     "prettier": "3.3.3",
     "sort-package-json": "2.10.1",
     "ts-jest": "^28.0.3",
