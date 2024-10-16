@@ -1,3 +1,7 @@
+# TBD
+
+- [FP-2916](https://movai.atlassian.net/browse/FP-2916): Configure husky, lint-staged and prettier for lib-core
+
 # 1.2.3
 
 - [FP-2926](https://movai.atlassian.net/browse/FP-2926): Clear console and app errors
