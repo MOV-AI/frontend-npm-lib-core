@@ -183,6 +183,13 @@ Here's how it can be done:
    pnpm start    # runs the app
    ```
 
+## How to setup linting git hook
+
+1. Install husky git hook:
+   ```bash
+   "pnpm prepare"
+   ```
+
 # Testing
 
 ## Running tests
