@@ -10,14 +10,14 @@ import { PermissionType } from "../../models/permission";
 import {
   INTERNAL_AUTHENTICATIONS,
   NEW_TOKEN_VERSION_ID,
-  Token
+  Token,
 } from "../../models/authentication";
 import {
   ChangePassword,
   ResetPassword,
   UserModel as UserModel,
   UserPost,
-  UserPut
+  UserPut,
 } from "../../models/user";
 
 type UserType = UserV1 | InternalUser | AclUser;
@@ -150,7 +150,7 @@ export class User {
   static hasPermission = (
     user: UserModel,
     resource: string,
-    operation: PermissionType
+    operation: PermissionType,
   ) => {
     if (user.Superuser) return true;
     return (user.Resources?.[resource] || []).includes(operation);

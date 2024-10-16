@@ -5,7 +5,7 @@ let features = {};
 if (!window.mock) {
   Document.factory({ type: "Configuration", name: "ee" })
     .read()
-    .then(val => {
+    .then((val) => {
       let json = {};
 
       try {
@@ -20,22 +20,22 @@ if (!window.mock) {
         "EE: " +
           (json.Version ?? "2.4.0 (assumed)") +
           "\nFEATURES: " +
-          Object.keys(features).join(",")
+          Object.keys(features).join(","),
       );
     });
 }
 
 const Features = {
-  get: key => features[key],
-  set: key => {
+  get: (key) => features[key],
+  set: (key) => {
     features[key] = value;
   },
-  enable: key => {
+  enable: (key) => {
     features[key] = true;
   },
-  disable: key => {
+  disable: (key) => {
     features[key] = false;
-  }
+  },
 };
 
 export default Features;

@@ -26,20 +26,20 @@ export default class BaseModel {
   }
 
   _initialize = () => {
-    this.patterns.forEach(pattern => this._subscribe(pattern));
+    this.patterns.forEach((pattern) => this._subscribe(pattern));
 
     return this;
   };
 
-  _subscribe = pattern => {
+  _subscribe = (pattern) => {
     this.db.subscribe(
       pattern,
-      data => this._onDataChange(data),
-      data => this._onDataLoad(data)
+      (data) => this._onDataChange(data),
+      (data) => this._onDataLoad(data),
     );
   };
 
-  _validatePatterns = patterns => {
+  _validatePatterns = (patterns) => {
     const default_pattern = { Scope: this.model, Name: "*" };
     const _patterns = patterns ? patterns : default_pattern;
     return Array.isArray(_patterns) ? _patterns : [_patterns];
@@ -60,7 +60,7 @@ export default class BaseModel {
     }
   }
 
-  get = id => {
+  get = (id) => {
     return this._cache.get(id);
   };
 
@@ -68,13 +68,13 @@ export default class BaseModel {
     return this._cache.values();
   };
 
-  _get_or_create = key => {
+  _get_or_create = (key) => {
     return (
       this.get(key) ||
       this.add(key, {
         name: key,
         obj: {},
-        id: key
+        id: key,
       }).get(key)
     );
   };
@@ -83,12 +83,12 @@ export default class BaseModel {
     return this._cache.set(key, data);
   };
 
-  remove = key => {
+  remove = (key) => {
     this._cache.delete(key);
   };
 
   destroy = () => {
-    this.patterns.forEach(pattern => this.db.unsubscribe(pattern));
+    this.patterns.forEach((pattern) => this.db.unsubscribe(pattern));
   };
 
   /**
@@ -115,10 +115,10 @@ export default class BaseModel {
    *    Events
    */
 
-  _onDataChange = data => {
+  _onDataChange = (data) => {
     const obj = _get(data, `key.${this.model}`, {});
 
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       const entry = this._get_or_create(key);
 
       if (data.event === WS_EVENT_TYPES.DEL) {
@@ -140,10 +140,10 @@ export default class BaseModel {
     });
   };
 
-  _onDataLoad = data => {
+  _onDataLoad = (data) => {
     const obj = _get(data, `value.${this.model}`, {});
 
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       const entry = this._get_or_create(key);
       _merge(entry.obj, obj[key]);
     });
@@ -153,17 +153,17 @@ export default class BaseModel {
     }
   };
 
-  onReady = callback => {
+  onReady = (callback) => {
     if (this.db_state !== this.db_states.ready) {
       this._subject_state.subscribe(EMPTY_FUNCTION, EMPTY_FUNCTION, () =>
-        callback()
+        callback(),
       );
     } else {
       callback();
     }
   };
 
-  onUpdate = callback => {
+  onUpdate = (callback) => {
     this._subject.subscribe(callback);
   };
 }

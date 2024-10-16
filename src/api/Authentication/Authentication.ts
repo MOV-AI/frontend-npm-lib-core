@@ -6,7 +6,7 @@ import {
   LoginResponse,
   NEW_TOKEN_VERSION_ID,
   STORAGE_KEYS,
-  Token
+  Token,
 } from "../../models/authentication";
 
 export class AuthException {
@@ -46,12 +46,13 @@ export default class Authentication {
       const tokenData: Token = {
         message: {
           name: decodedToken.message?.name ?? decodedToken.account_name,
-          superUser: decodedToken.message?.Superuser ?? decodedToken?.super_user
+          superUser:
+            decodedToken.message?.Superuser ?? decodedToken?.super_user,
         },
         auth_token: false,
         refresh_token: Authentication.getRefreshToken(),
         error: false,
-        access_token: token
+        access_token: token,
       };
       const isNewTokenVersion = !!decodedToken.domain_name;
       if (isNewTokenVersion) {
@@ -65,7 +66,7 @@ export default class Authentication {
         auth_token: false,
         refresh_token: false,
         access_token: false,
-        error: true
+        error: true,
       };
     }
   };
@@ -79,7 +80,7 @@ export default class Authentication {
   static storeTokens = (
     data: LoginResponse,
     remember: boolean,
-    options = { storeRefreshToken: true }
+    options = { storeRefreshToken: true },
   ) => {
     window.localStorage.setItem(STORAGE_KEYS.TOKEN, data["access_token"]);
     const refreshToken = data["refresh_token"];
@@ -101,7 +102,7 @@ export default class Authentication {
     username: string,
     password: string,
     remember = false,
-    domain = INTERNAL_AUTHENTICATION
+    domain = INTERNAL_AUTHENTICATION,
   ) => {
     try {
       Authentication.deleteTokens();
@@ -111,7 +112,7 @@ export default class Authentication {
         username: username,
         password: password,
         remember: remember,
-        domain
+        domain,
       };
 
       const response = await Authentication.request({ url, body });
@@ -143,7 +144,7 @@ export default class Authentication {
     const token = this.getToken();
     Authentication.request({
       url: "/logout/",
-      headers: { Authorization: `bearer ${token}` }
+      headers: { Authorization: `bearer ${token}` },
     }).finally(() => {
       // Clear Tokens from client side
       Authentication.deleteTokens();
@@ -182,26 +183,26 @@ export default class Authentication {
 
   static getProviders = (): Promise<{ domains: string[] }> => {
     const headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     };
     const url = `/domains/`;
-    return new Promise(resolve =>
+    return new Promise((resolve) =>
       fetch(url, { headers })
-        .then(response => {
+        .then((response) => {
           if (!response.ok) {
             throw new Error(response.statusText);
           }
           return response
             .json()
             .then(resolve)
-            .catch(error => {
+            .catch((error) => {
               throw new Error(error.statusText);
             });
         })
-        .catch(error => {
+        .catch((error) => {
           console.warn("Error Fetching Providers: ", error);
           resolve({ domains: [INTERNAL_AUTHENTICATION] });
-        })
+        }),
     );
   };
 
@@ -216,9 +217,9 @@ export default class Authentication {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...headers
+        ...headers,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
   };
 
@@ -227,23 +228,23 @@ export default class Authentication {
 
     const url = `/token-refresh/`;
     const body = {
-      token: refreshToken
+      token: refreshToken,
     };
 
     return Authentication.request({ url, body })
-      .then(response => {
+      .then((response) => {
         if (response.status != 200) {
           throw new Error("Not Allowed");
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         Authentication.storeTokens(data, remember, {
-          storeRefreshToken: false
+          storeRefreshToken: false,
         });
         return true;
       })
-      .catch(_error => {
+      .catch((_error) => {
         Authentication.deleteTokens();
         return false;
       });

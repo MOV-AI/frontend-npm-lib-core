@@ -1,7 +1,7 @@
 import UndoManager from "./UndoManager";
 
 let state = 0;
-const addAction = n =>
+const addAction = (n) =>
   UndoManager.actionBuilder()
     .doAction(() => (state = state + n))
     .undoAction(() => (state = state - n))
@@ -23,7 +23,7 @@ test("Should do undo and redo", () => {
   actions.push({ action: () => undoManager.undo(), state: 0 });
   actions.push({ action: () => undoManager.redo(), state: 1 });
   actions.push({ action: () => undoManager.doIt(addFive), state: 6 });
-  actions.forEach(a => {
+  actions.forEach((a) => {
     a.action();
     expect(state).toBe(a.state);
   });
@@ -38,7 +38,7 @@ test("empty undo", () => {
   actions.push({ action: () => undoManager.undo(), state: 0 });
   actions.push({ action: () => undoManager.undo(), state: 0 });
   actions.push({ action: () => undoManager.undo(), state: 0 });
-  actions.forEach(a => {
+  actions.forEach((a) => {
     a.action();
     expect(state).toBe(a.state);
   });
@@ -54,7 +54,7 @@ test("empty redo", () => {
   actions.push({ action: () => undoManager.redo(), state: 1 });
   actions.push({ action: () => undoManager.redo(), state: 4 });
   actions.push({ action: () => undoManager.redo(), state: 4 });
-  actions.forEach(a => {
+  actions.forEach((a) => {
     a.action();
     expect(state).toBe(a.state);
   });
@@ -68,7 +68,7 @@ test("should addIt", () => {
   actions.push({ action: () => undoManager.addIt(addTree), state: 4 });
   actions.push({ action: () => undoManager.undo(), state: 1 });
   actions.push({ action: () => undoManager.undo(), state: 0 });
-  actions.forEach(a => {
+  actions.forEach((a) => {
     a.action();
     expect(state).toBe(a.state);
   });
@@ -83,7 +83,7 @@ test("test undo limit", () => {
   actions.push({ action: () => undoManager.undo(), state: 4 });
   actions.push({ action: () => undoManager.undo(), state: 1 });
   actions.push({ action: () => undoManager.undo(), state: 1 });
-  actions.forEach(a => {
+  actions.forEach((a) => {
     a.action();
     expect(state).toBe(a.state);
   });
