@@ -26,13 +26,13 @@ class UserV1 extends BaseUser {
       this.timestamp = currTime;
 
       return Rest.get({
-        path: `${USER_API_ROUTE}/${this.tokenData.message.name}/`
+        path: `${USER_API_ROUTE}/${this.tokenData.message.name}/`,
       })
-        .then(data => {
+        .then((data) => {
           this.data = data;
           resolve({ response: data });
         })
-        .catch(error => {
+        .catch((error) => {
           this.data = null;
           reject({ error });
         });
@@ -45,7 +45,7 @@ class UserV1 extends BaseUser {
         ...user,
         Roles: (user.Role && [user.Role]) || [],
         Permissions: user.Resources,
-        SuperUser: user.Superuser
+        SuperUser: user.Superuser,
       };
     });
   };
@@ -56,7 +56,7 @@ class UserV1 extends BaseUser {
     return this.getData().then(({ response: user }) => user.Superuser);
   };
 
-  changePassword = body => {
+  changePassword = (body) => {
     const model = mapToUserV1PasswordChangeModel(body);
     return Rest.post({ path: `v1/User/change-password/`, body: model });
   };
@@ -71,7 +71,7 @@ class UserV1 extends BaseUser {
     const model = mapToUserV1PasswordChangeModel(body);
     return Rest.post({
       path: `v1/User/${userId}/reset-password/`,
-      body: model
+      body: model,
     });
   };
 }

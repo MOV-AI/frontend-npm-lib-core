@@ -1,6 +1,6 @@
 import AuthWebSocket from "../AuthWebSocket/AuthWebSocket";
 import Authentication, {
-  AuthException
+  AuthException,
 } from "../Authentication/Authentication";
 const { getToken, checkLogin } = Authentication;
 
@@ -9,12 +9,12 @@ const WSSUB_STATES = {
   INIT: 1,
   CONNECTING: 2,
   OPEN: 3,
-  CLOSED: 4
+  CLOSED: 4,
 };
 
 const CONNECTION = {
   online: 0,
-  offline: 1
+  offline: 1,
 };
 
 const DEFAULT_METHOD = () => {
@@ -35,13 +35,13 @@ class WSSub {
     this.RESEND_TIMEOUT = 1000;
     this.RETRIES = 3;
     this.NORMAL_CLOSE_EVT = 1000;
-    
+
     // supported commands
     this.commands = {
       SUBSCRIBE: "subscribe",
       UNSUBSCRIBE: "unsubscribe",
       LIST: "list",
-      EXECUTE: "execute"
+      EXECUTE: "execute",
     };
 
     this.onOnline = DEFAULT_METHOD;
@@ -62,8 +62,8 @@ class WSSub {
       new Promise((_, reject) =>
         setTimeout(() => {
           reject(new Error("Timeout"));
-        }, timeout)
-      )
+        }, timeout),
+      ),
     ]);
   };
 
@@ -92,7 +92,7 @@ class WSSub {
       onClose,
       onError,
       onMessage,
-      connectionHandler: onAuthError
+      connectionHandler: onAuthError,
     });
 
     this.connect();
@@ -199,7 +199,7 @@ class WSSub {
     const _map = is_command ? this.evt_callbacks : this.sub_callbacks;
     const _callbacks = _map.get(pattern) || [];
 
-    _callbacks.forEach(cb => {
+    _callbacks.forEach((cb) => {
       setTimeout(cb, 0, message);
     });
 
@@ -216,7 +216,7 @@ class WSSub {
   /**
    * triggered when the socket opens
    */
-  onOpen = _evt => {
+  onOpen = (_evt) => {
     this.status = WSSUB_STATES.OPEN;
 
     // send current subscriptions to the server
@@ -227,7 +227,7 @@ class WSSub {
   /**
    * triggered when the socket closes
    */
-  onClose = evt => {
+  onClose = (evt) => {
     this.dispatch("onclose");
     this.status = WSSUB_STATES.CLOSED;
 
@@ -240,7 +240,7 @@ class WSSub {
   /**
    * triggered when the socket raises an error
    */
-  onError = _evt => {
+  onError = (_evt) => {
     this.dispatch("onerror");
   };
 
@@ -255,7 +255,7 @@ class WSSub {
   /**
    * triggered when the socket receives a message
    */
-  onMessage = msg => {
+  onMessage = (msg) => {
     try {
       const data = JSON.parse(msg.data);
       if (data.error) throw new Error(data.error);
@@ -268,7 +268,7 @@ class WSSub {
         ? [event]
         : data.patterns;
 
-      rcv_patterns.forEach(pattern => {
+      rcv_patterns.forEach((pattern) => {
         const _prefix = is_command ? `${event}/` : "";
         const _pattern = `${_prefix}${JSON.stringify(pattern)}`;
 
@@ -290,7 +290,7 @@ class WSSub {
    */
   offlineValidation = ({
     onOnline = this.onOnline,
-    onOffline = this.onOffline
+    onOffline = this.onOffline,
   }) => {
     this.onOnline = onOnline;
     this.onOffline = onOffline;
@@ -298,7 +298,7 @@ class WSSub {
     clearInterval(this.connectionCheckTimeout);
     this.connectionCheckTimeout = setInterval(
       this.checkConnection,
-      this.RECONN_VALIDATION_TIMEOUT
+      this.RECONN_VALIDATION_TIMEOUT,
     );
     // Return MasterDB instance
     return this;
@@ -315,15 +315,16 @@ class WSSub {
     clearInterval(this.connectionCheckTimeout);
     this.connectionCheckTimeout = setInterval(
       this.checkConnection,
-      this.RECONN_VALIDATION_TIMEOUT
+      this.RECONN_VALIDATION_TIMEOUT,
     );
     // Return promise
     return connectionPromise;
   };
 
   handleFalseConnection = (statusText) => {
-    if(statusText === "Token must be a string!") return Authentication.logout();
-  }
+    if (statusText === "Token must be a string!")
+      return Authentication.logout();
+  };
 
   /**
    * Check connection state by doing requests
@@ -332,15 +333,16 @@ class WSSub {
   checkConnection = () => {
     return fetch(`/token-verify/`, {
       method: "POST",
-      body: JSON.stringify({ token: getToken() })
+      body: JSON.stringify({ token: getToken() }),
     })
-      .then(res => {
-        if (!res.ok && res.status !== 200) return this.handleFalseConnection(res.statusText);
+      .then((res) => {
+        if (!res.ok && res.status !== 200)
+          return this.handleFalseConnection(res.statusText);
         if (this.connectionState === CONNECTION.online) return;
         this.connectionState = CONNECTION.online;
         this.onOnline();
       })
-      .catch(_err => {
+      .catch((_err) => {
         console.warn(_err);
         if (this.connectionState === CONNECTION.offline) return;
         this.connectionState = CONNECTION.offline;
@@ -375,7 +377,7 @@ class WSSub {
   reSubscribe = () => {
     const { SUBSCRIBE } = this.commands;
 
-    Array.from(this.sub_callbacks.keys()).forEach(key => {
+    Array.from(this.sub_callbacks.keys()).forEach((key) => {
       const message = this.fmtMessage(SUBSCRIBE, JSON.parse(key));
       this.send(message);
     });
@@ -401,7 +403,7 @@ class WSSub {
    * get the list of the current pattern subscriptions
    * @param {function} evt_callback function to execute on event
    */
-  list = evt_callback => {
+  list = (evt_callback) => {
     const { LIST } = this.commands;
     const message = this.fmtMessage(LIST);
 
@@ -464,18 +466,18 @@ class WSSub {
     }
     const url = this.REST_API + "database/" + scope + "/" + key + "/";
 
-    checkLogin().then(_res => {
+    checkLogin().then((_res) => {
       fetch(url)
-        .then(response => response.json())
+        .then((response) => response.json())
 
-        .then(data => {
+        .then((data) => {
           if (callback) {
             callback(data);
           } else {
             //NOTHING
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     });
@@ -496,7 +498,7 @@ class WSSub {
     const data = { key: key, scope: scope, value: value };
     const url = this.REST_API + "database/";
 
-    checkLogin().then(res => {
+    checkLogin().then((res) => {
       if (!res) {
         throw new AuthException("login error");
       }
@@ -506,9 +508,9 @@ class WSSub {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
-        }
-      }).then(_res => {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }).then((_res) => {
         if (callback) {
           callback(res);
         }
@@ -525,10 +527,10 @@ class WSSub {
     if (callback) {
       response
         .json()
-        .then(data => {
+        .then((data) => {
           callback(data, response);
         })
-        .catch(e => {
+        .catch((e) => {
           callback(undefined, e);
 
           if (sendAlert && process.env.NODE_ENV === "development") {
@@ -538,7 +540,7 @@ class WSSub {
                 response.status +
                 "\n" +
                 "Error: " +
-                response.statusText
+                response.statusText,
             );
           }
         });
@@ -552,7 +554,7 @@ class WSSub {
    * @memberof Database
    */
   get = async (url, callback = undefined) => {
-    checkLogin().then(async res => {
+    checkLogin().then(async (res) => {
       if (!res) {
         throw new AuthException("login error");
       }
@@ -560,13 +562,13 @@ class WSSub {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
-        }
+          Authorization: `Bearer ${getToken()}`,
+        },
       })
-        .then(response => {
+        .then((response) => {
           this._sendResponse(response, callback);
         })
-        .catch(e => callback(undefined, e));
+        .catch((e) => callback(undefined, e));
     });
   };
 
@@ -585,7 +587,7 @@ class WSSub {
       url = this.REST_API + scope + "/";
     }
 
-    checkLogin().then(res => {
+    checkLogin().then((res) => {
       if (!res) {
         throw new AuthException("login error");
       }
@@ -595,9 +597,9 @@ class WSSub {
         body: JSON.stringify({ key: key, data: value }),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
-        }
-      }).then(response => {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }).then((response) => {
         this._sendResponse(response, callback);
       });
     });
@@ -612,10 +614,10 @@ class WSSub {
       method: "POST",
       body: formData,
       headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
+        Authorization: `Bearer ${getToken()}`,
+      },
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(callback);
   };
 
@@ -634,7 +636,7 @@ class WSSub {
       url = this.REST_API + scope + "/";
     }
 
-    checkLogin().then(res => {
+    checkLogin().then((res) => {
       if (!res) {
         throw new AuthException("login error");
       }
@@ -644,9 +646,9 @@ class WSSub {
         body: JSON.stringify(value),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
-        }
-      }).then(response => {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }).then((response) => {
         this._sendResponse(response, callback, true);
       });
     });
@@ -668,7 +670,7 @@ class WSSub {
       return;
     }
 
-    checkLogin().then(res => {
+    checkLogin().then((res) => {
       if (!res) {
         throw new AuthException("login error");
       }
@@ -678,9 +680,9 @@ class WSSub {
         body: JSON.stringify(data),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
-        }
-      }).then(response => {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }).then((response) => {
         this._sendResponse(response, callback, true);
       });
     });
@@ -698,9 +700,9 @@ class WSSub {
     cloudFunction,
     func = "",
     args = undefined,
-    callback = undefined
+    callback = undefined,
   ) => {
-    return checkLogin().then(res => {
+    return checkLogin().then((res) => {
       if (!res) {
         throw new AuthException("login error");
       }
@@ -711,14 +713,14 @@ class WSSub {
         body: JSON.stringify({ func: func, args: args }),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
-        }
-      }).then(response => {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }).then((response) => {
         if (callback) {
           response
             .json()
-            .then(data => callback(data))
-            .catch(e => {
+            .then((data) => callback(data))
+            .catch((e) => {
               console.log("cloudFunction error", e);
               callback({ result: false, error: e });
             });
@@ -743,22 +745,22 @@ class WSSub {
       url = this.REST_API + scope + "/";
       return;
     }
-    let newValue = value.map(obj => {
+    let newValue = value.map((obj) => {
       return { componentName: obj.componentName, name: obj.name };
     });
     const key_workspace = {
-      Workspace: "*"
+      Workspace: "*",
     };
 
-    checkLogin().then(_res => {
+    checkLogin().then((_res) => {
       fetch(url, {
         method: "POST",
         body: JSON.stringify({ key: key_workspace, data: newValue }),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
-        }
-      }).then(response => {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }).then((response) => {
         this._sendResponse(response, callback, true);
       });
     });

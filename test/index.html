@@ -1,50 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movai Lib Core Test</title>
+    <script src="../dist/index.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movai Lib Core Test</title>
-  <script src="../dist/index.js"></script>
-
-</head>
-
-<body>
-  <script>
-    const { Utils, Database, Authentication, MasterDB, RobotManager, CONSTANTS } = Movai;
-    document.writeln(CONSTANTS.GLOBAL_WORKSPACE)
-    Utils.range(0, 10).forEach(x => document.writeln(x));
-    const user = "admin"
-    const pass = "movaimovai"
-    Authentication.login(user, pass).then(() => {
-      const robotManager = new RobotManager();
-      robotManager.subscribeToChanges(robots => {
-        console.log("$$$$ robots", robots)
-      })
-      robotManager.getAll((data) => {
-        Object.keys(data).forEach(robotId => {
-          console.log(">>>> robot id", robotId)
-          document.writeln(`Robot id ${robotId}`)
-          const robot = robotManager.getRobot(robotId);
-          robot.subscribe({
-            property: "Alerts",
-            onUpdate: robotData => {
-              console.log(`>>>>${robotId}`, robotData, robotManager.getRobot(robotId))
-            }
-          })
-          robot.subscribe({
-            property: "Parameter",
-            propValue: "tf",
-            onUpdate: robotData => {
-              console.log(`#####${robotId}`, robotData, robotManager.getRobot(robotId))
-            }
-          })
-        })
-      })
-    })
-
-  </script>
-</body>
-
+  <body>
+    <script>
+      const {
+        Utils,
+        Database,
+        Authentication,
+        MasterDB,
+        RobotManager,
+        CONSTANTS,
+      } = Movai;
+      document.writeln(CONSTANTS.GLOBAL_WORKSPACE);
+      Utils.range(0, 10).forEach((x) => document.writeln(x));
+      const user = "admin";
+      const pass = "movaimovai";
+      Authentication.login(user, pass).then(() => {
+        const robotManager = new RobotManager();
+        robotManager.subscribeToChanges((robots) => {
+          console.log("$$$$ robots", robots);
+        });
+        robotManager.getAll((data) => {
+          Object.keys(data).forEach((robotId) => {
+            console.log(">>>> robot id", robotId);
+            document.writeln(`Robot id ${robotId}`);
+            const robot = robotManager.getRobot(robotId);
+            robot.subscribe({
+              property: "Alerts",
+              onUpdate: (robotData) => {
+                console.log(
+                  `>>>>${robotId}`,
+                  robotData,
+                  robotManager.getRobot(robotId),
+                );
+              },
+            });
+            robot.subscribe({
+              property: "Parameter",
+              propValue: "tf",
+              onUpdate: (robotData) => {
+                console.log(
+                  `#####${robotId}`,
+                  robotData,
+                  robotManager.getRobot(robotId),
+                );
+              },
+            });
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

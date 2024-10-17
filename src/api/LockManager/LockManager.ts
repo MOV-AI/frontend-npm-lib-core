@@ -2,7 +2,7 @@ import {
   CachedLocks,
   LockVar,
   SubscriberCallbackHandler,
-  SubscriptionManager
+  SubscriptionManager,
 } from "../../models";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
@@ -65,10 +65,10 @@ class LockManager {
           this.applyChanges(locks, dataEventType);
 
           // Call subscribed onChange functions
-          Object.keys(this.subscribedOnDataChange).forEach(key => {
+          Object.keys(this.subscribedOnDataChange).forEach((key) => {
             this.subscribedOnDataChange[key].send(
               this.cachedLocks,
-              dataEventType
+              dataEventType,
             );
           });
         },
@@ -78,10 +78,10 @@ class LockManager {
             this.cachedLocks = data.value;
           }
           // Call subscribed onLoad functions
-          Object.keys(this.subscribedOnDataLoad).forEach(key => {
+          Object.keys(this.subscribedOnDataLoad).forEach((key) => {
             this.subscribedOnDataLoad[key].send(this.cachedLocks);
           });
-        }
+        },
       );
     } catch (error) {}
   }
