@@ -27,7 +27,7 @@ class BroadcastChannel {
    *
    * @param {string} event: event name -> should be a valid event name present in BROADCAST_EVENTS
    */
-  unsubscribe = event => {
+  unsubscribe = (event) => {
     if (!this.subscribed_events.hasOwnProperty(event)) return;
     delete this.subscribed_events[event];
     console.log("BroadcastChannel unsubscribe to", event);
@@ -47,7 +47,7 @@ class BroadcastChannel {
       event: event,
       source: this.appName,
       target: target,
-      data: data || {}
+      data: data || {},
     });
   };
 
@@ -65,14 +65,14 @@ class BroadcastChannel {
    *
    * @param message: Message event containing origin and data passed from the postMessage
    */
-  _onMessage = message => {
+  _onMessage = (message) => {
     const messageData = message.data;
     // Ignore message received if event is not subscribed
     if (!this.subscribed_events.hasOwnProperty(messageData.event)) return;
     // Ignore message if target is not appName
     if (messageData.target !== this.appName) return;
     // Call subscribed event callback
-    this.subscribed_events[messageData.event].forEach(callback => {
+    this.subscribed_events[messageData.event].forEach((callback) => {
       callback(messageData);
     });
     console.log("BroadcastChannel _onMessage from", messageData.source);

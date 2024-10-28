@@ -1,7 +1,7 @@
 import Authentication from "../Authentication/Authentication";
 import {
   APPLICATIONS_PERMISSION_SCOPE,
-  UserPermissions
+  UserPermissions,
 } from "../../models/permission";
 import { ChangePassword, UserWithPermissions } from "../../models/user";
 import Rest from "../Rest/Rest";
@@ -11,7 +11,7 @@ class BaseUser {
     public tokenData = Authentication.getTokenData(),
     public data = null,
     public timestamp = null,
-    public TIMEOUT_MS = 3000
+    public TIMEOUT_MS = 3000,
   ) {}
 
   getUsername = (): string => {
@@ -33,7 +33,7 @@ class BaseUser {
       Label: this.getUsername(),
       Resources: Permissions || {},
       Superuser: SuperUser ?? this.isSuperUser(),
-      Roles
+      Roles,
     };
   };
 

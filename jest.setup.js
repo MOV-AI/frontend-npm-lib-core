@@ -1,3 +1,2 @@
-jest.mock('roslib', () => {
-});
+jest.mock("roslib", () => {});
 globalThis.mock = true;

@@ -43,7 +43,7 @@ Snapshot.create = ({ target, body = {} }) => {
  */
 Snapshot.createByRef = ({ target, source }) => {
   const body = {
-    src: `${source.workspace}/${source.type}/${source.name}/${source.version}`
+    src: `${source.workspace}/${source.type}/${source.name}/${source.version}`,
   };
 
   return Snapshot._create({ target, source, body });

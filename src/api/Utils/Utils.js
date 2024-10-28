@@ -6,13 +6,11 @@ import _transform from "lodash/transform";
 import { deepEqual as equal } from "fast-equals";
 import Role from "../Role/Role";
 
- export const ofNull = x => x !== null && x !== undefined ? x : null;
+export const ofNull = (x) => (x !== null && x !== undefined ? x : null);
 
-export const getter = prop => obj => obj[prop];
+export const dot = (f) => (g) => (x) => f(g(x));
 
-export const dot = f => g => x => f(g(x));
-
-export const maybeGet = prop => obj => {
+export const maybeGet = (prop) => (obj) => {
   const result = obj[prop];
   return result !== null && result !== undefined ? result : null;
 };
@@ -33,7 +31,7 @@ export const random = (a, b) => {
   return init + (end - init) * Math.random();
 };
 
-export const normalizeStr = str => {
+export const normalizeStr = (str) => {
   // from https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript
   return str
     .normalize("NFD")
@@ -52,7 +50,7 @@ export const normalizeStr = str => {
  */
 export const groupBy = (array, groupFunction) => {
   const ans = {};
-  array.forEach(x => {
+  array.forEach((x) => {
     const key = groupFunction(x);
     if (!ans[key]) ans[key] = [];
     ans[key].push(x);
@@ -61,7 +59,7 @@ export const groupBy = (array, groupFunction) => {
 };
 
 // From https://flaviocopes.com/how-to-uppercase-first-letter-javascript/
-export const capitalize = s => {
+export const capitalize = (s) => {
   if (typeof s !== "string") return "";
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
@@ -82,8 +80,8 @@ export const flattenObject = (obj, prefix = "") =>
     if (typeof obj[k] === "object" && !_isEmpty(obj[k])) {
       Object.assign(acc, flattenObject(obj[k], pre + k));
     } else {
-      acc[pre + k] = obj[k]
-    };
+      acc[pre + k] = obj[k];
+    }
 
     return acc;
   }, {});
@@ -112,7 +110,7 @@ export const randomGuid = () => {
 export const validateEntityName = (
   entityName,
   notAllowedWords = ["__"],
-  regex = ALPHANUMERIC_REGEX
+  regex = ALPHANUMERIC_REGEX,
 ) => {
   const validExpression = entityName.search(regex) !== -1;
   return (
@@ -127,7 +125,7 @@ export const validateEntityName = (
  * @param {object} user
  * @returns List of roles
  */
-export const getUserRoles = user => {
+export const getUserRoles = (user) => {
   let userRoles = user.Role || user.roles || user.Roles;
   if (!Array.isArray(userRoles)) userRoles = [userRoles];
   return userRoles;
@@ -139,20 +137,18 @@ export const getUserRoles = user => {
  * @param {object} user
  * @returns {[ResourcePermission]} List of permissions
  */
-export const parseUserData = async user => {
+export const parseUserData = async (user) => {
   const resourcesParsedData = [];
   const userRoles = getUserRoles(user);
-  const permissionsByResourceType = await getPermissionsByScope(
-    userRoles
-  );
+  const permissionsByResourceType = await getPermissionsByScope(userRoles);
   user.Resources = permissionsByResourceType;
   for (let [resourceType, resourcePermissions] of Object.entries(
-    user.allResourcesPermissions
+    user.allResourcesPermissions,
   )) {
     const hasUserResource = user?.Resources?.[resourceType] ?? false;
     const resource = {
       name: resourcePermissions.Label || resourceType,
-      permissions: resourcePermissions.map(perm => {
+      permissions: resourcePermissions.map((perm) => {
         const rolePermValue =
           permissionsByResourceType[resourceType]?.includes(perm);
         let permValue = rolePermValue;
@@ -164,9 +160,9 @@ export const parseUserData = async user => {
           name: perm,
           roleDefault: rolePermValue,
           resourceType: resourceType,
-          value: permValue
+          value: permValue,
         };
-      })
+      }),
     };
     resourcesParsedData.push(resource);
   }
@@ -178,7 +174,7 @@ export const parseUserData = async user => {
  * @param {object} user
  * @returns {object} Dictionary with list of permissions by scope
  */
-export const getPermissionsByScope = async userRoles => {
+export const getPermissionsByScope = async (userRoles) => {
   const allRoles = await Role.getAll();
   return userRoles.reduce((prev, role) => {
     const selectedRoleResources = allRoles?.[role]?.Resources ?? {};
@@ -186,7 +182,7 @@ export const getPermissionsByScope = async userRoles => {
       ([resourceType, permissions]) => {
         if (!prev[resourceType]) prev[resourceType] = [];
         prev[resourceType] = [...prev[resourceType], ...permissions];
-      }
+      },
     );
     return prev;
   }, {});
@@ -206,7 +202,7 @@ const SAME_TAB = "_self";
 const loadLayout = (e, ctrlKey = false) => {
   globalThis.open(
     `${globalThis.location.origin}/${API_VERSION}/mov-fe-app-ide/?app_mode=1&layout_id=${e.URL}`,
-    ctrlKey ? NEW_TAB : SAME_TAB
+    ctrlKey ? NEW_TAB : SAME_TAB,
   );
 };
 
@@ -218,7 +214,7 @@ const loadLayout = (e, ctrlKey = false) => {
 const loadApplication = (e, ctrlKey = false) => {
   globalThis.open(
     `${globalThis.location.origin}/${API_VERSION}/${e.URL}/`,
-    ctrlKey ? NEW_TAB : SAME_TAB
+    ctrlKey ? NEW_TAB : SAME_TAB,
   );
 };
 
@@ -226,7 +222,7 @@ const loadApplication = (e, ctrlKey = false) => {
  * loads the requested external page
  * @param {object} e application's object
  */
-const loadUrl = e => {
+const loadUrl = (e) => {
   globalThis.open(`${e.URL}`);
 };
 
@@ -240,7 +236,7 @@ export const loadResources = (event, element) => {
     application: loadApplication,
     layout: loadLayout,
     external: loadUrl,
-    default: loadUrl
+    default: loadUrl,
   };
   const openInNew = event?.ctrlKey || event?.button === 1;
   const loader = resourcesMap[element?.Type] || resourcesMap.default;
@@ -252,19 +248,19 @@ export const loadResources = (event, element) => {
  * @param {object} body Object corresponding to either old or new password change model
  * @returns {object} Object corresponding to old model for V1 user
  */
-export const mapToUserV1PasswordChangeModel = body => {
+export const mapToUserV1PasswordChangeModel = (body) => {
   const {
     current_password,
     CurrentPassword,
     new_password,
     NewPassword,
     confirm_password,
-    ConfirmPassword
+    ConfirmPassword,
   } = body;
   return {
     current_password: current_password ?? CurrentPassword ?? "",
     new_password: new_password ?? NewPassword,
-    confirm_password: confirm_password ?? ConfirmPassword
+    confirm_password: confirm_password ?? ConfirmPassword,
   };
 };
 
@@ -357,11 +353,10 @@ export function buildDocPath(doc) {
  * @returns {string} Random ID in format : "1c76107c-146e-40bc-93fb-8148750cf50a"
  */
 export const randomId = () => {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
     (
       c ^
       (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16)
+    ).toString(16),
   );
 };
-

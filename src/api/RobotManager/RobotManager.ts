@@ -6,7 +6,7 @@ import {
   EMPTY_FUNCTION,
   HEARTBEAT_TIMEOUT,
   SET_WS_EVENTS,
-  MAX_LOG_LIMIT
+  MAX_LOG_LIMIT,
 } from "../Utils/constants";
 import Robot from "./Robot";
 import Rest from "../Rest/Rest";
@@ -17,7 +17,7 @@ import {
   getRequestMessage,
   getRequestRobots,
   getRequestService,
-  getRequestTags
+  getRequestTags,
 } from "./Utils/Utils";
 import {
   CachedRobots,
@@ -25,7 +25,7 @@ import {
   LogQueryParam,
   RobotModel,
   SubscriptionManager,
-  UpdateRobotParam
+  UpdateRobotParam,
 } from "../../models";
 
 // Constants
@@ -88,7 +88,7 @@ class RobotManager {
     MasterDB.subscribe(
       SUBSCRIPTION_PATTERN,
       this.onDataChange,
-      this.onDataLoad
+      this.onDataLoad,
     );
   }
 
@@ -100,13 +100,13 @@ class RobotManager {
     this.isDataLoaded = true;
     if (data.value) {
       this.cachedRobots = data.value.Robot;
-      Object.keys(this.cachedRobots).forEach(id => {
+      Object.keys(this.cachedRobots).forEach((id) => {
         this.robots[id] = new ProtectedRobot(id, this.cachedRobots[id]);
         this.cachedRobots[id].Online = true;
       });
     }
     // Call subscribed onLoad functions
-    Object.keys(this.subscribedOnDataLoad).forEach(key => {
+    Object.keys(this.subscribedOnDataLoad).forEach((key) => {
       this.subscribedOnDataLoad[key].send(this.cachedRobots);
     });
 
@@ -127,31 +127,31 @@ class RobotManager {
 
     // Set changed robots
     const changedRobots: CachedRobots = {};
-    Object.keys(robots).forEach(robotId => {
+    Object.keys(robots).forEach((robotId) => {
       const robot = this.robots[robotId];
       const changedKeys_ = robot.getChangedKeysAndResetData();
       const changedKeys = changedKeys_
         // until https://movai.atlassian.net/browse/BP-910 is not solved
         .filter(
-          key =>
+          (key) =>
             !(
               DEL_WS_EVENTS.includes(dataEventType) &&
               KEYS_TO_DISCONSIDER_DEL_EVENT.includes(key)
-            )
+            ),
         )
         .filter(
-          key =>
+          (key) =>
             !(
               SET_WS_EVENTS.includes(dataEventType) &&
               KEYS_TO_DISCONSIDER_SET_EVENT.includes(key)
-            )
+            ),
         );
       if (changedKeys.length) {
         changedRobots[robotId] = this.cachedRobots[robotId];
       }
     });
     // Call subscribed onChange functions
-    Object.keys(this.subscribedOnDataChange).forEach(key => {
+    Object.keys(this.subscribedOnDataChange).forEach((key) => {
       if (Object.keys(changedRobots).length) {
         this.subscribedOnDataChange[key].send(changedRobots, dataEventType);
       }
@@ -249,18 +249,16 @@ class RobotManager {
   private heartbeatMonitor = () => {
     clearTimeout(this.heartbeatTimeout);
     const robotsWhichChangedOnlineStatus: ProtectedRobot[] = [];
-    Object.values(this.robots).forEach(robot => {
-      if (!this.cachedRobots[robot.id])
-        return;
-      const previousOnlineStatus = this.cachedRobots[robot.id].Online;
+    Object.values(this.robots).forEach((robot) => {
+      const previousOnlineStatus = this.cachedRobots[robot.id]?.Online;
       this.checkStatus(robot);
-      if (this.cachedRobots[robot.id].Online !== previousOnlineStatus) {
+      if (this.cachedRobots[robot.id]?.Online !== previousOnlineStatus) {
         robotsWhichChangedOnlineStatus.push(robot);
       }
     });
 
     // Call subscribed onChange functions
-    Object.keys(this.subscribedOnDataChange).forEach(key => {
+    Object.keys(this.subscribedOnDataChange).forEach((key) => {
       if (robotsWhichChangedOnlineStatus.length > 0) {
         this.subscribedOnDataChange[key].send(this.cachedRobots, HEART_BEAT);
       }
@@ -268,7 +266,7 @@ class RobotManager {
 
     this.heartbeatTimeout = setTimeout(
       this.heartbeatMonitor,
-      HEARTBEAT_TIMEOUT
+      HEARTBEAT_TIMEOUT,
     );
   };
 
@@ -279,7 +277,9 @@ class RobotManager {
    */
   private checkStatus = (robot: ProtectedRobot) => {
     const id = robot.id;
-    this.cachedRobots[id].Online = robot.updateStatus();
+
+    if (this.cachedRobots[id])
+      this.cachedRobots[id].Online = robot.updateStatus();
   };
 
   /**
@@ -288,7 +288,7 @@ class RobotManager {
    * @param {string} event : Event type ("set", "hset", "del", "hdel")
    */
   private applyChanges = (robots: CachedRobots, event: string) => {
-    Object.keys(robots).forEach(robotId => {
+    Object.keys(robots).forEach((robotId) => {
       const obj: RobotModel = robots[robotId];
       // Set robot object if not yet created
       if (!this.robots[robotId]) {
@@ -298,7 +298,7 @@ class RobotManager {
       const robot = this.robots[robotId];
       const cachedRobot = this.cachedRobots[robotId];
       // Update cached and robot data attribute
-      Object.keys(obj).forEach(key => {
+      Object.keys(obj).forEach((key) => {
         const objKey = key as keyof RobotModel;
         const value: any = obj[objKey];
         const prevCachedValue = cachedRobot[objKey];
@@ -312,7 +312,7 @@ class RobotManager {
           : value;
         robot.setData(
           objKey,
-          isObjectAndNotDel ? _merge(prevRobotValue, value) : value
+          isObjectAndNotDel ? _merge(prevRobotValue, value) : value,
         );
       });
       // Send updated data to subscribed components
@@ -335,14 +335,16 @@ class RobotManager {
     const _limit = queryParam?.limit || MAX_LOG_LIMIT;
     const _levels = getRequestLevels(
       queryParam?.level?.selected || [],
-      queryParam?.level?.list
+      queryParam?.level?.list,
     );
     const _services = getRequestService(queryParam?.service?.selected);
     const _tags = getRequestTags(queryParam?.tag?.selected);
     const _message = getRequestMessage(queryParam?.searchMessage);
     const _dates = getRequestDate(queryParam?.date?.from, queryParam?.date?.to);
     const _robots = getRequestRobots(queryParam?.robot?.selected);
-    return [_limit, _levels, _services, _dates, _tags, _message, _robots].join("");
+    return [_limit, _levels, _services, _dates, _tags, _message, _robots].join(
+      "",
+    );
   }
 
   /**

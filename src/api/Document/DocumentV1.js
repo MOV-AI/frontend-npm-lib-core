@@ -58,22 +58,27 @@ class DocumentV1 {
   /**
    * Get document data
    */
-  read = (apiVersion = "v1") => {
+  read = async (apiVersion = "v1") => {
     const { type, name } = this;
     const path =
       apiVersion === "v1" ? `v1/${type}/${name}/` : `v2/db/${this.path}`;
 
-    return Rest.get({ path }).then(data => {
-      this.data = data;
-      return apiVersion === "v1" ? data : data[type][name];
-    });
+    try {
+      const documentData = await Rest.get({ path });
+
+      this.data = documentData;
+
+      return apiVersion === "v1" ? documentData : documentData[type][name];
+    } catch (e) {
+      console.error(`Error reading document "${name}" of type "${type}"`, e);
+    }
   };
 
   /**
    * Update the document using PUT request
    * @param {object} body Request payload
    */
-  update = body => {
+  update = (body) => {
     const { type, name } = this;
     const path = `v1/${type}/${name}/`;
 
@@ -85,7 +90,7 @@ class DocumentV1 {
    * @param {object} body : Request body
    * @returns Request promise
    */
-  overwrite = body => {
+  overwrite = (body) => {
     const { type, name } = this;
     const path = `v1/${type}/${name}/`;
 
@@ -98,7 +103,7 @@ class DocumentV1 {
    * Subscribe to document changes (notifications only available in the global workspace)
    * @param {Function} callback Callback to execute when the document is updated
    */
-  subscribe = callback => {
+  subscribe = (callback) => {
     this.resubscribe(callback);
   };
 
@@ -106,13 +111,13 @@ class DocumentV1 {
    * Resubscribe to document changes (notifications only available in the global workspace)
    * @param {Function} callback Callback to execute when the document is updated
    */
-  resubscribe = callback => {
+  resubscribe = (callback) => {
     if (this.readOnly) return;
 
     this.unsubscribe();
 
     this.subscriber = new BaseModel({}, this.type, this.database, [
-      { Scope: this.type, Name: this.name }
+      { Scope: this.type, Name: this.name },
     ]);
 
     this.subscriber.onUpdate(() => {

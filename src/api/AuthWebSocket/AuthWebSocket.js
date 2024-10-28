@@ -1,5 +1,5 @@
 import Authentication, {
-  AuthException
+  AuthException,
 } from "../Authentication/Authentication";
 import { authSub } from "./../Authentication/authSub";
 
@@ -12,7 +12,7 @@ export default class AuthWebSocket {
     onClose = null,
     onError = null,
     onMessage = null,
-    connectionHandler = null
+    connectionHandler = null,
   }) {
     this.onOpen = onOpen === null ? this._onOpen : onOpen;
     this.onClose = onClose === null ? this._onClose : onClose;
@@ -25,30 +25,29 @@ export default class AuthWebSocket {
     this.socket = false;
     this.connected = false;
     authSub.subscribe(({ loggedIn }) => {
-      if (loggedIn)
-        this.createSocket();
+      if (loggedIn) this.createSocket();
     });
   }
 
-  _onOpen = evt => {
+  _onOpen = (evt) => {
     console.log("Socket Open: ", evt);
   };
 
-  _onClose = evt => {
+  _onClose = (evt) => {
     console.log("Socket Close: ", evt);
     this.connected = false;
   };
 
-  _onError = evt => {
+  _onError = (evt) => {
     this.connected = false;
     console.log("Socket Error: ", evt);
   };
 
-  _onMessage = evt => {
+  _onMessage = (evt) => {
     console.log("Socket Message: ", evt);
   };
 
-  _connectionHandler = value => {
+  _connectionHandler = (value) => {
     console.log("Invalid Token, no handler specified! ", value);
   };
 
@@ -56,7 +55,7 @@ export default class AuthWebSocket {
     let sock = false;
 
     checkLogin()
-      .then(res => {
+      .then((res) => {
         if (!res) {
           throw new AuthException("login error");
         }
@@ -76,7 +75,7 @@ export default class AuthWebSocket {
 
         this.socket = sock;
       })
-      .catch(e => {
+      .catch((e) => {
         if (e.name === "AuthException") {
           this.connectionHandler(false);
         }
@@ -85,14 +84,14 @@ export default class AuthWebSocket {
 
   send(data) {
     checkLogin()
-      .then(res => {
+      .then((res) => {
         if (!res) {
           throw new AuthException("login error");
         }
 
         this.socket.send(data);
       })
-      .catch(e => {
+      .catch((e) => {
         switch (e.name) {
           case "AuthException":
             this.connectionHandler(false);
@@ -110,7 +109,7 @@ export default class AuthWebSocket {
                 }
               },
               400,
-              sub_interval
+              sub_interval,
             );
             break;
         }

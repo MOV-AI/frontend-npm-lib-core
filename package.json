@@ -1,16 +1,20 @@
 {
   "name": "@mov-ai/mov-fe-lib-core",
-  "version": "1.2.1-13",
+  "version": "1.2.3-0",
   "description": "The Mov.AI's core frontend library.",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/mov-ai"
+  "keywords": [
+    "frontend",
+    "core",
+    "common",
+    "utils"
+  ],
+  "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MOV-AI/frontend-npm-lib-core.git"
   },
-  "main": "cjs/mov-core.js",
-  "browser": "web/mov-core.js",
-  "module": "esm/mov-core.js",
-  "entry": "src/mov-core.ts",
-  "types": "types/mov-core.d.ts",
-  "library": "Movai",
+  "license": "ISC",
+  "author": "MOV.AI",
   "exports": {
     ".": {
       "import": "./esm/mov-core.js",
@@ -18,66 +22,10 @@
       "default": "./cjs/mov-core.js"
     }
   },
-  "external": {
-    "lodash": "global _",
-    "react": "global React",
-    "@mov-ai/mov-fe-lib-sub": "global ttySub"
-  },
-  "scripts": {
-    "lock": "mv ../../pnpm-workspace.yaml ../../pnpm-workspace.yaml.bak ; pnpm i ; mv ../../pnpm-workspace.yaml.bak ../../pnpm-workspace.yaml",
-    "test": "scripts test",
-    "testDev": "jest --watchAll",
-    "testStatic": "webpack --mode=development && echo 'Open browser at http://localhost:3030/test/index.html' && node test/server.js",
-    "build": "scripts types && scripts build",
-    "fast": "scripts build",
-    "watch": "scripts watch",
-    "clean": "rm -rf cjs esm web types"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MOV-AI/frontend-npm-lib-core.git"
-  },
-  "keywords": [
-    "frontend",
-    "core",
-    "common",
-    "utils"
-  ],
-  "author": "MOV.AI",
-  "license": "ISC",
-  "homepage": "https://github.com/MOV-AI/frontend-npm-lib-core/blob/main/README.md",
-  "devDependencies": {
-    "@mov-ai/mov-fe-lib-scripts": "^0.6.8-1",
-    "@mov-ai/mov-fe-lib-sub": "^2.3.2-1",
-    "@types/jest": "29.5.13",
-    "@types/lodash": "^4.17.7",
-    "@types/node": "^20.11.27",
-    "@types/react": "^18.3.6",
-    "@types/roslib": "^1.3.5",
-    "express": "^4.21.0",
-    "http-proxy-middleware": "^3.0.2"
-  },
-  "peerDependencies": {
-    "@mov-ai/mov-fe-lib-sub": "^2.3.2-1"
-  },
-  "optionalDependencies": {
-    "react": "^18.2.0"
-  },
-  "dependencies": {
-    "fast-equals": "^5.0.1",
-    "js-yaml": "^4.1.0",
-    "jwt-decode": "^3.1.2",
-    "lodash": "^4.17.21",
-    "roslib": "^1.4.1",
-    "rxjs": "^7.3.0"
-  },
-  "files": [
-    "cjs",
-    "web",
-    "esm",
-    "types",
-    "resources"
-  ],
+  "main": "cjs/mov-core.js",
+  "module": "esm/mov-core.js",
+  "browser": "web/mov-core.js",
+  "types": "types/mov-core.d.ts",
   "typesVersions": {
     "*": {
       "api": [
@@ -88,5 +36,68 @@
       ]
     }
   },
-  "packageManager": "pnpm@9.4.0"
+  "files": [
+    "cjs",
+    "web",
+    "esm",
+    "types",
+    "resources"
+  ],
+  "scripts": {
+    "build": "scripts types && scripts build",
+    "buildDev": "webpack --mode=development --watch",
+    "clean": "rm -rf cjs esm web types",
+    "fast": "scripts build",
+    "lock": "mv ../../pnpm-workspace.yaml ../../pnpm-workspace.yaml.bak ; pnpm i ; mv ../../pnpm-workspace.yaml.bak ../../pnpm-workspace.yaml",
+    "prepare": "husky",
+    "test": "scripts test",
+    "testStatic": "webpack --mode=development && echo 'Open browser at http://localhost:3030/test/index.html' && node test/server.js",
+    "ts": "tsc --noEmit",
+    "watch": "scripts watch"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown",
+    "package.json": "sort-package-json"
+  },
+  "dependencies": {
+    "fast-equals": "^5.0.1",
+    "js-yaml": "^4.1.0",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
+    "roslib": "^1.4.1",
+    "rxjs": "^7.3.0"
+  },
+  "devDependencies": {
+    "@mov-ai/mov-fe-lib-scripts": "^0.6.8-1",
+    "@mov-ai/mov-fe-lib-sub": "^2.3.2-1",
+    "@types/jest": "29.5.13",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^20.11.27",
+    "@types/react": "^18.3.6",
+    "@types/roslib": "^1.3.5",
+    "express": "^4.21.0",
+    "http-proxy-middleware": "^3.0.2",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "lodash": "^4.17.21",
+    "prettier": "3.3.3",
+    "sort-package-json": "2.10.1"
+  },
+  "peerDependencies": {
+    "@mov-ai/mov-fe-lib-sub": "^2.3.2-1"
+  },
+  "optionalDependencies": {
+    "react": "^18.2.0"
+  },
+  "packageManager": "pnpm@9.11.0",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/mov-ai"
+  },
+  "entry": "src/mov-core.ts",
+  "external": {
+    "lodash": "global _",
+    "react": "global React",
+    "@mov-ai/mov-fe-lib-sub": "global ttySub"
+  },
+  "library": "Movai"
 }

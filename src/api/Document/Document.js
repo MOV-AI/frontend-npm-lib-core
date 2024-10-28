@@ -5,7 +5,7 @@ import Rest from "../Rest/Rest";
 const withDocVersion = function (docVersion) {
   return {
     v1: DocumentV1,
-    v2: DocumentV2
+    v2: DocumentV2,
   }[docVersion];
 };
 
@@ -89,10 +89,10 @@ class Document {
   static exists({ name, scope, version, workspace = "global" }) {
     const path = `v2/db/${workspace}/${scope}/${name}/${version}`;
     return Rest.get({ path })
-      .then(data => {
+      .then((data) => {
         return !!data[scope];
       })
-      .catch(err => {
+      .catch((err) => {
         return err.status === 500 ? false : true;
       });
   }

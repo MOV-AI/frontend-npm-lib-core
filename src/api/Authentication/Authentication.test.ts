@@ -6,7 +6,7 @@ const unmockedConsole = global.console;
 beforeAll(() => {
   global.console = {
     ...global.console,
-    warn: jest.fn()
+    warn: jest.fn(),
   };
 });
 
@@ -24,9 +24,9 @@ test("Get Providers when fetch is successfull", () => {
       json: () =>
         Promise.resolve({
           domains: providers,
-          success: true
-        })
-    })
+          success: true,
+        }),
+    }),
   ) as jest.Mock;
 
   Authentication.getProviders().then(({ domains }) => {
@@ -37,8 +37,8 @@ test("Get Providers when fetch is successfull", () => {
 test("Get Providers when fetch is not successfull", () => {
   global.fetch = jest.fn(() =>
     Promise.resolve({
-      ok: false
-    })
+      ok: false,
+    }),
   ) as jest.Mock;
 
   expectProvidersToBeTheDefault();
@@ -52,7 +52,7 @@ test("Get Providers when API is down", () => {
 function expectProvidersToBeTheDefault() {
   Authentication.getProviders().then(({ domains }) =>
     expect(domains).toEqual(
-      expect.arrayContaining([Authentication.DEFAULT_PROVIDER])
-    )
+      expect.arrayContaining([Authentication.DEFAULT_PROVIDER]),
+    ),
   );
 }

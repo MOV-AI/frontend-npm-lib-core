@@ -12,7 +12,7 @@ class DocumentV2 extends DocumentV1 {
     const { workspace, type, name, version } = this;
     const path = `v2/db/${workspace}/${type}/${name}/${version}`;
 
-    return Rest.get({ path }).then(data => {
+    return Rest.get({ path }).then((data) => {
       this.data = data;
       return data;
     });
@@ -22,7 +22,7 @@ class DocumentV2 extends DocumentV1 {
    * Update the document using PUT request
    * @param {object} body Request payload
    */
-  update = body => {
+  update = (body) => {
     const { workspace, type, name, version } = this;
     const path = `v2/db/${workspace}/${type}/${name}/${version}`;
 
@@ -44,7 +44,7 @@ class DocumentV2 extends DocumentV1 {
       srcWorkspace: workspace,
       type,
       name,
-      version
+      version,
     });
   };
 
@@ -57,7 +57,7 @@ class DocumentV2 extends DocumentV1 {
     return Snapshot.getAll({
       workspace,
       type,
-      name
+      name,
     });
   };
 

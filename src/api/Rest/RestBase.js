@@ -5,7 +5,7 @@ const RestBase = {};
  * Encodes the values of an object
  * @param {object} data - Object to encode
  */
-RestBase.encodeURI = data => {
+RestBase.encodeURI = (data) => {
   const output = {};
   for (const [key, value] of Object.entries(data)) {
     output[key] = encodeURIComponent(value);
@@ -39,7 +39,7 @@ RestBase._request = ({
   method = "GET",
   body = {},
   search,
-  customHeaders = {}
+  customHeaders = {},
 }) => {
   const headers = customHeaders;
   const requestUrl = url ? url : RestBase.getUrl({ path, search });
@@ -47,12 +47,12 @@ RestBase._request = ({
 
   const payload = {
     method,
-    headers
+    headers,
   };
 
   if (!skipBody.includes(method)) payload.body = JSON.stringify(body);
 
-  return fetch(requestUrl, payload).then(response => {
+  return fetch(requestUrl, payload).then((response) => {
     if (!response.ok) {
       return Promise.reject(response);
     }
@@ -118,7 +118,9 @@ RestBase.upload = ({ packageName, key, value, customHeaders = {} }) => {
 };
 
 let currentApp = "";
-RestBase.setApp = ({ name }) => { currentApp = name; };
+RestBase.setApp = ({ name }) => {
+  currentApp = name;
+};
 
 /**
  * Execute remote procedure call
