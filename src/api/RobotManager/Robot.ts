@@ -25,6 +25,7 @@ import MasterDB from "../Database/MasterDB";
 import * as Utils from "./../Utils/Utils";
 import Rest from "../Rest/Rest";
 import Document from "../Document/Document";
+import Logs from "./../Logs";
 
 class Robot {
   readonly id: string;
@@ -300,23 +301,28 @@ class Robot {
    * @returns {Promise<Tasks>} Returns previous/current robot tasks
    */
   async getTasks(): Promise<Tasks> {
-    const path = `v1/logs/?limit=2&level=info&tags=ui&robots=${this.name}`;
-    return Rest.get({ path })
-      .then((res: Log) => {
-        if (!res?.data?.length) {
-          return DEFAULT_ROBOT_TASKS;
-        }
-        // Return tasks
-        return {
-          currentTask: res.data[0]?.message || DEFAULT_ROBOT_TASKS.currentTask,
-          previousTask:
-            res.data[1]?.message || DEFAULT_ROBOT_TASKS.previousTask,
-        };
-      })
-      .catch((error: Error) => {
-        console.warn("Failed to get tasks", error);
-        return DEFAULT_ROBOT_TASKS;
-      });
+    const logs = new Logs();
+    const res = logs.filter({
+      limit: 2,
+      levels: {
+        info: true,
+      },
+      tags: {
+        ui: true,
+      },
+      robots: {
+        [this.name as string]: true,
+      },
+    });
+
+    if (!res.length) return DEFAULT_ROBOT_TASKS;
+
+    const [current, prev] = res;
+
+    return {
+      currentTask: current.message || DEFAULT_ROBOT_TASKS.currentTask,
+      previousTask: prev.message || DEFAULT_ROBOT_TASKS.previousTask,
+    };
   }
 
   //========================================================================================
