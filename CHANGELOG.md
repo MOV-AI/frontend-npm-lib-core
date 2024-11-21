@@ -1,5 +1,7 @@
 # TBD
 
+- [FP-3061](https://movai.atlassian.net/browse/FP-3061): Release of mutex lock does not work
+- [FP-2989](https://movai.atlassian.net/browse/FP-2989): ADMIN BOARD - Unclear message to user creation failure
 - [FP-2916](https://movai.atlassian.net/browse/FP-2916): Configure husky, lint-staged and prettier for lib-core
 
 # 1.2.3
