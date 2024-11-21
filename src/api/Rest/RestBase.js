@@ -34,7 +34,7 @@ RestBase.getUrl = ({ path, search = {} }) => {
  * @param {String} method - Request method
  * @param {Object} body - Request payload
  */
-RestBase._request = ({
+RestBase._request = async ({
   url,
   path,
   method = "GET",
@@ -53,12 +53,10 @@ RestBase._request = ({
 
   if (!skipBody.includes(method)) payload.body = JSON.stringify(body);
 
-  return fetch(requestUrl, payload).then((response) => {
-    if (!response.ok) {
-      return Promise.reject(response);
-    }
-    return response.json();
-  });
+  const response = await fetch(requestUrl, payload);
+
+  if (!response.ok) throw new Error(await response.text());
+  else return await response.json();
 };
 
 /**
