@@ -9,9 +9,9 @@ import {
   getRequestService,
   getRequestTags,
 } from "./../RobotManager/Utils/Utils";
+import { DEFAULT_LEVELS, DEFAULT_SERVICE } from "./../Utils/constants";
 
 const MAX_FETCH_LOGS = 200000;
-const MAX_LOGS = 2000;
 let logsDataGlobal = [];
 
 /**
@@ -121,9 +121,14 @@ function matchTags(tags, item) {
 }
 
 let singleton = null;
-globalThis.logs = logsDataGlobal;
+globalThis.getLogs = () => logsDataGlobal;
 
 export default class Logs {
+  static CONSTANTS = {
+    DEFAULT_LEVELS,
+    DEFAULT_SERVICE,
+  };
+
   constructor() {
     if (singleton) return singleton;
 
@@ -162,27 +167,25 @@ export default class Logs {
 
   filter(query = {}) {
     const {
-      levels = {},
-      service = {},
+      levels = DEFAULT_LEVELS,
+      service = DEFAULT_SERVICE,
       tags = {},
       robots = {},
       selectedFromDate = null,
       selectedToDate = null,
-      message = null,
+      message = "",
     } = query;
 
-    return logsDataGlobal
-      .filter(
-        (item) =>
-          (levels[item.level] || noSelection(levels)) &&
-          (service[item.service] || noSelection(service)) &&
-          (matchTags(tags, item) || noSelection(tags)) &&
-          (item.message || "").includes(message) &&
-          (robots[item.robot] || noSelection(robots)) &&
-          (!selectedFromDate || item.timestamp >= selectedFromDate) &&
-          (!selectedToDate || item.timestamp <= selectedToDate),
-      )
-      .slice(0, MAX_LOGS);
+    return logsDataGlobal.filter(
+      (item) =>
+        (levels[item.level] || noSelection(levels)) &&
+        (service[item.service] || noSelection(service)) &&
+        (matchTags(tags, item) || noSelection(tags)) &&
+        (item.message || "").includes(message) &&
+        (robots[item.robot] || noSelection(robots)) &&
+        (!selectedFromDate || item.timestamp >= selectedFromDate) &&
+        (!selectedToDate || item.timestamp <= selectedToDate),
+    );
   }
 
   subscribe(callback) {
