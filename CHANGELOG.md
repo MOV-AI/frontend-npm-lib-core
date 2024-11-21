@@ -2,6 +2,8 @@
 
 - [FP-3061](https://movai.atlassian.net/browse/FP-3061): Release of mutex lock does not work
 - [FP-2989](https://movai.atlassian.net/browse/FP-2989): ADMIN BOARD - Unclear message to user creation failure
+- [FP-3066](https://movai.atlassian.net/browse/FP-3066): Fleetboard: Logs of the workers are stored in the manager but the fleetboard is not able to display them correctly
+- [FP-3034](https://movai.atlassian.net/browse/FP-3034): Logs - Do not select backend by default
 - [FP-2916](https://movai.atlassian.net/browse/FP-2916): Configure husky, lint-staged and prettier for lib-core
 
 # 1.2.3

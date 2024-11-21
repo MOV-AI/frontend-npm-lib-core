@@ -48,6 +48,21 @@ export const SERVICE_LABEL = {
   haproxy: "ha-proxy",
 };
 
+export const DEFAULT_SERVICE = Object.keys(SERVICE_LABEL).reduce(
+  (a, item) => ({ [item]: false, ...a }),
+  {
+    spawner: true,
+  },
+);
+
+export const DEFAULT_LEVELS = {
+  INFO: true,
+  WARNING: false,
+  DEBUG: false,
+  ERROR: true,
+  CRITICAL: true,
+};
+
 export const VAR_SCOPES = {
   GLOBAL: "global",
   FLEET: "fleet",
