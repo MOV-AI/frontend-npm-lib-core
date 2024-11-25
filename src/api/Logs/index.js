@@ -2,14 +2,10 @@ import { webSocketOpen } from "../WebSocket";
 import Features from "./../Features";
 import Rest from "../Rest/Rest";
 import {
-  getRequestDate,
-  getRequestLevels,
-  getRequestMessage,
-  getRequestRobots,
-  getRequestService,
-  getRequestTags,
-} from "./../RobotManager/Utils/Utils";
-import { DEFAULT_LEVELS, DEFAULT_SERVICE } from "./../Utils/constants";
+  DEFAULT_LEVELS,
+  DEFAULT_SERVICE,
+  MAX_LOG_LIMIT,
+} from "./../Utils/constants";
 
 const MAX_FETCH_LOGS = 200000;
 let logsDataGlobal = [];
@@ -65,31 +61,43 @@ export function logsDedupe(oldLogs, data) {
   return data.slice(0, z + 1).concat(newSecOverlap.reverse(), oldLogs);
 }
 
+function getRequestList(label, values) {
+  return values?.length
+    ? label + "=" + values.map((el) => el.label).join()
+    : "";
+}
+
+function getRequestString(label, value) {
+  return value ? label + "=" + value : "";
+}
+
+function getRequestDate(label, value) {
+  return getRequestString(label, (value ?? 0) / 1000);
+}
+
 /**
- * Get Logs params
+ * Get Logs parameter string
  * @param {LogQueryParam} queryParam : Object to construct query string
  * @returns {string} query parameter string
  */
-function getLogsParam(queryParam) {
-  // Get request parameters
-  const _limit = queryParam?.limit || MAX_LOG_LIMIT;
-  const _levels = getRequestLevels(
-    queryParam?.level?.selected || [],
-    queryParam?.level?.list,
-  );
-  const _services = getRequestService(queryParam?.service?.selected);
-  const _tags = getRequestTags(queryParam?.tag?.selected);
-  const _message = getRequestMessage(queryParam?.searchMessage);
-  const _dates = getRequestDate(queryParam?.date?.from, queryParam?.date?.to);
-  const _robots = getRequestRobots(queryParam?.robot?.selected);
-  return [_limit, _levels, _services, _dates, _tags, _message, _robots].join(
-    "",
-  );
+function getLogsParam(queryParam = {}) {
+  return [
+    getRequestString("limit", queryParam?.limit || MAX_LOG_LIMIT),
+    getRequestList("level", queryParam.level?.selected),
+    getRequestList("services", queryParam.service?.selected),
+    getRequestList("tags", queryParam.tag?.selected),
+    getRequestString("message", queryParam.searchMessage),
+    getRequestDate("fromDate", queryParam.date?.from),
+    getRequestDate("toDate", queryParam.date?.to),
+    getRequestList("robots", queryParam.robot?.selected),
+  ]
+    .filter((a) => !!a)
+    .join("&");
 }
 
 async function getLogs() {
   const path =
-    "v1/logs/?limit=" +
+    "v1/logs/?" +
     getLogsParam({
       limit: MAX_FETCH_LOGS,
       date: {
@@ -102,10 +110,13 @@ async function getLogs() {
 
   const data = response?.data || [];
   const oldLogs = logsDataGlobal || [];
-  return (logsDataGlobal = logsDedupe(oldLogs, data.map(transformLog)).slice(
-    0,
-    MAX_FETCH_LOGS,
-  ));
+  const newLogs = data.map(transformLog);
+
+  return (logsDataGlobal = (
+    Features.get("noLogsDedupe")
+      ? newLogs.concat(oldLogs)
+      : logsDedupe(oldLogs, newLogs)
+  ).slice(0, MAX_FETCH_LOGS));
 }
 
 function noSelection(obj) {
