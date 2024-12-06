@@ -6,9 +6,9 @@ import {
   DEFAULT_SERVICE,
   MAX_LOG_LIMIT,
 } from "./../Utils/constants";
+import IntervalTree from "@flatten-js/interval-tree";
 
-const MAX_FETCH_LOGS = 200000;
-let logsDataGlobal = [];
+const MAX_FETCH_LOGS = 20000;
 
 /**
  * Tranform log from the format received from the API to the format
@@ -72,7 +72,10 @@ function getRequestString(label, value) {
 }
 
 function getRequestDate(label, value) {
-  return getRequestString(label, (value ?? 0) / 1000);
+  return getRequestString(
+    label,
+    value ? new Number(value / 1000).toFixed(0) : 0,
+  );
 }
 
 /**
@@ -82,7 +85,7 @@ function getRequestDate(label, value) {
  */
 function getLogsParam(queryParam = {}) {
   return [
-    getRequestString("limit", queryParam?.limit || MAX_LOG_LIMIT),
+    getRequestString("limit", queryParam?.limit),
     getRequestList("level", queryParam.level?.selected),
     getRequestList("services", queryParam.service?.selected),
     getRequestList("tags", queryParam.tag?.selected),
@@ -95,28 +98,28 @@ function getLogsParam(queryParam = {}) {
     .join("&");
 }
 
-async function getLogs(maximum = 0) {
+async function getLogs(fromDate, toDate, limit) {
+  // console.log("GETLOGS", fromDate, toDate, limit);
   const path =
     "v1/logs/?" +
     getLogsParam({
-      limit: MAX_FETCH_LOGS,
+      limit,
       date: {
-        from: logsDataGlobal.length ? logsDataGlobal[0].timestamp : null,
-        to: null,
+        from: fromDate,
+        to: toDate,
       },
     });
 
   const response = await Rest.get({ path });
 
   const data = response?.data || [];
-  const oldLogs = logsDataGlobal || [];
   const newLogs = data.map(transformLog);
-
-  return (logsDataGlobal = (
-    Features.get("noLogsDedupe")
-      ? newLogs.concat(oldLogs)
-      : logsDedupe(oldLogs, newLogs)
-  ).slice(-maximum));
+  return newLogs;
+  // return (
+  //   Features.get("noLogsDedupe")
+  //     ? newLogs.concat(oldLogs)
+  //     : logsDedupe(oldLogs, newLogs)
+  // ).slice(-maximum);
 }
 
 function noSelection(obj) {
@@ -172,16 +175,28 @@ export default class Logs {
 
     singleton = this;
     this.subs = new Map();
+    this.maximum = MAX_FETCH_LOGS;
+    this.lastInterval = [];
+    this.fetchingAbsent = false;
     this.refresh();
-    this.maximum = maximum;
   }
 
   clear() {
-    logsDataGlobal = [];
+    this.tree = new IntervalTree();
     this.update();
   }
 
-  refresh() {
+  getLastTo() {
+    return this.lastInterval.length
+      ? this.lastInterval[this.lastInterval.length - 1].timestamp
+      : null;
+  }
+
+  getLastFrom() {
+    return this.lastInterval.length ? this.lastInterval[0].timestamp : null;
+  }
+
+  async refresh() {
     this.streaming = Features.get("logStreaming");
     this.clear();
 
@@ -190,18 +205,22 @@ export default class Logs {
       const sock = webSocketOpen({ path: "/ws/logs", params });
       sock.onmessage = (msg) => {
         const item = websocketTransform(JSON.parse(msg?.data ?? {}));
-        logsDataGlobal = [transformLog(item, 0, [item], 0.000001)]
-          .concat(logsDataGlobal)
-          .slice(-maximum);
+
+        this.pushInterval([transformLog(item, 0, [item], 0.000001)]);
+
         this.update();
       };
-      getLogs(this.maximum).then(() => this.update());
+
+      this.pushInterval(await getLogs(this.getLastFrom(), null, this.maximum));
+
+      this.update();
     } else this.getLogs();
   }
 
   async getLogs() {
     try {
-      await getLogs(this.maximum);
+      this.pushInterval(await getLogs(this.getLastFrom(), null, this.maximum));
+
       this.update();
     } catch (e) {
       console.log("Failed getting logs", e);
@@ -210,7 +229,123 @@ export default class Logs {
   }
 
   get() {
-    return logsDataGlobal;
+    let total = [];
+
+    for (const innerInterval of this.tree.iterate())
+      total = innerInterval.concat(total);
+
+    return total;
+  }
+
+  getAbsentIntervals(fromTime, toTime = this.lastInterval[0]?.timestamp) {
+    if (!fromTime) return [];
+
+    let absentStart = fromTime;
+    const absentTimes = [];
+
+    for (const innerKey of this.tree.iterate(
+      [fromTime, toTime],
+      (_value, key) => key,
+    )) {
+      const { low, high } = innerKey;
+
+      if (absentStart < low) absentTimes.push([absentStart, low]);
+
+      absentStart = high;
+    }
+
+    if (absentStart < toTime) absentTimes.push([absentStart, toTime]);
+
+    return absentTimes;
+  }
+
+  getKey(interval) {
+    return [interval[interval.length - 1].timestamp, interval[0].timestamp];
+  }
+
+  pushInterval(interval) {
+    if (this.lastInterval.length)
+      this.tree.remove(this.getKey(this.lastInterval), this.lastInterval);
+
+    this.lastInterval = interval.concat(this.lastInterval).slice(-this.maximum);
+
+    this.tree.insert(this.getKey(this.lastInterval), this.lastInterval);
+  }
+
+  getFormattedKey(intervalKey) {
+    const [start, end] = intervalKey;
+    return [new Date(start).toISOString(), new Date(end).toISOString()];
+  }
+
+  putInterval(intervalKey, interval) {
+    if (!interval.length) {
+      this.tree.insert(intervalKey, []);
+      return;
+    }
+
+    const [fromDate, toDate] = intervalKey;
+
+    const trueKey = this.getKey(interval);
+
+    const [trueFromDate, trueToDate] = intervalKey;
+
+    // console.log("putInterval", this.getFormattedKey(trueKey), this.getFormattedKey(intervalKey), intervalKey, interval, this.tree);
+
+    for (const innerInterval of this.tree.iterate(trueKey)) {
+      const innerKey = this.getKey(innerInterval);
+      const [innerFromDate, innerToDate] = innerKey;
+
+      if (innerFromDate === toDate) {
+        this.tree.remove(innerKey);
+        // console.log("putting inner ", this.getFormattedKey(innerKey)[1], "on top of", this.getFormattedKey(trueKey)[0]);
+        this.tree.insert(
+          [trueFromDate, innerToDate],
+          interval.concat(innerInterval),
+        );
+        return;
+      }
+
+      if (innerToDate === fromDate) {
+        this.tree.remove(innerKey);
+        // console.log("putting", this.getFormattedKey(trueKey)[1], "on top of inner", this.getFormattedKey(innerKey)[0]);
+        this.tree.insert(
+          [innerFromDate, trueToDate],
+          innerInterval.concat(interval),
+        );
+        return;
+      }
+    }
+
+    this.tree.insert(trueKey, interval);
+  }
+
+  async fetchAbsent(selectedFromDate, selectedToDate) {
+    if (this.fetchingAbsent) return;
+
+    const fromDate = selectedFromDate ? selectedFromDate.getTime() : null;
+    const toDate =
+      (selectedToDate ? selectedToDate.getTime() : null) || this.getLastTo();
+
+    const absentIntervals = this.getAbsentIntervals(fromDate, toDate);
+
+    if (!absentIntervals.length) return;
+
+    this.fetchingAbsent = true;
+
+    // console.log("ABSENT!", absentIntervals);
+
+    const allAbsent = await Promise.all(
+      absentIntervals.map((interval) =>
+        getLogs(interval[0], interval[1]).then((logs) => [interval, logs]),
+      ),
+    );
+
+    // console.log("allAbsent are", allAbsent);
+    for (const [key, absent] of allAbsent) this.putInterval(key, absent);
+
+    if (allAbsent.length) this.update();
+
+    this.fetchingAbsent = false;
   }
 
   filter(query = {}) {
@@ -224,7 +359,9 @@ export default class Logs {
       message = "",
     } = query;
 
-    return logsDataGlobal.filter(
+    this.fetchAbsent(selectedFromDate, selectedToDate);
+
+    return this.get().filter(
       (item) =>
         (levels[item.level] || noSelection(levels)) &&
         (service[item.service] || noSelection(service)) &&
@@ -242,7 +379,7 @@ export default class Logs {
   }
 
   update() {
-    for (const [sub] of this.subs) sub(logsDataGlobal);
+    for (const [sub] of this.subs) sub(this.get());
   }
 }
 
