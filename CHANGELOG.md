@@ -1,3 +1,8 @@
+# 1.2.4
+
+- [FP-3073](https://movai.atlassian.net/browse/FP-3073): Frontend says robot offline. Only fixable on browser refresh
+- [FP-2916](https://movai.atlassian.net/browse/FP-2916): Configure husky, lint-staged and prettier for lib-core
+
 # 1.2.3
 
 - [FP-2926](https://movai.atlassian.net/browse/FP-2926): Clear console and app errors

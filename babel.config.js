@@ -8,9 +8,9 @@ module.exports = {
           chrome: "78",
           node: "12",
         },
-        modules: "auto"
+        modules: "auto",
       },
-    ]
+    ],
   ],
   plugins: [
     "@babel/plugin-syntax-dynamic-import",
@@ -18,10 +18,11 @@ module.exports = {
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-proposal-json-strings",
     [
-      "@babel/plugin-transform-runtime", {
+      "@babel/plugin-transform-runtime",
+      {
         loose: true,
         useESModules: false,
-      }
-    ]
-  ]
+      },
+    ],
+  ],
 };

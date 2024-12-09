@@ -78,7 +78,7 @@ class DocumentV1 {
    * Update the document using PUT request
    * @param {Object} body Request payload
    */
-  update = body => {
+  update = (body) => {
     const { type, name } = this;
     const path = `v1/${type}/${name}/`;
 
@@ -90,7 +90,7 @@ class DocumentV1 {
    * @param {Object} body : Request body
    * @returns Request promise
    */
-  overwrite = body => {
+  overwrite = (body) => {
     const { type, name } = this;
     const path = `v1/${type}/${name}/`;
 
@@ -103,7 +103,7 @@ class DocumentV1 {
    * Subscribe to document changes (notifications only available in the global workspace)
    * @param {Function} callback Callback to execute when the document is updated
    */
-  subscribe = callback => {
+  subscribe = (callback) => {
     this.resubscribe(callback);
   };
 
@@ -111,13 +111,13 @@ class DocumentV1 {
    * Resubscribe to document changes (notifications only available in the global workspace)
    * @param {Function} callback Callback to execute when the document is updated
    */
-  resubscribe = callback => {
+  resubscribe = (callback) => {
     if (this.readOnly) return;
 
     this.unsubscribe();
 
     this.subscriber = new BaseModel({}, this.type, this.database, [
-      { Scope: this.type, Name: this.name }
+      { Scope: this.type, Name: this.name },
     ]);
 
     this.subscriber.onUpdate(() => {
