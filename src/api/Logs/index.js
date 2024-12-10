@@ -211,7 +211,7 @@ export default class Logs {
         this.update();
       };
 
-      this.pushInterval(await getLogs(this.getLastFrom(), null, this.maximum));
+      this.shiftInterval(await getLogs(this.getLastFrom(), null, this.maximum));
 
       this.update();
     } else this.getLogs();
@@ -263,13 +263,21 @@ export default class Logs {
     return [interval[interval.length - 1].timestamp, interval[0].timestamp];
   }
 
-  pushInterval(interval) {
+  setLastInterval(interval) {
     if (this.lastInterval.length)
       this.tree.remove(this.getKey(this.lastInterval), this.lastInterval);
 
-    this.lastInterval = interval.concat(this.lastInterval).slice(-this.maximum);
+    this.lastInterval = interval.slice(-this.maximum);
 
     this.tree.insert(this.getKey(this.lastInterval), this.lastInterval);
+  }
+
+  shiftInterval(interval) {
+    this.setLastInterval(this.lastInterval.concat(interval));
+  }
+
+  pushInterval(interval) {
+    this.setLastInterval(interval.concat(this.lastInterval));
   }
 
   getFormattedKey(intervalKey) {
