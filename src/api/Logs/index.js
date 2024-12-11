@@ -9,6 +9,7 @@ import {
 import IntervalTree from "@flatten-js/interval-tree";
 
 const MAX_FETCH_LOGS = 20000;
+const END_TIMES = 8640000000000000;
 
 /**
  * Tranform log from the format received from the API to the format
@@ -178,6 +179,7 @@ export default class Logs {
     this.maximum = MAX_FETCH_LOGS;
     this.lastInterval = [];
     this.fetchingAbsent = false;
+    this.subscriptionTree = new IntervalTree();
     this.refresh();
   }
 
@@ -292,12 +294,8 @@ export default class Logs {
     }
 
     const [fromDate, toDate] = intervalKey;
-
     const trueKey = this.getKey(interval);
-
     const [trueFromDate, trueToDate] = intervalKey;
-
-    // console.log("putInterval", this.getFormattedKey(trueKey), this.getFormattedKey(intervalKey), intervalKey, interval, this.tree);
 
     for (const innerInterval of this.tree.iterate(trueKey)) {
       const innerKey = this.getKey(innerInterval);
@@ -305,7 +303,6 @@ export default class Logs {
 
       if (innerFromDate === toDate) {
         this.tree.remove(innerKey);
-        // console.log("putting inner ", this.getFormattedKey(innerKey)[1], "on top of", this.getFormattedKey(trueKey)[0]);
         this.tree.insert(
           [trueFromDate, innerToDate],
           interval.concat(innerInterval),
@@ -315,7 +312,6 @@ export default class Logs {
 
       if (innerToDate === fromDate) {
         this.tree.remove(innerKey);
-        // console.log("putting", this.getFormattedKey(trueKey)[1], "on top of inner", this.getFormattedKey(innerKey)[0]);
         this.tree.insert(
           [innerFromDate, trueToDate],
           innerInterval.concat(interval),
@@ -340,15 +336,12 @@ export default class Logs {
 
     this.fetchingAbsent = true;
 
-    // console.log("ABSENT!", absentIntervals);
-
     const allAbsent = await Promise.all(
       absentIntervals.map((interval) =>
         getLogs(interval[0], interval[1]).then((logs) => [interval, logs]),
       ),
     );
 
-    // console.log("allAbsent are", allAbsent);
     for (const [key, absent] of allAbsent) this.putInterval(key, absent);
 
     if (allAbsent.length) this.update();
@@ -367,8 +360,6 @@ export default class Logs {
       message = "",
     } = query;
 
-    this.fetchAbsent(selectedFromDate, selectedToDate);
-
     return this.get().filter(
       (item) =>
         (levels[item.level] || noSelection(levels)) &&
@@ -384,6 +375,89 @@ export default class Logs {
   subscribe(callback) {
     this.subs.set(callback, true);
     return () => this.subs.delete(callback);
+  }
+
+  putSubscriptionInterval(intervalKey) {
+    let [fromDate, toDate] = intervalKey;
+    const matches = [];
+
+    for (const [value, key] of this.subscriptionTree.iterate(
+      intervalKey,
+      (value, key) => [value, key],
+    )) {
+      this.subscriptionTree.remove([key.low, key.high], value);
+
+      if (key.low < fromDate) {
+        if (fromDate < key.high) {
+          matches.push([key.low, fromDate, value]);
+          matches.push([fromDate, key.high, value + 1]);
+        } else if (fromDate === key.high)
+          matches.push([key.low, fromDate, value + 1]);
+        // else - fromDate > key.high shouldn't happen
+      } else if (key.low === fromDate) {
+        if (toDate < key.high) {
+          matches.push([key.low, toDate, value + 1]);
+          matches.push([toDate, key.high, value]);
+        } else if (toDate === key.high)
+          matches.push([key.low, toDate, value + 1]);
+        // else - toDate > key.high shouldn't happen
+      } else if (key.low > fromDate) {
+        if (toDate < key.high) {
+          matches.push([key.low, toDate, value + 1]);
+          matches.push([toDate, key.high, value]);
+        } else {
+          matches.push([key.low, key.high, value + 1]);
+        }
+      }
+    }
+
+    if (!matches.length)
+      return this.subscriptionTree.insert([fromDate, toDate], 1);
+
+    for (const [innerFrom, innerTo, value] of matches)
+      this.subscriptionTree.insert([innerFrom, innerTo], value);
+
+    let lastTo = fromDate;
+    for (const [innerFrom, innerTo] of matches) {
+      if (innerFrom > lastTo)
+        this.subscriptionTree.insert([lastTo, innerFrom], 1);
+      lastTo = innerTo;
+    }
+
+    if (toDate > lastTo) this.subscriptionTree.insert([lastTo, toDate], 1);
+  }
+
+  delSubscriptionInterval(intervalKey) {
+    for (const [value, key] of this.subscriptionTree.iterate(
+      intervalKey,
+      (value, key) => [value, key],
+    )) {
+      const innerKey = [key.low, key.high];
+      this.subscriptionTree.remove(innerKey, value);
+      if (value - 1 > 0) this.subscriptionTree.insert(innerKey, value - 1);
+    }
+  }
+
+  subscribe(callback, outerQuery = {}) {
+    const { selectedFromDate, selectedToDate } = outerQuery;
+
+    this.fetchAbsent(selectedFromDate, selectedToDate);
+
+    const key =
+      selectedFromDate || selectedToDate
+        ? [
+            selectedFromDate ? selectedFromDate.getTime() : -END_TIMES,
+            (selectedToDate ? selectedToDate.getTime() : null) || END_TIMES,
+          ]
+        : null;
+
+    if (key) this.putSubscriptionInterval(key);
+
+    this.subs.set(callback, true);
+    return () => {
+      if (key) this.delSubscriptionInterval(key);
+      this.subs.delete(callback);
+    };
   }
 
   update() {
