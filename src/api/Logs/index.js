@@ -7,6 +7,8 @@ import IntervalTree from "@flatten-js/interval-tree";
 const MAX_FETCH_LOGS = 20000;
 const END_TIMES = 8640000000000000;
 
+const WHOLE_TIME = [-END_TIMES, END_TIMES];
+
 /**
  * Tranform log from the format received from the API to the format
  * required to be rendered
@@ -61,9 +63,9 @@ function getLogsParam(queryParam = {}) {
     .join("&");
 }
 
-async function getLogs(fromDate, toDate, limit) {
+async function getLogs(fromDate, toDate) {
   const paramObj = {
-    limit: limit || MAX_FETCH_LOGS,
+    limit: MAX_FETCH_LOGS,
     date: {
       from: fromDate,
       to: toDate,
@@ -126,19 +128,18 @@ export default class Logs {
   };
 
   // change maximum to another number to limit the amount of kept logs
-  constructor(maximum = 0) {
+  constructor() {
     if (singleton) return singleton;
-
     singleton = this;
-    this.init(maximum);
+    this.init();
   }
 
-  init(maximum = 0) {
+  init() {
     this.subs = new Map();
-    this.maximum = maximum;
     this.lastInterval = [];
     this.fetchingAbsent = false;
     this.beginning = -END_TIMES;
+    this.unbound = 0;
     this.subscriptionTree = new IntervalTree();
     this.refresh();
   }
@@ -167,7 +168,7 @@ export default class Logs {
         this.update();
       };
 
-      this.shiftInterval(await getLogs(this.getLastTo(), null, this.maximum));
+      this.shiftInterval(await getLogs(this.getLastTo(), null));
 
       this.update();
     } else this.getLogs();
@@ -175,7 +176,7 @@ export default class Logs {
 
   async getLogs() {
     try {
-      this.pushInterval(await getLogs(this.getLastTo(), null, this.maximum));
+      this.pushInterval(await getLogs(this.getLastTo(), null));
 
       this.update();
     } catch (e) {
@@ -367,8 +368,7 @@ export default class Logs {
   }
 
   delIntervals(range) {
-    let last,
-      trim = false;
+    let last;
 
     for (const [value, key] of this.tree.iterate(range, (value, key) => [
       value,
@@ -377,7 +377,6 @@ export default class Logs {
       if (!this.subscriptionTree.intersect_any(key))
         this.tree.remove(key, value);
       last = [[key.low, key.high], value];
-      trim = true;
     }
 
     if (!this.tree.isEmpty())
@@ -393,12 +392,13 @@ export default class Logs {
 
     if (key[1] !== this.lastIntervalKey[1]) return;
 
-    if (
-      trim &&
-      value.length > MAX_FETCH_LOGS &&
-      !this.subscriptionTree.intersect_any(key)
-    ) {
-      value = value.slice(0, MAX_FETCH_LOGS);
+    if (value.length > MAX_FETCH_LOGS) {
+      if (
+        !this.subscriptionTree.intersect_any(key) ||
+        (this.subscriptionTree.size === 1 && this.unbound === 0)
+      )
+        value = value.slice(0, MAX_FETCH_LOGS);
+
       key[0] = value[value.length - 1].timestamp;
     }
 
@@ -417,7 +417,9 @@ export default class Logs {
   }
 
   subscribe(callback, outerQuery = {}) {
-    const { selectedFromDate, selectedToDate } = outerQuery;
+    const { selectedFromDate, selectedToDate, limit } = outerQuery;
+
+    if (!limit) this.unbound++;
 
     this.fetchAbsent(selectedFromDate, selectedToDate);
 
@@ -430,6 +432,8 @@ export default class Logs {
 
     this.subs.set(callback, true);
     return () => {
+      if (!limit) this.unbound--;
+
       this.delSubscriptionInterval(key);
       this.subs.delete(callback);
     };
@@ -442,9 +446,9 @@ export default class Logs {
 
     if (
       this.beginning !== -END_TIMES &&
-      this.subscriptionTree.exist([-END_TIMES, END_TIMES], 1)
+      this.subscriptionTree.exist(WHOLE_TIME, 1)
     ) {
-      this.subscriptionTree.remove([-END_TIMES, END_TIMES], 1);
+      this.subscriptionTree.remove(WHOLE_TIME, 1);
       this.subscriptionTree.insert([this.beginning, END_TIMES], 1);
     }
 
