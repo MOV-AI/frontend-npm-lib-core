@@ -1,4 +1,3 @@
-export const MAX_LOG_LIMIT = 10000;
 export const GLOBAL_WORKSPACE = "global";
 
 // BroadcastChannel events
@@ -7,14 +6,6 @@ export const BROADCAST_EVENTS = {
   RPL_ISOPEN: "RPL-ISOPEN",
   OPENDOC: "OPENDOC",
   RPL_OPENDOC: "RPL-OPENDOC",
-};
-
-// Robot Logger enum
-export const LOGGER_STATUS = {
-  init: 0,
-  running: 1,
-  paused: 2,
-  terminated: 3,
 };
 
 export const ALPHANUMERIC_REGEX = /^[\w][0-9A-Za-z-]*(_[0-9A-Za-z-]+)*[_]?$/;
@@ -46,6 +37,21 @@ export const SERVICE_LABEL = {
   redis: "Redis",
   ros: "Ros",
   haproxy: "ha-proxy",
+};
+
+export const DEFAULT_SERVICE = Object.keys(SERVICE_LABEL).reduce(
+  (a, item) => ({ [item]: false, ...a }),
+  {
+    spawner: true,
+  },
+);
+
+export const DEFAULT_LEVELS = {
+  INFO: true,
+  WARNING: false,
+  DEBUG: false,
+  ERROR: true,
+  CRITICAL: true,
 };
 
 export const VAR_SCOPES = {
