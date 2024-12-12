@@ -86,7 +86,7 @@ function getRequestDate(label, value) {
  */
 function getLogsParam(queryParam = {}) {
   return [
-    getRequestString("limit", queryParam?.limit),
+    getRequestString("limit", queryParam.limit),
     getRequestList("level", queryParam.level?.selected),
     getRequestList("services", queryParam.service?.selected),
     getRequestList("tags", queryParam.tag?.selected),
@@ -100,21 +100,20 @@ function getLogsParam(queryParam = {}) {
 }
 
 async function getLogs(fromDate, toDate, limit) {
-  // console.log("GETLOGS", fromDate, toDate, limit);
-  const path =
-    "v1/logs/?" +
-    getLogsParam({
-      limit,
-      date: {
-        from: fromDate,
-        to: toDate,
-      },
-    });
+  const paramObj = {
+    limit: limit || MAX_FETCH_LOGS,
+    date: {
+      from: fromDate,
+      to: toDate,
+    },
+  };
+  const path = "v1/logs/?" + getLogsParam(paramObj);
 
   const response = await Rest.get({ path });
 
   const data = response?.data || [];
   const newLogs = data.map(transformLog);
+  // console.log("GETLOGS", newLogs?.[newLogs.length - 1]?.timestamp, newLogs?.[0]?.timestamp, newLogs, paramObj);
   return newLogs;
   // return (
   //   Features.get("noLogsDedupe")
@@ -176,9 +175,10 @@ export default class Logs {
 
     singleton = this;
     this.subs = new Map();
-    this.maximum = MAX_FETCH_LOGS;
+    this.maximum = maximum;
     this.lastInterval = [];
     this.fetchingAbsent = false;
+    this.beginning = -END_TIMES;
     this.subscriptionTree = new IntervalTree();
     this.refresh();
   }
@@ -188,14 +188,12 @@ export default class Logs {
     this.update();
   }
 
-  getLastTo() {
-    return this.lastInterval.length
-      ? this.lastInterval[this.lastInterval.length - 1].timestamp
-      : null;
+  getLastFrom() {
+    return this.lastIntervalKey?.[0] ?? null;
   }
 
-  getLastFrom() {
-    return this.lastInterval.length ? this.lastInterval[0].timestamp : null;
+  getLastTo() {
+    return this.lastIntervalKey?.[1] ?? null;
   }
 
   async refresh() {
@@ -208,12 +206,12 @@ export default class Logs {
       sock.onmessage = (msg) => {
         const item = websocketTransform(JSON.parse(msg?.data ?? {}));
 
-        this.pushInterval([transformLog(item, 0, [item], 0.000001)]);
+        this.pushInterval([transformLog(item, 0, [item], 0.000001)], true);
 
         this.update();
       };
 
-      this.shiftInterval(await getLogs(this.getLastFrom(), null, this.maximum));
+      this.shiftInterval(await getLogs(this.getLastTo(), null, this.maximum));
 
       this.update();
     } else this.getLogs();
@@ -221,7 +219,7 @@ export default class Logs {
 
   async getLogs() {
     try {
-      this.pushInterval(await getLogs(this.getLastFrom(), null, this.maximum));
+      this.pushInterval(await getLogs(this.getLastTo(), null, this.maximum));
 
       this.update();
     } catch (e) {
@@ -232,6 +230,7 @@ export default class Logs {
 
   get() {
     let total = [];
+    if (!this.lastInterval.length) return [];
 
     for (const innerInterval of this.tree.iterate())
       total = innerInterval.concat(total);
@@ -239,7 +238,7 @@ export default class Logs {
     return total;
   }
 
-  getAbsentIntervals(fromTime, toTime = this.lastInterval[0]?.timestamp) {
+  getAbsentIntervals(fromTime, toTime = this.lastIntervalKey?.[1]) {
     if (!fromTime) return [];
 
     let absentStart = fromTime;
@@ -265,13 +264,13 @@ export default class Logs {
     return [interval[interval.length - 1].timestamp, interval[0].timestamp];
   }
 
-  setLastInterval(interval) {
+  setLastInterval(interval, intervalKey) {
     if (this.lastInterval.length)
-      this.tree.remove(this.getKey(this.lastInterval), this.lastInterval);
+      this.tree.remove(this.lastIntervalKey, this.lastInterval);
 
-    this.lastInterval = interval.slice(-this.maximum);
-
-    this.tree.insert(this.getKey(this.lastInterval), this.lastInterval);
+    this.lastInterval = interval;
+    this.lastIntervalKey = intervalKey ?? this.getKey(interval);
+    this.tree.insert(this.lastIntervalKey, interval);
   }
 
   shiftInterval(interval) {
@@ -287,40 +286,33 @@ export default class Logs {
     return [new Date(start).toISOString(), new Date(end).toISOString()];
   }
 
-  putInterval(intervalKey, interval) {
-    if (!interval.length) {
-      this.tree.insert(intervalKey, []);
-      return;
-    }
-
+  // assumes the interval is really absent
+  insertAbsent(intervalKey, interval) {
     const [fromDate, toDate] = intervalKey;
-    const trueKey = this.getKey(interval);
-    const [trueFromDate, trueToDate] = intervalKey;
 
-    for (const innerInterval of this.tree.iterate(trueKey)) {
-      const innerKey = this.getKey(innerInterval);
-      const [innerFromDate, innerToDate] = innerKey;
+    for (const [innerInterval, key] of this.tree.iterate(
+      intervalKey,
+      (value, key) => [value, key],
+    )) {
+      this.tree.remove(key);
 
-      if (innerFromDate === toDate) {
-        this.tree.remove(innerKey);
-        this.tree.insert(
-          [trueFromDate, innerToDate],
+      if (key.high === fromDate)
+        return this.tree.insert(
+          [key.low, toDate],
           interval.concat(innerInterval),
         );
-        return;
-      }
 
-      if (innerToDate === fromDate) {
-        this.tree.remove(innerKey);
-        this.tree.insert(
-          [innerFromDate, trueToDate],
-          innerInterval.concat(interval),
-        );
-        return;
+      if (key.low === toDate) {
+        const possiblyLastKey = [fromDate, key.high];
+        const possiblyLast = innerInterval.concat(interval);
+        if (innerInterval === this.lastInterval)
+          return this.setLastInterval(possiblyLast, possiblyLastKey, false);
+        return this.tree.insert(possiblyLastKey, possiblyLast);
       }
     }
 
-    this.tree.insert(trueKey, interval);
+    if (intervalKey[1] === this.lastIntervalKey[1])
+      this.tree.insert(intervalKey, interval);
   }
 
   async fetchAbsent(selectedFromDate, selectedToDate) {
@@ -328,7 +320,7 @@ export default class Logs {
 
     const fromDate = selectedFromDate ? selectedFromDate.getTime() : null;
     const toDate =
-      (selectedToDate ? selectedToDate.getTime() : null) || this.getLastTo();
+      (selectedToDate ? selectedToDate.getTime() : null) || this.getLastFrom();
 
     const absentIntervals = this.getAbsentIntervals(fromDate, toDate);
 
@@ -342,7 +334,9 @@ export default class Logs {
       ),
     );
 
-    for (const [key, absent] of allAbsent) this.putInterval(key, absent);
+    // console.log("absent", fromDate, toDate, absentIntervals, allAbsent);
+
+    for (const [key, absent] of allAbsent) this.insertAbsent(key, absent);
 
     if (allAbsent.length) this.update();
 
@@ -372,11 +366,6 @@ export default class Logs {
     );
   }
 
-  subscribe(callback) {
-    this.subs.set(callback, true);
-    return () => this.subs.delete(callback);
-  }
-
   putSubscriptionInterval(intervalKey) {
     let [fromDate, toDate] = intervalKey;
     const matches = [];
@@ -385,7 +374,7 @@ export default class Logs {
       intervalKey,
       (value, key) => [value, key],
     )) {
-      this.subscriptionTree.remove([key.low, key.high], value);
+      this.subscriptionTree.remove(key, value);
 
       if (key.low < fromDate) {
         if (fromDate < key.high) {
@@ -427,14 +416,53 @@ export default class Logs {
     if (toDate > lastTo) this.subscriptionTree.insert([lastTo, toDate], 1);
   }
 
+  delIntervals(range) {
+    let last,
+      trim = false;
+
+    for (const [value, key] of this.tree.iterate(range, (value, key) => [
+      value,
+      key,
+    ])) {
+      if (!this.subscriptionTree.intersect_any(key))
+        this.tree.remove(key, value);
+      last = [[key.low, key.high], value];
+      trim = true;
+    }
+
+    if (!this.tree.isEmpty())
+      for (const [value, key] of this.tree.iterate(undefined, (value, key) => [
+        value,
+        key,
+      ]))
+        last = [[key.low, key.high], value];
+
+    if (!last) return;
+
+    let [key, value] = last;
+
+    if (key[1] !== this.lastIntervalKey[1]) return;
+
+    if (
+      trim &&
+      value.length > MAX_FETCH_LOGS &&
+      !this.subscriptionTree.intersect_any(key)
+    ) {
+      value = value.slice(0, MAX_FETCH_LOGS);
+      key[0] = value[value.length - 1].timestamp;
+    }
+
+    this.setLastInterval(value, key);
+  }
+
   delSubscriptionInterval(intervalKey) {
     for (const [value, key] of this.subscriptionTree.iterate(
       intervalKey,
       (value, key) => [value, key],
     )) {
-      const innerKey = [key.low, key.high];
-      this.subscriptionTree.remove(innerKey, value);
-      if (value - 1 > 0) this.subscriptionTree.insert(innerKey, value - 1);
+      this.subscriptionTree.remove(key, value);
+      if (value - 1 > 0) this.subscriptionTree.insert(key, value - 1);
+      else setTimeout(() => this.delIntervals([key.low, key.high]), 0);
     }
   }
 
@@ -443,25 +471,34 @@ export default class Logs {
 
     this.fetchAbsent(selectedFromDate, selectedToDate);
 
-    const key =
-      selectedFromDate || selectedToDate
-        ? [
-            selectedFromDate ? selectedFromDate.getTime() : -END_TIMES,
-            (selectedToDate ? selectedToDate.getTime() : null) || END_TIMES,
-          ]
-        : null;
+    const key = [
+      selectedFromDate ? selectedFromDate.getTime() : this.beginning,
+      (selectedToDate ? selectedToDate.getTime() : null) || END_TIMES,
+    ];
 
-    if (key) this.putSubscriptionInterval(key);
+    this.putSubscriptionInterval(key);
 
     this.subs.set(callback, true);
     return () => {
-      if (key) this.delSubscriptionInterval(key);
+      this.delSubscriptionInterval(key);
       this.subs.delete(callback);
     };
   }
 
   update() {
-    for (const [sub] of this.subs) sub(this.get());
+    const logs = this.get();
+
+    if (logs.length) this.beginning = logs[logs.length - 1].timestamp;
+
+    if (
+      this.beginning !== -END_TIMES &&
+      this.subscriptionTree.exist([-END_TIMES, END_TIMES], 1)
+    ) {
+      this.subscriptionTree.remove([-END_TIMES, END_TIMES], 1);
+      this.subscriptionTree.insert([this.beginning, END_TIMES], 1);
+    }
+
+    for (const [sub] of this.subs) sub(logs);
   }
 }
 
