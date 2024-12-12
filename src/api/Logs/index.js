@@ -1,11 +1,7 @@
 import { webSocketOpen } from "../WebSocket";
 import Features from "./../Features";
 import Rest from "../Rest/Rest";
-import {
-  DEFAULT_LEVELS,
-  DEFAULT_SERVICE,
-  MAX_LOG_LIMIT,
-} from "./../Utils/constants";
+import { DEFAULT_LEVELS, DEFAULT_SERVICE } from "./../Utils/constants";
 import IntervalTree from "@flatten-js/interval-tree";
 
 const MAX_FETCH_LOGS = 20000;
@@ -28,40 +24,6 @@ function transformLog(log, _index, _data, ts_multiplier = 1000) {
   };
 }
 
-/**
- * Remove duplicates from logs for the second overlaping the
- * current and the last request
- * @returns {array} Concatenated logs without duplicates
- */
-export function logsDedupe(oldLogs, data) {
-  if (!data.length) return oldLogs;
-
-  // date of the oldest log received in the current request
-  const oldDate = data[data.length - 1].timestamp;
-  // map to store the old logs of the overlaped second
-  let map = {};
-
-  // iter over old logs with last timestamp of the new logs
-  // and put in a map
-  for (let i = 0; i < oldLogs.length && oldLogs[i].timestamp === oldDate; i++)
-    map[oldLogs[i].message] = oldLogs[i];
-
-  // array to store logs from overlap second which had not
-  // been sent  before
-  let newSecOverlap = [];
-  let z;
-
-  // iter over new logs (oldest to latest) with last timestamp,
-  // check if present in last map
-  //  - if not, push
-  for (z = data.length - 1; z >= 0 && data[z].timestamp === oldDate; z--)
-    if (!map[data[z].message]) newSecOverlap.push(data[z]);
-
-  // cut new logs up to z, concat with the deduped ones
-  // and the old logs up to i
-  return data.slice(0, z + 1).concat(newSecOverlap.reverse(), oldLogs);
-}
-
 function getRequestList(label, values) {
   return values?.length
     ? label + "=" + values.map((el) => el.label).join()
@@ -75,7 +37,7 @@ function getRequestString(label, value) {
 function getRequestDate(label, value) {
   return getRequestString(
     label,
-    value ? new Number(value / 1000).toFixed(0) : 0,
+    value ? (new Number(value) / 1000).toFixed(0) : 0,
   );
 }
 
@@ -113,13 +75,7 @@ async function getLogs(fromDate, toDate, limit) {
 
   const data = response?.data || [];
   const newLogs = data.map(transformLog);
-  // console.log("GETLOGS", newLogs?.[newLogs.length - 1]?.timestamp, newLogs?.[0]?.timestamp, newLogs, paramObj);
   return newLogs;
-  // return (
-  //   Features.get("noLogsDedupe")
-  //     ? newLogs.concat(oldLogs)
-  //     : logsDedupe(oldLogs, newLogs)
-  // ).slice(-maximum);
 }
 
 function noSelection(obj) {
@@ -174,6 +130,10 @@ export default class Logs {
     if (singleton) return singleton;
 
     singleton = this;
+    this.init(maximum);
+  }
+
+  init(maximum = 0) {
     this.subs = new Map();
     this.maximum = maximum;
     this.lastInterval = [];
@@ -181,11 +141,6 @@ export default class Logs {
     this.beginning = -END_TIMES;
     this.subscriptionTree = new IntervalTree();
     this.refresh();
-  }
-
-  clear() {
-    this.tree = new IntervalTree();
-    this.update();
   }
 
   getLastFrom() {
@@ -198,7 +153,8 @@ export default class Logs {
 
   async refresh() {
     this.streaming = Features.get("logStreaming");
-    this.clear();
+    this.tree = new IntervalTree();
+    this.update();
 
     if (this.streaming) {
       const params = new URLSearchParams();
@@ -334,8 +290,6 @@ export default class Logs {
       ),
     );
 
-    // console.log("absent", fromDate, toDate, absentIntervals, allAbsent);
-
     for (const [key, absent] of allAbsent) this.insertAbsent(key, absent);
 
     if (allAbsent.length) this.update();
@@ -366,7 +320,7 @@ export default class Logs {
     );
   }
 
-  putSubscriptionInterval(intervalKey) {
+  collectIntersections(intervalKey) {
     let [fromDate, toDate] = intervalKey;
     const matches = [];
 
@@ -376,29 +330,25 @@ export default class Logs {
     )) {
       this.subscriptionTree.remove(key, value);
 
+      // should work well in all expected situations
       if (key.low < fromDate) {
         if (fromDate < key.high) {
           matches.push([key.low, fromDate, value]);
           matches.push([fromDate, key.high, value + 1]);
         } else if (fromDate === key.high)
           matches.push([key.low, fromDate, value + 1]);
-        // else - fromDate > key.high shouldn't happen
-      } else if (key.low === fromDate) {
-        if (toDate < key.high) {
-          matches.push([key.low, toDate, value + 1]);
-          matches.push([toDate, key.high, value]);
-        } else if (toDate === key.high)
-          matches.push([key.low, toDate, value + 1]);
-        // else - toDate > key.high shouldn't happen
-      } else if (key.low > fromDate) {
-        if (toDate < key.high) {
-          matches.push([key.low, toDate, value + 1]);
-          matches.push([toDate, key.high, value]);
-        } else {
-          matches.push([key.low, key.high, value + 1]);
-        }
-      }
+      } else if (toDate < key.high) {
+        matches.push([key.low, toDate, value + 1]);
+        matches.push([toDate, key.high, value]);
+      } else matches.push([key.low, key.high, value + 1]);
     }
+
+    return matches;
+  }
+
+  putSubscriptionInterval(intervalKey) {
+    let [fromDate, toDate] = intervalKey;
+    const matches = this.collectIntersections(intervalKey);
 
     if (!matches.length)
       return this.subscriptionTree.insert([fromDate, toDate], 1);

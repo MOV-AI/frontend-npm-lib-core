@@ -1,4 +1,3 @@
-export const MAX_LOG_LIMIT = 10000;
 export const GLOBAL_WORKSPACE = "global";
 
 // BroadcastChannel events
