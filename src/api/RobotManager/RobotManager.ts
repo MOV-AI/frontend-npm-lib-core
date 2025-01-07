@@ -6,23 +6,11 @@ import {
   EMPTY_FUNCTION,
   HEARTBEAT_TIMEOUT,
   SET_WS_EVENTS,
-  MAX_LOG_LIMIT,
 } from "../Utils/constants";
 import Robot from "./Robot";
-import Rest from "../Rest/Rest";
-import { webSocketOpen } from "../WebSocket";
-import {
-  getRequestDate,
-  getRequestLevels,
-  getRequestMessage,
-  getRequestRobots,
-  getRequestService,
-  getRequestTags,
-} from "./Utils/Utils";
 import {
   CachedRobots,
   LoadRobotParam,
-  LogQueryParam,
   RobotModel,
   SubscriptionManager,
   UpdateRobotParam,
@@ -320,63 +308,6 @@ class RobotManager {
       robot.sendUpdates(event);
     });
   };
-
-  //========================================================================================
-  /*                                                                                      *
-   *                                    Static Methods                                    *
-   *                                                                                      */
-  //========================================================================================
-  /**
-   * Get Logs params
-   * @param {LogQueryParam} queryParam : Object to construct query string
-   * @returns {string} query parameter string
-   */
-  static getLogsParam(queryParam: LogQueryParam): string {
-    // Get request parameters
-    const _limit = queryParam?.limit || MAX_LOG_LIMIT;
-    const _levels = getRequestLevels(
-      queryParam?.level?.selected || [],
-      queryParam?.level?.list,
-    );
-    const _services = getRequestService(queryParam?.service?.selected);
-    const _tags = getRequestTags(queryParam?.tag?.selected);
-    const _message = getRequestMessage(queryParam?.searchMessage);
-    const _dates = getRequestDate(queryParam?.date?.from, queryParam?.date?.to);
-    const _robots = getRequestRobots(queryParam?.robot?.selected);
-    return [_limit, _levels, _services, _dates, _tags, _message, _robots].join(
-      "",
-    );
-  }
-
-  /**
-   * Open Websocket connection to get the logs
-   * @param {LogQueryParam} queryParam : Object to construct query string
-   * @returns {Promise} Request promise
-   */
-  static openLogs(queryParam: LogQueryParam): WebSocket {
-    const splits = RobotManager.getLogsParam(queryParam).split("&");
-    let params = new URLSearchParams();
-    for (const split in splits) {
-      const [key, value] = split.split("=");
-      params.set(value ? key : "limit", value ?? key);
-    }
-    return webSocketOpen({ path: "/ws/logs", params });
-  }
-
-  //========================================================================================
-  /*                                                                                      *
-   *                                    Static Methods                                    *
-   *                                                                                      */
-  //========================================================================================
-  /**
-   * Get Logs for multiple robots
-   * @param {LogQueryParam} queryParam : Object to construct query string
-   * @returns {Promise} Request promise
-   */
-  static async getLogs(queryParam: LogQueryParam): Promise<any> {
-    const path = "v1/logs/?limit=" + RobotManager.getLogsParam(queryParam);
-    return Rest.get({ path });
-  }
 }
 
 export default RobotManager;
