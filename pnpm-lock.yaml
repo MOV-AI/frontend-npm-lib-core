@@ -14,6 +14,9 @@ importers:
       '@flatten-js/interval-tree':
         specifier: ^1.1.3
         version: 1.1.3
+      '@tty-pt/logs':
+        specifier: ^0.0.26
+        version: 0.0.26(@flatten-js/interval-tree@1.1.3)(bintrees@1.0.2)
       fast-equals:
         specifier: ^5.0.1
         version: 5.0.1
@@ -925,6 +928,12 @@ packages:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
 
+  '@tty-pt/logs@0.0.26':
+    resolution: {integrity: sha512-cJ/GNqXKrkXsnr6Al9kKC9fmbXpXdYTZ91t+9ptW3PEsvmq0PUpOhW2RZvovSoo/3Rall1dQ2iUiD+/enZ1GIg==}
+    peerDependencies:
+      '@flatten-js/interval-tree': ^1.1.3
+      bintrees: ^1.0.2
+
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
 
@@ -1216,6 +1225,9 @@ packages:
 
   big.js@5.2.2:
     resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
+
+  bintrees@1.0.2:
+    resolution: {integrity: sha512-VOMgTMwjAaUG580SXn3LacVgjurrbMme7ZZNYGSSV7mmtY6QQRh0Eg3pwIcntQ77DErK1L0NxkbetjcoXzVwKw==}
 
   body-parser@1.20.1:
     resolution: {integrity: sha512-jWi7abTbYwajOytWCQc37VulmWiRae5RyTpaCyDcS5/lMdtwSz5lOpDE67srw/HYe35f1z3fDQw+3txg7gNtWw==}
@@ -4130,6 +4142,11 @@ snapshots:
 
   '@tootallnate/once@2.0.0': {}
 
+  '@tty-pt/logs@0.0.26(@flatten-js/interval-tree@1.1.3)(bintrees@1.0.2)':
+    dependencies:
+      '@flatten-js/interval-tree': 1.1.3
+      bintrees: 1.0.2
+
   '@types/babel__core@7.20.5':
     dependencies:
       '@babel/parser': 7.23.9
@@ -4482,6 +4499,8 @@ snapshots:
   base64id@2.0.0: {}
 
   big.js@5.2.2: {}
+
+  bintrees@1.0.2: {}
 
   body-parser@1.20.1:
     dependencies:
