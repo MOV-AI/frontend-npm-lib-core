@@ -1,10 +1,6 @@
 import _cloneDeep from "lodash/cloneDeep";
 import {
   LoadRobotParam,
-  Log,
-  Tasks,
-  LogData,
-  Logger,
   RobotMap,
   RobotModel,
   UpdateRobotParam,
@@ -14,12 +10,7 @@ import {
   Alert,
   Alerts,
 } from "../../models";
-import {
-  LOGGER_STATUS,
-  EMPTY_FUNCTION,
-  DEFAULT_ROBOT_TASKS,
-  TIME_TO_OFFLINE,
-} from "../Utils/constants";
+import { EMPTY_FUNCTION, TIME_TO_OFFLINE } from "../Utils/constants";
 import DocumentV2 from "../Document/DocumentV2";
 import MasterDB from "../Database/MasterDB";
 import * as Utils from "./../Utils/Utils";
@@ -33,9 +24,6 @@ class Robot {
   private name?: RobotModel["RobotName"];
   private previousData: RobotModel;
   private lastUpdate: Date;
-  private logs: Array<LogData>;
-  private logger: Logger;
-  private logSubscriptions: SubscriptionManager;
   private dataSubscriptions: SubscriptionManager;
   private onGetIPCallback: Function;
   private api: DocumentV2;
@@ -52,12 +40,6 @@ class Robot {
     this.data = { ...data, Online: true };
     this.previousData = this.data;
     this.lastUpdate = new Date();
-    this.logs = [];
-    this.logger = {
-      status: LOGGER_STATUS.init,
-      time: 3000,
-    };
-    this.logSubscriptions = {};
     this.dataSubscriptions = {};
     this.onGetIPCallback = EMPTY_FUNCTION;
     this.api = Document.factory(
@@ -181,22 +163,6 @@ class Robot {
   }
 
   /**
-   * Start robot logger
-   */
-  startLogger() {
-    this.logger.status = LOGGER_STATUS.running;
-    this._getLogs();
-  }
-
-  /**
-   * Stop robot logger
-   */
-  stopLogger() {
-    this.logger.status = LOGGER_STATUS.paused;
-    clearTimeout(this.logger.timeout as NodeJS.Timeout);
-  }
-
-  /**
    * Subscribe to changes in robot's data
    * @param {Function} callback: Function to be called on get logs
    */
@@ -256,28 +222,6 @@ class Robot {
   }
 
   /**
-   * Subscribe to the robot logs
-   * @param {Function} callback: Function to be called on get logs
-   */
-  subscribeToLogs(callback: Function) {
-    const subscriptionId = Utils.randomGuid();
-    this.logSubscriptions[subscriptionId] = { send: callback };
-    if (this.logger.status !== LOGGER_STATUS.running) this.startLogger();
-    else if (this.logs) callback(this.logs);
-    return subscriptionId;
-  }
-
-  /**
-   * Unsubscribe to the robot logs
-   * @param {string} subscriptionId: Subscription id that needs to be canceled
-   */
-  unsubscribeToLogs(subscriptionId: string) {
-    if (!subscriptionId || !this.logSubscriptions[subscriptionId]) return;
-    delete this.logSubscriptions[subscriptionId];
-    if (Object.keys(this.logSubscriptions).length === 0) this.stopLogger();
-  }
-
-  /**
    * Unsubscribe to the robot data
    *
    * @param {String} subscriptionId: Subscription id that needs to be canceled
@@ -287,80 +231,11 @@ class Robot {
     delete this.dataSubscriptions[subscriptionId];
   }
 
-  /**
-   * Refresh logs
-   */
-  refreshLogs() {
-    clearTimeout(this.logger.timeout as NodeJS.Timeout);
-    this._getLogs();
-  }
-
-  /**
-   * Get robot current and previous tasks
-   * @returns {Promise<Tasks>} Returns previous/current robot tasks
-   */
-  async getTasks(): Promise<Tasks> {
-    const path = `v1/logs/?limit=2&level=info&tags=ui&robots=${this.name}`;
-    return Rest.get({ path })
-      .then((res: Log) => {
-        if (!res?.data?.length) {
-          return DEFAULT_ROBOT_TASKS;
-        }
-        // Return tasks
-        return {
-          currentTask: res.data[0]?.message || DEFAULT_ROBOT_TASKS.currentTask,
-          previousTask:
-            res.data[1]?.message || DEFAULT_ROBOT_TASKS.previousTask,
-        };
-      })
-      .catch((error: Error) => {
-        console.warn("Failed to get tasks", error);
-        return DEFAULT_ROBOT_TASKS;
-      });
-  }
-
   //========================================================================================
   /*                                                                                      *
    *                                   Private functions                                  *
    *                                                                                      */
   //========================================================================================
-
-  /**
-   * Get robot logs
-   */
-  private _getLogs() {
-    if (Object.keys(this.logSubscriptions).length === 0) return; // Stop if there's no active subscriptions
-    if (this.logger.status !== LOGGER_STATUS.running) return; // Or if logger status is not "running"
-    if (!this.name) return; // Or if robot has no name
-
-    // Get logs from server
-    const path = `v1/logs/?limit=20&level=info,error,warning,critical&tags=ui&robots=${this.name}`;
-    Rest.get({ path })
-      .then((response: Log) => {
-        if (!response || !response.data) return;
-        // Cache log data and send response to active subscriptions
-        this.logs = response.data;
-        for (const key in this.logSubscriptions) {
-          this.logSubscriptions[key].send(response.data);
-        }
-        // Enqueue next request
-        this._enqueueNextRequest();
-      })
-      .catch((err: Error) => {
-        // Enqueue next request
-        this.logger.time += 1000;
-        this._enqueueNextRequest();
-        console.warn("Failed log request", err);
-      });
-  }
-
-  /**
-   * Enqueue next request to get logs
-   */
-  private _enqueueNextRequest() {
-    clearTimeout(this.logger.timeout as NodeJS.Timeout);
-    this.logger.timeout = setTimeout(() => this._getLogs(), this.logger.time);
-  }
 
   /**
    * Function to be called when robot IP subscribed loads
