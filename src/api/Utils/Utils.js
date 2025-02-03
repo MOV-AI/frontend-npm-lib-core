@@ -73,8 +73,12 @@ export const mod = (x, n) => ((x % n) + n) % n;
  * flatten an object
  * https://github.com/30-seconds/30-seconds-of-code/blob/master/snippets/flattenObject.md
  */
-export const flattenObject = (obj, prefix = "") =>
-  Object.keys(obj).reduce((acc, k) => {
+export const flattenObject = (obj, prefix = "") => {
+  if (!obj || typeof obj !== "object") {
+    return {}; // Return an empty object if obj is null, undefined, or not an object
+  }
+
+  return Object.keys(obj).reduce((acc, k) => {
     const pre = prefix.length ? prefix + "." : "";
 
     if (typeof obj[k] === "object" && !_isEmpty(obj[k])) {
@@ -85,6 +89,7 @@ export const flattenObject = (obj, prefix = "") =>
 
     return acc;
   }, {});
+};
 
 /**
  * Generate random Guid
