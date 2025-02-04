@@ -25,6 +25,7 @@ import Snapshot from "./Snapshot/Snapshot";
 import Rest from "./Rest/Rest";
 import { ROSBridge, MainROSBridge } from "./ROSBridge/ROSBridge";
 import Role from "./Role/Role";
+import Logs from "./Logs";
 
 export {
   Acl,
@@ -53,4 +54,5 @@ export {
   Rest,
   ROSBridge,
   MainROSBridge,
+  Logs,
 };

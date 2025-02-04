@@ -27,7 +27,7 @@ if (!globalThis.mock) {
 
 const Features = {
   get: (key) => features[key],
-  set: (key) => {
+  set: (key, value) => {
     features[key] = value;
   },
   enable: (key) => {
@@ -37,5 +37,7 @@ const Features = {
     features[key] = false;
   },
 };
+
+globalThis.Features = Features;
 
 export default Features;

@@ -60,6 +60,7 @@
     "package.json": "sort-package-json"
   },
   "dependencies": {
+    "@tty-pt/logs": "^0.0.26",
     "fast-equals": "^5.0.1",
     "js-yaml": "^4.1.0",
     "jwt-decode": "^3.1.2",
