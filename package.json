@@ -77,6 +77,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^15.2.10",
     "prettier": "3.3.3",
+    "serve-static": "^1.16.2",
     "sort-package-json": "2.10.1",
     "ts-jest": "^28.0.3",
     "ts-loader": "^9.3.0",
