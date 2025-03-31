@@ -63,6 +63,7 @@ export const WS_EVENT_TYPES = {
   HSET: "hset",
   DEL: "del",
   HDEL: "hdel",
+  EXP: "expire",
 };
 
 export const DEL_WS_EVENTS = [WS_EVENT_TYPES.DEL, WS_EVENT_TYPES.HDEL];

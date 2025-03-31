@@ -1,5 +1,6 @@
 # TBD
 
+- [FP-3061](https://movai.atlassian.net/browse/FP-3061): Release of mutex lock does not work
 - [FP-3138](https://movai.atlassian.net/browse/FP-3138): Not able to use dev container in all frontend repos
 
 # 1.2.4
