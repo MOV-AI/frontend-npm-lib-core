@@ -1,3 +1,7 @@
+# 2.6.0
+
+- New version
+
 # 1.2.5
 
 - [FP-3061](https://movai.atlassian.net/browse/FP-3061): Release of mutex lock does not work
