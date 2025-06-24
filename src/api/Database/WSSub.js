@@ -196,6 +196,9 @@ class WSSub {
    * @param {any} message data to pass to the callback
    */
   dispatch = (pattern, message, is_command = true) => {
+    /// important to not freeze the browser
+    if (document.visibilityState === "hidden") return;
+
     const _map = is_command ? this.evt_callbacks : this.sub_callbacks;
     const _callbacks = _map.get(pattern) || [];
 
