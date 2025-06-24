@@ -1,3 +1,7 @@
+# 2.6.1
+
+- [FP-3074](https://movai.atlassian.net/browse/FP-3074): Tab crashes after high memory usage
+
 # 2.6.0
 
 - New version
