@@ -1,4 +1,4 @@
-# TBD
+# 2.6.2
 
 - [FP-2297](https://movai.atlassian.net/browse/FP-2297): Re-login form is not shown when cookies are removed or token is deleted
 
