@@ -325,8 +325,7 @@ class WSSub {
   };
 
   handleFalseConnection = (statusText) => {
-    if (statusText === "Token must be a string!")
-      return Authentication.logout();
+    return Authentication.logout();
   };
 
   /**
