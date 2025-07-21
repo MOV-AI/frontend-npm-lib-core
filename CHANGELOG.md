@@ -1,3 +1,7 @@
+# TBD
+
+- [FP-3282](https://movai.atlassian.net/browse/FP-3282): Remove usage of /api/v1/newUser and /api/v1/User/\* endpoints
+
 # 2.6.1
 
 - [FP-3074](https://movai.atlassian.net/browse/FP-3074): Tab crashes after high memory usage

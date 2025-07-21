@@ -3,7 +3,6 @@ import Permissions from "../Permission/Permission";
 import { Utils } from "../index";
 import InternalUser from "./InternalUser";
 import Role from "../Role/Role";
-import UserV1 from "./UserV1";
 import AclUser from "./AclUser";
 import Application from "../Application/Application";
 import { PermissionType } from "../../models/permission";
@@ -14,13 +13,15 @@ import {
 } from "../../models/authentication";
 import {
   ChangePassword,
+  InternalUserModel,
   ResetPassword,
   UserModel as UserModel,
   UserPost,
   UserPut,
+  UserWithPermissions,
 } from "../../models/user";
 
-type UserType = UserV1 | InternalUser | AclUser;
+type UserType = InternalUser | AclUser;
 export class User {
   private tokenData: Token;
   private instance: UserType;
@@ -43,7 +44,7 @@ export class User {
    * @returns the class which the user belongs
    */
   getUserClass = () => {
-    if (!Authentication.isNewToken(this.tokenData)) return UserV1;
+    if (!Authentication.isNewToken(this.tokenData)) return InternalUser;
     if (this.isInternalUser()) return InternalUser;
     return AclUser;
   };
@@ -56,9 +57,9 @@ export class User {
 
   /**
    * Get user data
-   * @returns {Promise<User>}
+   * @returns {Promise<InternalUserModel | UserWithPermissions>}
    */
-  getData = async (): Promise<InternalUser> => {
+  getData = async (): Promise<InternalUserModel | UserWithPermissions> => {
     return this.instance.getData();
   };
 
