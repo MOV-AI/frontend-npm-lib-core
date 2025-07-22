@@ -1,6 +1,6 @@
 {
   "name": "@mov-ai/mov-fe-lib-core",
-  "version": "2.6.1-1",
+  "version": "2.6.3-0",
   "description": "The Mov.AI's core frontend library.",
   "keywords": [
     "frontend",

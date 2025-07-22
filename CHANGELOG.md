@@ -1,6 +1,10 @@
-# TBD
+# 2.6.3
 
 - [FP-3282](https://movai.atlassian.net/browse/FP-3282): Remove usage of /api/v1/newUser and /api/v1/User/\* endpoints
+
+# 2.6.2
+
+- [FP-2297](https://movai.atlassian.net/browse/FP-2297): Re-login form is not shown when cookies are removed or token is deleted
 
 # 2.6.1
 
