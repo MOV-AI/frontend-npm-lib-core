@@ -1,4 +1,4 @@
-# 2.6.3
+# 2.7.0
 
 - [FP-3282](https://movai.atlassian.net/browse/FP-3282): Remove usage of /api/v1/newUser and /api/v1/User/\* endpoints
 
