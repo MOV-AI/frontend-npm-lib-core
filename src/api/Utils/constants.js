@@ -71,3 +71,5 @@ export const SET_WS_EVENTS = [WS_EVENT_TYPES.SET, WS_EVENT_TYPES.HSET];
 
 export const TIME_TO_OFFLINE = 5000;
 export const HEARTBEAT_TIMEOUT = 2000;
+
+export const LOCAL_STORAGE_LANG_KEY = "movai.lang";
