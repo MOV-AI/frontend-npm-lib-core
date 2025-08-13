@@ -1,4 +1,4 @@
-# 2.7.1
+# 2.8.0
 
 - [FP-3260](https://movai.atlassian.net/browse/FP-3260): Translation epic
 
