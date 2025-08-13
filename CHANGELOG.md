@@ -1,3 +1,7 @@
+# 2.7.1
+
+- [FP-3260](https://movai.atlassian.net/browse/FP-3260): Translation epic
+
 # 2.7.0
 
 - [FP-3282](https://movai.atlassian.net/browse/FP-3282): Remove usage of /api/v1/newUser and /api/v1/User/\* endpoints
