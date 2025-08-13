@@ -114,6 +114,10 @@ export class User {
     return this.instance.changePassword(body);
   };
 
+  setLanguage = (language: string): Promise<boolean> => {
+    return this.instance.setLanguage(language);
+  };
+
   //========================================================================================
   /*                                                                                      *
    *                                    Static Methods                                    *

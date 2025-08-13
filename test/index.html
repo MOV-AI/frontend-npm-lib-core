@@ -20,8 +20,8 @@
       } = Movai;
       document.writeln(CONSTANTS.GLOBAL_WORKSPACE);
       Utils.range(0, 10).forEach((x) => document.writeln(x));
-      const user = "admin";
-      const pass = "movaimovai";
+      const user = "movai";
+      const pass = "movai123";
       Authentication.login(user, pass).then(() => {
         const robotManager = new RobotManager();
         robotManager.subscribeToChanges((robots) => {
