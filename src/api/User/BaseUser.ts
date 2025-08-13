@@ -56,6 +56,11 @@ class BaseUser {
   resetPassword = () => {
     /* Implemented in derived classes */
   };
+
+  setLanguage = (_language: string): Promise<boolean> => {
+    /* Implemented in derived classes */
+    return Promise.resolve(true);
+  };
 }
 
 export default BaseUser;
