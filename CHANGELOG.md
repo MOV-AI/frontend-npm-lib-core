@@ -1,3 +1,7 @@
+# 2.8.1
+
+- [FP-3329](https://movai.atlassian.net/browse/FP-3329): MOVAI Logs out and does not allow user to save it's work
+
 # 2.8.0
 
 - [FP-3260](https://movai.atlassian.net/browse/FP-3260): Translation epic
