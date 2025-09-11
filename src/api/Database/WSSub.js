@@ -338,8 +338,6 @@ class WSSub {
       body: JSON.stringify({ token: getToken() }),
     })
       .then((res) => {
-        if (!res.ok && res.status !== 200)
-          return this.handleFalseConnection(res.statusText);
         if (this.connectionState === CONNECTION.online) return;
         this.connectionState = CONNECTION.online;
         this.onOnline();
