@@ -9,6 +9,9 @@ on:
     paths-ignore:
       - "package.json"
       - "package-lock.json"
+  push:
+    branches:
+      - dev
 
 jobs:
   CI:
