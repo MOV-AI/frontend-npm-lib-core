@@ -5,7 +5,7 @@ import {
   AclPost,
   AclBatchResult,
   AclPut,
-  AclPutResult
+  AclPutResult,
 } from "../../models/acl";
 import { HttpErrorResponse } from "../../models/http";
 import { LdapResourceType } from "../../models/ldap";
@@ -17,12 +17,12 @@ export const ACL_API_ROUTE = "v2/Acl";
 export default class Acl {
   static get = (domainName: string, accountName: string): Promise<AclModel> =>
     Rest.get({
-      path: `${ACL_API_ROUTE}/${domainName}/user/${accountName}/`
+      path: `${ACL_API_ROUTE}/${domainName}/user/${accountName}/`,
     });
 
   static getUsersByDomain = (domainName: string): Promise<AclList> => {
     return Rest.get({
-      path: `${ACL_API_ROUTE}/${domainName}/user/`
+      path: `${ACL_API_ROUTE}/${domainName}/user/`,
     }).catch((err: HttpErrorResponse) => {
       if (err.status === REQUEST_STATUS.NOT_FOUND) return [];
       else throw err;
@@ -31,7 +31,7 @@ export default class Acl {
 
   static getGroupsByDomain = (domainName: string): Promise<AclList> => {
     return Rest.get({
-      path: `${ACL_API_ROUTE}/${domainName}/group/`
+      path: `${ACL_API_ROUTE}/${domainName}/group/`,
     }).catch((err: HttpErrorResponse) => {
       if (err.status === REQUEST_STATUS.NOT_FOUND) return [];
       else throw err;
@@ -41,11 +41,11 @@ export default class Acl {
   static addResourcesToAcl = (
     domainName: string,
     resourceType: LdapResourceType,
-    postModel: AclPost[]
+    postModel: AclPost[],
   ): Promise<AclBatchResult> => {
     return Rest.post({
       path: `${ACL_API_ROUTE}/${domainName}/${resourceType}/`,
-      body: postModel
+      body: postModel,
     }).catch((err: HttpErrorResponse) => {
       console.warn(`Error saving ${resourceType}: `, err);
       throw err;
@@ -55,11 +55,11 @@ export default class Acl {
   static updateResourceInACL = (
     domainName: string,
     resourceType: LdapResourceType,
-    putModel: AclPut[]
+    putModel: AclPut[],
   ): Promise<AclPutResult> => {
     return Rest.put({
       path: `${ACL_API_ROUTE}/${domainName}/${resourceType}/`,
-      body: putModel
+      body: putModel,
     }).catch((err: HttpErrorResponse) => {
       console.warn(`Error saving ${resourceType}: `, err);
       throw err;
@@ -69,11 +69,11 @@ export default class Acl {
   static deleteResourceFromAcl = (
     domainName: string,
     resourceType: LdapResourceType,
-    deleteModel: AclDeleteModel[]
+    deleteModel: AclDeleteModel[],
   ): Promise<AclBatchResult> => {
     return Rest.delete({
       path: `${ACL_API_ROUTE}/${domainName}/${resourceType}/`,
-      body: deleteModel
+      body: deleteModel,
     }).catch((err: HttpErrorResponse) => {
       console.log(`Error deleting ${resourceType}: `, err);
       throw err;

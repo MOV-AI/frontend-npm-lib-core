@@ -7,10 +7,10 @@ module.exports = {
     path: path.resolve("./"),
     filename: "dist/index.js",
     library: "Movai",
-    libraryTarget: "umd"
+    libraryTarget: "umd",
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"]
+    extensions: [".tsx", ".ts", ".js"],
   },
   target: "web",
   devtool: "source-map",
@@ -20,21 +20,21 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: "ts-loader",
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.(js|mjs|jsx)$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: "babel-loader",
-        }
+        },
       },
       {
         test: /\.(woff|woff2)$/,
         use: {
-          loader: "url-loader"
-        }
-      }
-    ]
-  }
+          loader: "url-loader",
+        },
+      },
+    ],
+  },
 };

@@ -4,7 +4,7 @@ export const STORAGE_KEYS = {
   TOKEN: "movai.token",
   REFRESH_TOKEN: "movai.refreshToken",
   TOKEN_REMEMBER: "movai.tokenRemember",
-  SESSION: "movai.session"
+  SESSION: "movai.session",
 };
 
 export const INTERNAL_AUTHENTICATION = "internal";

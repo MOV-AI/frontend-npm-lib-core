@@ -79,14 +79,14 @@ export class ROSBridge {
         },
         (error: string) => {
           reject(error);
-        }
+        },
       );
     });
   }
 
   callService(
     message: { [prop: string]: any },
-    serviceID: { name: string; serviceType: string }
+    serviceID: { name: string; serviceType: string },
   ): Promise<any> {
     this.connect();
     if (!this.ros.isConnected) {
@@ -100,9 +100,9 @@ export class ROSBridge {
         (result: any) => {
           resolve(result);
         },
-        error => {
+        (error) => {
           reject(error);
-        }
+        },
       );
     });
   }
@@ -114,15 +114,15 @@ export class ROSBridge {
     this.ros = new Ros({ url: this.url });
     this.ros.on("connection", () => {
       console.debug("ROS Bridge connected!");
-      this.onConnectSubs.forEach(f => f());
+      this.onConnectSubs.forEach((f) => f());
     });
-    this.ros.on("error", error => {
+    this.ros.on("error", (error) => {
       console.debug("ROS Bridge error!");
-      this.onErrorSubs.forEach(f => f(error));
+      this.onErrorSubs.forEach((f) => f(error));
     });
     this.ros.on("close", () => {
       console.debug("ROS Bridge closed!");
-      this.onCloseSubs.forEach(f => f());
+      this.onCloseSubs.forEach((f) => f());
     });
   }
 }

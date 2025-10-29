@@ -14,26 +14,26 @@ export default class DataManagerBase {
       throw new Error("No models added");
     }
 
-    Object.keys(this.models).forEach(key => {
+    Object.keys(this.models).forEach((key) => {
       const prop = key.charAt(0).toLowerCase() + key.slice(1);
 
       Object.defineProperty(this, prop, {
         get: () => {
           return this.models[key];
-        }
+        },
       });
     });
     return this._subscribeModelsReady();
   };
 
   _subscribeModelsReady = () => {
-    Object.keys(this.models).forEach(key => {
+    Object.keys(this.models).forEach((key) => {
       this.models[key].onReady(() => this._setModelReady(key));
     });
     return this;
   };
 
-  _setModelReady = model => {
+  _setModelReady = (model) => {
     this.isReady += 1;
     if (this.isReady === Object.keys(this.models).length) {
       this._subject_state.complete();
@@ -50,12 +50,12 @@ export default class DataManagerBase {
     return subscribeTo.onUpdate(callback);
   };
 
-  onReady = callback => {
+  onReady = (callback) => {
     if (this.db_state !== this.db_states.ready) {
       this._subject_state.subscribe(
         () => {},
         () => {},
-        () => callback()
+        () => callback(),
       );
     } else {
       callback();

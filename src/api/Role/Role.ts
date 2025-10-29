@@ -3,7 +3,7 @@ import {
   RoleModel,
   RolesMap,
   RoleUpdateModel,
-  RoleUpdateResult
+  RoleUpdateResult,
 } from "../../models/role";
 
 const ROLE_API_ROUTE = "v2/Role/";
@@ -11,7 +11,7 @@ const ROLE_API_ROUTE = "v2/Role/";
 class Role {
   static getAll = (): Promise<RolesMap> =>
     Rest.get({
-      path: ROLE_API_ROUTE
+      path: ROLE_API_ROUTE,
     });
 
   static get = (id: string): Promise<RoleModel> =>
@@ -22,7 +22,7 @@ class Role {
 
   static update = (
     roleName: string,
-    model: RoleUpdateModel
+    model: RoleUpdateModel,
   ): Promise<RoleUpdateResult> =>
     Rest.post({ path: `${ROLE_API_ROUTE}${roleName}/`, body: model });
 

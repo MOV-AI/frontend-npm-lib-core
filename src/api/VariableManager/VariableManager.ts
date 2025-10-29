@@ -5,12 +5,12 @@ import {
   SubscriptionManager,
   SubscriberMap,
   VarGetResult,
-  VarMap
+  VarMap,
 } from "../../models";
 import MasterDB from "../Database/MasterDB";
 import Rest from "../Rest/Rest";
 import { EMPTY_FUNCTION, VAR_SCOPES, WS_EVENT_TYPES } from "../Utils/constants";
-import {Utils} from "../index";
+import { Utils } from "../index";
 
 // Used as global variable to avoid creation multiple subscribers
 let instance: VariableManager | null = null;
@@ -71,27 +71,29 @@ class VariableManager {
           const variables = data.key.Var;
           const dataEventType = data.event;
 
-          Object.keys(variables).forEach(scope => {
-            Object.keys(variables[scope].ID).forEach(keyVar => {
+          Object.keys(variables).forEach((scope) => {
+            Object.keys(variables[scope].ID).forEach((keyVar) => {
               // check if key changed exists in subscribedOnVarChange
               if (this.subscribedOnVarChange[keyVar]) {
                 //  Call subscribed Var onChange functions
-                Object.keys(this.subscribedOnVarChange[keyVar]).forEach(id => {
-                  this.subscribedOnVarChange[keyVar][id].send(
-                    variables[scope].ID[keyVar]?.Value ?? variables[scope].ID[keyVar]
-                  );
-                });
+                Object.keys(this.subscribedOnVarChange[keyVar]).forEach(
+                  (id) => {
+                    this.subscribedOnVarChange[keyVar][id].send(
+                      variables[scope].ID[keyVar]?.Value ??
+                        variables[scope].ID[keyVar],
+                    );
+                  },
+                );
               }
             });
-          }) 
-
+          });
 
           this.applyChanges(variables, dataEventType);
           // Call subscribed onChange functions
-          Object.keys(this.subscribedOnDataChange).forEach(key => {
+          Object.keys(this.subscribedOnDataChange).forEach((key) => {
             this.subscribedOnDataChange[key].send(
               this.cachedVars,
-              dataEventType
+              dataEventType,
             );
           });
         },
@@ -101,10 +103,10 @@ class VariableManager {
             this.cachedVars = data.value;
           }
           // Call subscribed onLoad functions
-          Object.keys(this.subscribedOnDataLoad).forEach(key => {
+          Object.keys(this.subscribedOnDataLoad).forEach((key) => {
             this.subscribedOnDataLoad[key].send(this.cachedVars);
           });
-        }
+        },
       );
     } catch (error) {}
   }
@@ -144,10 +146,12 @@ class VariableManager {
   // varName = <robot_name>@recovery_state
   subscribeToVar(varName: string, callback: Function) {
     const subscriptionId = Utils.randomGuid();
-    const subscription = {[subscriptionId]: { send: callback }}
-    if (!this.subscribedOnVarChange[varName]) this.subscribedOnVarChange[varName] = subscription;
-    else this.subscribedOnVarChange[varName][subscriptionId] = { send: callback }
-    
+    const subscription = { [subscriptionId]: { send: callback } };
+    if (!this.subscribedOnVarChange[varName])
+      this.subscribedOnVarChange[varName] = subscription;
+    else
+      this.subscribedOnVarChange[varName][subscriptionId] = { send: callback };
+
     return subscriptionId;
   }
 
@@ -156,8 +160,8 @@ class VariableManager {
    */
   unsubscribeToVar(varName: string, subscriptionId: string) {
     // delete subscriber
-      if (!subscriptionId || !this.subscribedOnVarChange[subscriptionId]) return;
-      delete this.subscribedOnVarChange[subscriptionId];
+    if (!subscriptionId || !this.subscribedOnVarChange[subscriptionId]) return;
+    delete this.subscribedOnVarChange[subscriptionId];
   }
 
   /**
@@ -181,7 +185,7 @@ class VariableManager {
   setVar = async ({
     key,
     value,
-    scope = VAR_SCOPES.GLOBAL
+    scope = VAR_SCOPES.GLOBAL,
   }: {
     scope: string;
     value: RedisVarType | object;
@@ -229,7 +233,7 @@ class VariableManager {
           this.setVar({
             value: res.value,
             key: CURRENT_DATE_KEY,
-            scope: VAR_SCOPES.GLOBAL
+            scope: VAR_SCOPES.GLOBAL,
           }).then(() => {
             return true;
           });
@@ -255,22 +259,22 @@ class VariableManager {
 
       if (!this.cachedVars.Var[scope]) {
         this.cachedVars.Var = Object.assign(this.cachedVars.Var, {
-          [scope]: { ID: {} }
+          [scope]: { ID: {} },
         });
       }
 
       this.cachedVars.Var[scope].ID = Object.assign(
         this.cachedVars.Var[scope].ID,
-        obj.ID
+        obj.ID,
       );
 
       this.variables[scope].ID = Object.assign(
         this.variables[scope].ID,
-        obj.ID
+        obj.ID,
       );
 
       // Update cached and variable data attribute
-      Object.keys(obj.ID).forEach(varName => {
+      Object.keys(obj.ID).forEach((varName) => {
         // Remove variable
         if (event === WS_EVENT_TYPES.DEL) {
           delete this.variables[scope].ID[varName];
@@ -293,10 +297,10 @@ class VariableManager {
     const validators = [
       {
         fn: () => VariableManager.isValidScope(scope),
-        error: "Invalid scope"
-      }
+        error: "Invalid scope",
+      },
     ];
-    validators.forEach(obj => {
+    validators.forEach((obj) => {
       if (!obj.fn()) {
         throw new Error(obj.error);
       }

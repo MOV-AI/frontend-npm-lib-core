@@ -12,13 +12,13 @@ import {
   SubscriptionManager,
   UnsubscriberModel,
   Alert,
-  Alerts
+  Alerts,
 } from "../../models";
 import {
   LOGGER_STATUS,
   EMPTY_FUNCTION,
   DEFAULT_ROBOT_TASKS,
-  TIME_TO_OFFLINE
+  TIME_TO_OFFLINE,
 } from "../Utils/constants";
 import DocumentV2 from "../Document/DocumentV2";
 import MasterDB from "../Database/MasterDB";
@@ -43,7 +43,7 @@ class Robot {
 
   constructor(
     id: string,
-    data: RobotModel = { IP: "", RobotName: "", Status: {}, Alerts: {} }
+    data: RobotModel = { IP: "", RobotName: "", Status: {}, Alerts: {} },
   ) {
     this.id = id;
     this.ip = data.IP;
@@ -55,7 +55,7 @@ class Robot {
     this.logs = [];
     this.logger = {
       status: LOGGER_STATUS.init,
-      time: 3000
+      time: 3000,
     };
     this.logSubscriptions = {};
     this.dataSubscriptions = {};
@@ -65,9 +65,9 @@ class Robot {
         workspace: "global",
         type: Robot.SCOPE,
         name: this.id,
-        version: "-"
+        version: "-",
       },
-      "v2"
+      "v2",
     );
   }
 
@@ -85,16 +85,16 @@ class Robot {
       property,
       propValue = "*",
       onLoad = EMPTY_FUNCTION,
-      onUpdate = EMPTY_FUNCTION
+      onUpdate = EMPTY_FUNCTION,
     } = params;
     MasterDB.subscribe(
       {
         Scope: Robot.SCOPE,
         Name: this.id,
-        [property]: propValue
+        [property]: propValue,
       },
       (update: UpdateRobotParam) => onUpdate(update),
-      (data: LoadRobotParam) => onLoad(data)
+      (data: LoadRobotParam) => onLoad(data),
     );
   }
 
@@ -106,7 +106,7 @@ class Robot {
     const pattern = {
       Scope: Robot.SCOPE,
       Name: this.id,
-      [property]: propValue
+      [property]: propValue,
     };
     MasterDB.unsubscribe(pattern, EMPTY_FUNCTION);
   }
@@ -116,24 +116,27 @@ class Robot {
    * @returns {Promise<RobotModel>} Get data request
    */
   async getData(): Promise<RobotModel> {
-    return this.api.read().then((data: RobotMap) => {
-      const robotData = data?.Robot?.[this.id];
-      if (robotData) {
-        this.data = robotData;
-        this.ip = robotData.IP;
-        this.name = robotData.RobotName;
-        this.alerts = Object.entries(robotData.Alerts || {}).reduce(
-          (a: {}, item: [name: string, value: Alert]) => ({
-            ...a,
-            [item[0]]: item[1]
-          }),
-          {}
-        );
-      }
-      return robotData;
-    }).catch((e: Error) => {
-      console.error("Robot.getData", e);
-    });
+    return this.api
+      .read()
+      .then((data: RobotMap) => {
+        const robotData = data?.Robot?.[this.id];
+        if (robotData) {
+          this.data = robotData;
+          this.ip = robotData.IP;
+          this.name = robotData.RobotName;
+          this.alerts = Object.entries(robotData.Alerts || {}).reduce(
+            (a: {}, item: [name: string, value: Alert]) => ({
+              ...a,
+              [item[0]]: item[1],
+            }),
+            {},
+          );
+        }
+        return robotData;
+      })
+      .catch((e: Error) => {
+        console.error("Robot.getData", e);
+      });
   }
 
   /**
@@ -207,7 +210,7 @@ class Robot {
    * Send updated data to subscribed components
    */
   sendUpdates(event: string) {
-    Object.keys(this.dataSubscriptions).forEach(key => {
+    Object.keys(this.dataSubscriptions).forEach((key) => {
       this.dataSubscriptions[key].send(this.data, event);
     });
   }
@@ -306,7 +309,8 @@ class Robot {
         // Return tasks
         return {
           currentTask: res.data[0]?.message || DEFAULT_ROBOT_TASKS.currentTask,
-          previousTask: res.data[1]?.message || DEFAULT_ROBOT_TASKS.previousTask
+          previousTask:
+            res.data[1]?.message || DEFAULT_ROBOT_TASKS.previousTask,
         };
       })
       .catch((error: Error) => {

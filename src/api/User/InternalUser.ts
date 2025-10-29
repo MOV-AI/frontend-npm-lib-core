@@ -5,7 +5,7 @@ import {
   InternalUserModel as InternalUserModel,
   UserUpdateResult,
   UserPut,
-  ResetPassword
+  ResetPassword,
 } from "../../models/user";
 import Rest from "../Rest/Rest";
 import { REQUEST_STATUS } from "../Utils/constants";
@@ -28,8 +28,17 @@ class InternalUser extends BaseUser {
   changePassword = (model: ChangePassword): Promise<UserUpdateResult> =>
     Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/change-password`,
-      body: model
+      body: model,
     });
+
+  setLanguage = (language: string): Promise<boolean> => {
+    return Rest.put({
+      path: `${INTERNAL_USER_API_ROUTE}/${this.getUsername()}/`,
+      body: { Language: language },
+    })
+      .then(() => true)
+      .catch(() => false);
+  };
 
   //========================================================================================
   /*                                                                                      *
@@ -39,7 +48,7 @@ class InternalUser extends BaseUser {
 
   static getAll = (): Promise<{ [accountName: string]: InternalUserModel }> =>
     Rest.get({
-      path: `${INTERNAL_USER_API_ROUTE}/`
+      path: `${INTERNAL_USER_API_ROUTE}/`,
     }).catch((err: HttpErrorResponse) => {
       if (err.status === REQUEST_STATUS.NOT_FOUND) return [];
       else throw err;
@@ -47,7 +56,7 @@ class InternalUser extends BaseUser {
 
   static get = (accountName: string): Promise<InternalUserModel> =>
     Rest.get({
-      path: `${INTERNAL_USER_API_ROUTE}/${accountName}/`
+      path: `${INTERNAL_USER_API_ROUTE}/${accountName}/`,
     });
 
   static delete = (user: { name: string }): Promise<UserUpdateResult> => {
@@ -57,22 +66,22 @@ class InternalUser extends BaseUser {
   static create = (model: UserPost): Promise<UserUpdateResult> =>
     Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/new/`,
-      body: model
+      body: model,
     });
 
   static update = (userId: string, model: UserPut): Promise<UserUpdateResult> =>
     Rest.put({
       path: `${INTERNAL_USER_API_ROUTE}/${userId}/`,
-      body: model
+      body: model,
     });
 
   static resetPassword = (
     userId: string,
-    model: ResetPassword
+    model: ResetPassword,
   ): Promise<UserUpdateResult> => {
     return Rest.post({
       path: `${INTERNAL_USER_API_ROUTE}/${userId}/reset-password`,
-      body: model
+      body: model,
     });
   };
 }

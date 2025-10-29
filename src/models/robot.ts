@@ -22,7 +22,9 @@ export interface Alert {
   callback?: string;
 }
 
-export interface Alerts { [name: string]: Alert }
+export interface Alerts {
+  [name: string]: Alert;
+}
 
 export interface RobotModel {
   IP?: string | null;

@@ -1,6 +1,6 @@
-import {SubscriptionManager} from "./common"
+import { SubscriptionManager } from "./common";
 
-type VarValue =  { Value: string | number | object | boolean };
+type VarValue = { Value: string | number | object | boolean };
 
 export type RedisVarType = VarValue;
 export interface VarMap {

@@ -1,13 +1,13 @@
 import Authentication, {
-  AuthException
+  AuthException,
 } from "../Authentication/Authentication";
 const { checkLogin, getToken } = Authentication;
 
 const withAuth = (obj, props = {}) => {
   const handler = {
     __checkLogin: (target, prop) => {
-      return args =>
-        checkLogin().then(res => {
+      return (args) =>
+        checkLogin().then((res) => {
           // check login error
           if (!res) {
             throw new AuthException("Login error");
@@ -16,7 +16,7 @@ const withAuth = (obj, props = {}) => {
           // inject authorization headers
           const customHeaders = {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${getToken()}`
+            Authorization: `Bearer ${getToken()}`,
           };
 
           // return the original call with custom headers and original arguments
@@ -26,7 +26,7 @@ const withAuth = (obj, props = {}) => {
 
     get: function (target, prop) {
       return this.__checkLogin(target, prop);
-    }
+    },
   };
 
   return new Proxy(Object.assign(obj, props), handler);

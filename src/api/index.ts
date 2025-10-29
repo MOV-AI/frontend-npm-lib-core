@@ -1,4 +1,4 @@
-export { default as  Features } from "./Features";
+export { default as Features } from "./Features";
 import Acl from "./Acl/Acl";
 import Authentication from "./Authentication/Authentication";
 import InternalUser from "./User/InternalUser";
@@ -53,5 +53,5 @@ export {
   Snapshot,
   Rest,
   ROSBridge,
-  MainROSBridge
+  MainROSBridge,
 };

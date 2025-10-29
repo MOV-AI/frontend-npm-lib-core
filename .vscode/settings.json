@@ -1,3 +1,4 @@
 {
-    "liveServer.settings.port": 5501
+  "prettier.configPath": ".prettierrc.json",
+  "editor.formatOnSave": true
 }

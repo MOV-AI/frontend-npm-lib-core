@@ -32,7 +32,7 @@ function getDateWithoutSeconds(date: number): number {
  */
 export function getRequestLevels(
   selectedLevels: Array<string>,
-  levelsList: Array<LogLevel> = []
+  levelsList: Array<LogLevel> = [],
 ): string {
   if (
     Array.isArray(selectedLevels) &&
@@ -42,7 +42,7 @@ export function getRequestLevels(
   }
 
   try {
-    const level = selectedLevels.map(el => el.toLowerCase()).join();
+    const level = selectedLevels.map((el) => el.toLowerCase()).join();
     return `&level=${level}`;
   } catch (error) {
     console.warn("Error Requesting Level", error);
@@ -65,7 +65,7 @@ export function getRequestService(selectedService: Array<string> = []): string {
   }
 
   try {
-    const services = selectedService.map(el => el.toLowerCase()).join();
+    const services = selectedService.map((el) => el.toLowerCase()).join();
     return `&services=${services}`;
   } catch (error) {
     console.warn("Error Requesting Service", error);
@@ -81,7 +81,7 @@ export function getRequestService(selectedService: Array<string> = []): string {
  */
 export function getRequestDate(
   selectedFromDate: TimestampQuery | undefined,
-  selectedToDate: TimestampQuery | undefined
+  selectedToDate: TimestampQuery | undefined,
 ): string {
   let res = "";
   try {
@@ -111,7 +111,7 @@ export function getRequestTags(selectedTags: Array<LogTag> = []): string {
     return "";
   }
   // Format tags to URL parameter
-  const tags = selectedTags.map(el => el.label).join();
+  const tags = selectedTags.map((el) => el.label).join();
   return `&tags=${tags}`;
 }
 

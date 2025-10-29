@@ -16,7 +16,7 @@ const undoManagerWith100UndoOps = new UndoManager(100);
 
 ```javascript
 let state = 0;
-const addAction = n =>
+const addAction = (n) =>
   UndoManager.actionBuilder()
     // forward action
     .doAction(() => (state = state + n))
