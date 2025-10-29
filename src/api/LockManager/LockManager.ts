@@ -120,7 +120,7 @@ class LockManager {
    * Execute DELETE request
    */
   delete = ({ lockName, robotId }: { lockName: string; robotId: string }) => {
-    const path = `v1/${lockName}/${robotId}/`;
+    const path = `v1/lock/${lockName}/`;
     return Rest.delete({ path });
   };
 
