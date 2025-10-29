@@ -31,6 +31,15 @@ class InternalUser extends BaseUser {
       body: model,
     });
 
+  setLanguage = (language: string): Promise<boolean> => {
+    return Rest.put({
+      path: `${INTERNAL_USER_API_ROUTE}/${this.getUsername()}/`,
+      body: { Language: language },
+    })
+      .then(() => true)
+      .catch(() => false);
+  };
+
   //========================================================================================
   /*                                                                                      *
    *                                    Static Methods                                    *
