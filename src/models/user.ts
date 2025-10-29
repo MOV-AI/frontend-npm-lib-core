@@ -47,6 +47,7 @@ export interface InternalUserModel {
   CommonName: string;
   DomainName: string;
   Email: string;
+  Language: string;
   LastUpdate: {
     date: string;
     user: string;
