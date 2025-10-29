@@ -75,8 +75,12 @@ export const mod = (x, n) => ((x % n) + n) % n;
  * flatten an object
  * https://github.com/30-seconds/30-seconds-of-code/blob/master/snippets/flattenObject.md
  */
-export const flattenObject = (obj, prefix = "") =>
-  Object.keys(obj).reduce((acc, k) => {
+export const flattenObject = (obj, prefix = "") => {
+  if (!obj || typeof obj !== "object") {
+    return {}; // Return an empty object if obj is null, undefined, or not an object
+  }
+
+  return Object.keys(obj).reduce((acc, k) => {
     const pre = prefix.length ? prefix + "." : "";
 
     if (typeof obj[k] === "object" && !_isEmpty(obj[k])) {
@@ -87,6 +91,7 @@ export const flattenObject = (obj, prefix = "") =>
 
     return acc;
   }, {});
+};
 
 /**
  * Generate random Guid
@@ -243,27 +248,6 @@ export const loadResources = (event, element) => {
   const openInNew = event?.ctrlKey || event?.button === 1;
   const loader = resourcesMap[element?.Type] || resourcesMap.default;
   loader(element, openInNew);
-};
-
-/**
- * Maps new user password change model to old one
- * @param {object} body Object corresponding to either old or new password change model
- * @returns {object} Object corresponding to old model for V1 user
- */
-export const mapToUserV1PasswordChangeModel = (body) => {
-  const {
-    current_password,
-    CurrentPassword,
-    new_password,
-    NewPassword,
-    confirm_password,
-    ConfirmPassword,
-  } = body;
-  return {
-    current_password: current_password ?? CurrentPassword ?? "",
-    new_password: new_password ?? NewPassword,
-    confirm_password: confirm_password ?? ConfirmPassword,
-  };
 };
 
 /**
