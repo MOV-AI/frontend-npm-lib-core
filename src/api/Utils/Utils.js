@@ -251,27 +251,6 @@ export const loadResources = (event, element) => {
 };
 
 /**
- * Maps new user password change model to old one
- * @param {object} body Object corresponding to either old or new password change model
- * @returns {object} Object corresponding to old model for V1 user
- */
-export const mapToUserV1PasswordChangeModel = (body) => {
-  const {
-    current_password,
-    CurrentPassword,
-    new_password,
-    NewPassword,
-    confirm_password,
-    ConfirmPassword,
-  } = body;
-  return {
-    current_password: current_password ?? CurrentPassword ?? "",
-    new_password: new_password ?? NewPassword,
-    confirm_password: confirm_password ?? ConfirmPassword,
-  };
-};
-
-/**
  * Find difference between two objects
  * @param  {object} origObj - Source object to compare newObj against
  * @param  {object} newObj  - New object with potential changes

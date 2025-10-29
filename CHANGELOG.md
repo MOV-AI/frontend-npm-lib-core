@@ -1,3 +1,32 @@
+# 2.8.1
+
+- [FP-3329](https://movai.atlassian.net/browse/FP-3329): MOVAI Logs out and does not allow user to save it's work
+
+# 2.8.0
+
+- [FP-3260](https://movai.atlassian.net/browse/FP-3260): Translation epic
+
+# 2.7.0
+
+- [FP-3282](https://movai.atlassian.net/browse/FP-3282): Remove usage of /api/v1/newUser and /api/v1/User/\* endpoints
+
+# 2.6.2
+
+- [FP-2297](https://movai.atlassian.net/browse/FP-2297): Re-login form is not shown when cookies are removed or token is deleted
+
+# 2.6.1
+
+- [FP-3074](https://movai.atlassian.net/browse/FP-3074): Tab crashes after high memory usage
+
+# 2.6.0
+
+- New version
+
+# 1.2.5
+
+- [FP-3061](https://movai.atlassian.net/browse/FP-3061): Release of mutex lock does not work
+- [FP-3138](https://movai.atlassian.net/browse/FP-3138): Not able to use dev container in all frontend repos
+
 # 1.2.4
 
 - [FP-3073](https://movai.atlassian.net/browse/FP-3073): Frontend says robot offline. Only fixable on browser refresh
