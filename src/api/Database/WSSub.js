@@ -17,6 +17,10 @@ const CONNECTION = {
   offline: 1,
 };
 
+const TIME_TO_IGNORE_WEBSOCKET_MESSAGES_WHILE_TAB_IS_INVISIBLE = 3 * 60000; // 3 minutes
+let timeOnOtherTab = 0;
+let lastVisibleTimestamp = Date.now();
+
 const DEFAULT_METHOD = () => {
   /** Empty on purpose */
 };
@@ -26,6 +30,20 @@ const DEFAULT_METHOD = () => {
  */
 class WSSub {
   constructor() {
+    const handleClose = () => {
+      this.isClosing = true;
+      this.close(); // gracefully close socket
+    };
+
+    // Fires before leaving (user refresh, close, navigate)
+    window.addEventListener("beforeunload", handleClose);
+
+    // Modern replacement that works with bfcache and Safari
+    window.addEventListener("pagehide", (event) => {
+      if (event.persisted) return; // don't close if using back-forward cache
+      handleClose();
+    });
+
     const isHttps = window.location.protocol === "https:";
     this.host = `${window.location.hostname}:${window.location.port}`;
     this.url = `${isHttps ? "wss" : "ws"}://${this.host}/ws/subscriber`;
@@ -80,6 +98,7 @@ class WSSub {
    */
 
   initSocket = () => {
+    if (this.isClosing) return this;
     if (this.websocket) return this;
     this.status = WSSUB_STATES.INIT;
 
@@ -114,12 +133,14 @@ class WSSub {
    */
   reConnect = () => {
     const { CONNECTING, OPEN } = WSSUB_STATES;
-
     if ([CONNECTING, OPEN].includes(this.status)) return;
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
 
     this.status = CONNECTING;
-
-    setTimeout(this.connect, this.RECONN_TIMEOUT);
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      this.connect();
+    }, this.RECONN_TIMEOUT);
   };
 
   /**
@@ -197,7 +218,20 @@ class WSSub {
    */
   dispatch = (pattern, message, is_command = true) => {
     /// important to not freeze the browser
-    if (document.visibilityState === "hidden") return;
+    if (document.visibilityState === "hidden") {
+      const now = Date.now();
+      timeOnOtherTab += now - lastVisibleTimestamp;
+      lastVisibleTimestamp = now;
+      if (
+        timeOnOtherTab >
+        TIME_TO_IGNORE_WEBSOCKET_MESSAGES_WHILE_TAB_IS_INVISIBLE
+      ) {
+        return;
+      }
+    } else {
+      timeOnOtherTab = 0;
+      lastVisibleTimestamp = Date.now();
+    }
 
     const _map = is_command ? this.evt_callbacks : this.sub_callbacks;
     const _callbacks = _map.get(pattern) || [];
@@ -233,6 +267,9 @@ class WSSub {
   onClose = (evt) => {
     this.dispatch("onclose");
     this.status = WSSUB_STATES.CLOSED;
+
+    // Don't reconnect if page is unloading
+    if (this.isClosing) return;
 
     // reconnect if the connection was not closed on purpose
     if (evt.code !== this.NORMAL_CLOSE_EVT) {
@@ -436,8 +473,13 @@ class WSSub {
    * close the socket connection
    */
   close = () => {
-    this.websocket.close();
-    this.websocket = null;
+    if (this.websocket) {
+      this.websocket.isClosing = true;
+      this.websocket.close();
+      clearTimeout(this.reconnectTimer);
+      clearInterval(this.connectionCheckTimeout);
+      this.websocket = null;
+    }
   };
 
   /**
