@@ -13,6 +13,7 @@ export default class AuthWebSocket {
     onMessage = null,
     connectionHandler = null,
   }) {
+    this.isClosing = false;
     this.onOpen = onOpen === null ? this._onOpen : onOpen;
     this.onClose = onClose === null ? this._onClose : onClose;
     this.onError = onError === null ? this._onError : onError;
@@ -22,7 +23,6 @@ export default class AuthWebSocket {
 
     this.wsUrl = url;
     this.socket = false;
-    this.timerId = false;
     this.connected = false;
   }
 
@@ -31,18 +31,13 @@ export default class AuthWebSocket {
   };
 
   _onClose = (evt) => {
-    console.log("Socket Close: ", evt);
-
-    this.connected = false;
-
-    // Deal with reconnecting the socket
-    this.socket = null;
-    if (this.timerId) {
-      clearTimeout(this.timerId);
+    if (this.isClosing) {
+      console.log("Socket closed gracefully:", evt);
+    } else {
+      console.warn("Socket closed unexpectedly:", evt);
     }
-    this.timerId = setTimeout(() => {
-      this.createSocket();
-    }, 5000);
+    this.connected = false;
+    this.socket = null;
   };
 
   _onError = (evt) => {
@@ -125,9 +120,10 @@ export default class AuthWebSocket {
 
   close() {
     if (this.socket) {
+      this.isClosing = true;
       this.socket.close();
-      clearTimeout(this.timerId);
       this.connected = false;
+      this.socket = null;
     }
   }
 }
