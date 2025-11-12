@@ -1,3 +1,8 @@
+# 2.8.2
+
+- [FP-3432](https://movai.atlassian.net/browse/FP-3432): IDE opens 2 to 6 new websocket connections when closing
+- [FP-3442](https://movai.atlassian.net/browse/FP-3442): Change tabs in browser causes strange behaviors in IDE
+
 # 2.8.1
 
 - [FP-3329](https://movai.atlassian.net/browse/FP-3329): MOVAI Logs out and does not allow user to save it's work
